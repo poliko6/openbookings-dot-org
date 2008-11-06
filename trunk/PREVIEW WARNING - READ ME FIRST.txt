@@ -1,4 +1,0 @@
-You just downloaded OpenBookings.org 0.7.0 Alpha preview
-
-This version is just a preview of the future (hopefully close !) OpenBookings.org 0.7.0b release.
-Is quite buggy and some functions are not working.
