@@ -1,0 +1,35 @@
+15/03/2006 - 0.7.0 beta
+ - Little code cleanup, mainly to improve css stylesheet implementation (which is still not perfect, I acknowledge)
+ - Added simple layout customisation settings (whole app background color, path to logo image file, welcome message)
+ - Added custom date format setting
+ - Added a "My bookings" page for users to list/remember their own bookings
+ - Added user account locking, the checkbox was present in the user profile page but the function wasn't really implemented until now
+ - Added a "Guest" user profile. Users with guest profile can browse bookings without doing changes. You can now create several named guests accounts and/or create a guest account with public credentials to allow anonymous browsing.(thanks Martin) 
+ - Replaced the "Activity step" select list by a simple text field to allow large booking steps for daily booking (hotel rooms, car rent...)
+ - Bug fix #8 : At login attempt failure, the login/password error message wasn't displayed under the login box
+ - Bug fix #9 : Few bookings wouldn't show on the main calendar due to "$year" and "$year_" variables confusion in calendar.php
+ - Bug fix #10 : In day.php and week.php, graphics were drawn too large on computers using dual-screen mode. Drawing with is now fixed to 800 pixels.
+ - Changed the program behavior to avoid opening popups, witch might be confusing when accidentaly hidden behind the main navigator window, and mignt also be blocked according to the navigator security settings.
+ - Renamed $app_path var to $app_url in the config.php (less confusing)
+
+
+07/03/2006 - 0.6.2 beta
+- Bug fix #6 : Fixed bad overbooking detection again. User just couldn't add any bookings. Sorry for this weird one :-(
+- Bug fix #7 : In Internet Explorer, a click on "Disconnect" was opening the login screen in a new window. But who uses Internet explorer anymore ? :-))
+
+07/02/2006 - 0.6.1 beta
+- Added german localization (thanks Martin from Switzerland)
+- Booking confirmation by email now works in when updating a booking, not only when adding.
+- Bug fix #3 : Fixed wrong overbooking detection with time offset. For details, look for "Bug fix #3" in the file functions.php
+- Bug fix #4 : In confirmation emails, "Accept" and "Refuse" buttons were only/always showed in french.
+- Bug fix #5 : Fixed overbooking detection. A booking can't be nested into a bigger one anymore. For details, look for "Bug fix #5" in the file functions.php
+
+25/11/2005 - 0.6.0 beta
+- Added a time offset setting in the config.php file that allow to correct timezone troubles (ie your server is in a different country than your users)
+
+21/11/2005 - 0.5.2 beta (bugfix version)
+- Bug fix #1 : When modifying a booking, the end date was shown incorrectly (today was shown instead of the stored date). For details, look for "Bug fix #1" in the file book.php
+- Bug fix #2 : The main calendar couldn't display correctly if one booking started in 2005 and ended in 2006. For details, look for "Bug fix #2" in the file calendar.php
+- Adding this file in the archive
+
+14/01/2005 - 0.5.1 beta (First public release)
