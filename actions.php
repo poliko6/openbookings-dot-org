@@ -18,7 +18,7 @@
     along with OpenBookings.org; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA */
 
-	'require_once "config.php";
+	require_once "config.php";
 	require_once "connect_db.php";
 	require_once "functions.php";
 
