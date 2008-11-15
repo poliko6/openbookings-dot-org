@@ -1,0 +1,32 @@
+OPENBOOKINGS.ORG 0.7.0b todo list
+
+- Add norwegian localization (thanks Roger Haugli)
+- Add a localization interface
+- Add weekly family browsing (all objects of one family on one screen)
+- Add an automatic database update from previous versions.
+- Add an installer
+- Add statistics
+- Improve the week chart (show more details and allow to add/edit bookings from it)
+- Include new localizations (see the MySQL table rs_param_lang to localize the application yourself)  (thanks for your German localization, Martin from Switzerland)
+- Encrypt the passwords
+- Enhance global security ($_POST instead of $_REQUEST)
+- Under Linux, allow to grab or to rely on users data (/etc/passwd)
+- Allow the use of one openbookings installation for several separated organisations
+- Add booking and cancellation deadlines (at app settings and object settings levels)
+- Allow overbooking
+- Allow mandatory booking (one user can book for another one according to his whishes)
+- Allow triggered/associated bookings (booking links between objects ie. one instructor with one aircraft).
+- Allow to add several users to one booking.
+
+- [done] Some app settings should become user settings (language, date_format, timezone)
+- [done] Add users to register themselves
+- [done] Allow profile locking
+- [done] Some app settings should become objects settings (activity start/end/step, user can edit..., email confirmations)
+- [done] Allow all day long activity setting
+- [done] Use frames rather than popups to simplify the user interface
+- [done] Use the htmlentities() function to avoid storing html special chars into the localization database
+- [pending] Allow stacking booking
+- [pending] Allow users to edit their profile (thanks Matteo from Switzerland)
+
+
+- Any idea ? jerome@openbookings.org
