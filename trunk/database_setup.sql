@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 2.10.1
+-- version 2.9.1.1
 -- http://www.phpmyadmin.net
 -- 
 -- Serveur: localhost
--- Généré le : Ven 18 Avril 2008 à 09:06
--- Version du serveur: 4.1.18
--- Version de PHP: 5.1.6
-
+-- Généré le : Samedi 15 Novembre 2008 à 21:49
+-- Version du serveur: 5.0.27
+-- Version de PHP: 5.2.0
 -- 
--- Base de données: `openbookings_current`
+-- Base de données: `openbookings`
 -- 
 
 -- --------------------------------------------------------
@@ -18,7 +17,7 @@
 -- 
 
 CREATE TABLE `rs_data_bookings` (
-  `book_id` int(10) unsigned NOT NULL,
+  `book_id` int(10) unsigned NOT NULL auto_increment,
   `rand_code` smallint(5) unsigned default NULL,
   `book_date` datetime NOT NULL default '0000-00-00 00:00:00',
   `object_id` smallint(5) unsigned NOT NULL default '0',
@@ -34,7 +33,7 @@ CREATE TABLE `rs_data_bookings` (
   KEY `book_start` (`book_start`),
   KEY `book_end` (`book_end`),
   KEY `rand_code` (`rand_code`)
-) TYPE=MyISAM AUTO_INCREMENT=26 ;
+) TYPE=MyISAM  AUTO_INCREMENT=26 ;
 
 -- 
 -- Contenu de la table `rs_data_bookings`
@@ -70,7 +69,7 @@ CREATE TABLE `rs_data_nobookings` (
 -- 
 
 CREATE TABLE `rs_data_objects` (
-  `object_id` smallint(5) unsigned NOT NULL,
+  `object_id` smallint(5) unsigned NOT NULL auto_increment,
   `rand_code` smallint(5) unsigned default NULL,
   `object_name` varchar(50) NOT NULL default '',
   `family_id` tinyint(3) unsigned NOT NULL default '0',
@@ -84,7 +83,7 @@ CREATE TABLE `rs_data_objects` (
   PRIMARY KEY  (`object_id`),
   KEY `rand_code` (`rand_code`),
   KEY `family_id` (`family_id`)
-) TYPE=MyISAM AUTO_INCREMENT=11 ;
+) TYPE=MyISAM  AUTO_INCREMENT=11 ;
 
 -- 
 -- Contenu de la table `rs_data_objects`
@@ -105,7 +104,7 @@ INSERT INTO `rs_data_objects` (`object_id`, `rand_code`, `object_name`, `family_
 -- 
 
 CREATE TABLE `rs_data_permissions` (
-  `permission_id` smallint(5) unsigned NOT NULL,
+  `permission_id` smallint(5) unsigned NOT NULL auto_increment,
   `object_id` smallint(5) unsigned NOT NULL default '0',
   `user_id` smallint(5) unsigned NOT NULL default '0',
   `profile_id` tinyint(3) unsigned NOT NULL default '0',
@@ -114,7 +113,7 @@ CREATE TABLE `rs_data_permissions` (
   KEY `user_id` (`user_id`),
   KEY `object_id` (`object_id`),
   KEY `profile_id` (`profile_id`)
-) TYPE=MyISAM COMMENT='custom users rights' AUTO_INCREMENT=53 ;
+) TYPE=MyISAM  COMMENT='custom users rights' AUTO_INCREMENT=53 ;
 
 -- 
 -- Contenu de la table `rs_data_permissions`
@@ -155,7 +154,7 @@ INSERT INTO `rs_data_permissions` (`permission_id`, `object_id`, `user_id`, `pro
 -- 
 
 CREATE TABLE `rs_data_users` (
-  `user_id` smallint(5) unsigned NOT NULL,
+  `user_id` smallint(5) unsigned NOT NULL auto_increment,
   `rand_id` smallint(5) unsigned NOT NULL default '0',
   `last_name` varchar(50) default NULL,
   `first_name` varchar(50) default NULL,
@@ -172,7 +171,7 @@ CREATE TABLE `rs_data_users` (
   UNIQUE KEY `login` (`login`),
   KEY `password` (`password`),
   KEY `profile_id` (`profile_id`)
-) TYPE=MyISAM AUTO_INCREMENT=221 ;
+) TYPE=MyISAM  AUTO_INCREMENT=221 ;
 
 -- 
 -- Contenu de la table `rs_data_users`
@@ -226,12 +225,12 @@ INSERT INTO `rs_param` (`param_name`, `param_value`) VALUES
 -- 
 
 CREATE TABLE `rs_param_families` (
-  `family_id` tinyint(3) unsigned NOT NULL,
+  `family_id` tinyint(3) unsigned NOT NULL auto_increment,
   `sort_order` tinyint(3) unsigned NOT NULL default '0',
   `family_name` varchar(50) NOT NULL default '',
   PRIMARY KEY  (`family_id`),
   KEY `ordre` (`sort_order`)
-) TYPE=MyISAM AUTO_INCREMENT=17 ;
+) TYPE=MyISAM  AUTO_INCREMENT=17 ;
 
 -- 
 -- Contenu de la table `rs_param_families`
@@ -251,7 +250,7 @@ INSERT INTO `rs_param_families` (`family_id`, `sort_order`, `family_name`) VALUE
 -- 
 
 CREATE TABLE `rs_param_lang` (
-  `lang_id` mediumint(8) unsigned NOT NULL,
+  `lang_id` mediumint(8) unsigned NOT NULL auto_increment,
   `english` varchar(255) default NULL,
   `french` varchar(255) default NULL,
   `german` varchar(255) default NULL,
@@ -259,7 +258,7 @@ CREATE TABLE `rs_param_lang` (
   KEY `english` (`english`),
   KEY `french` (`french`),
   KEY `deutsch` (`german`)
-) TYPE=MyISAM AUTO_INCREMENT=837 ;
+) TYPE=MyISAM  AUTO_INCREMENT=837 ;
 
 -- 
 -- Contenu de la table `rs_param_lang`
@@ -509,12 +508,12 @@ INSERT INTO `rs_param_lang` (`lang_id`, `english`, `french`, `german`) VALUES
 -- 
 
 CREATE TABLE `rs_param_profiles` (
-  `profile_id` tinyint(3) unsigned NOT NULL default '0',
+  `profile_id` tinyint(3) unsigned NOT NULL auto_increment,
   `display_order` tinyint(3) unsigned NOT NULL default '0',
   `profile_name` varchar(100) NOT NULL default '',
   PRIMARY KEY  (`profile_id`),
   KEY `order` (`display_order`)
-) TYPE=MyISAM;
+) TYPE=MyISAM  AUTO_INCREMENT=5 ;
 
 -- 
 -- Contenu de la table `rs_param_profiles`
