@@ -1,0 +1,73 @@
+OPENBOOKINGS.ORG v0.6.3b QUICKSETUP (version Française ci-dessous !)
+
+(assumes that you have PHP, MySQL and an admin tool like PhpMyAdmin installed on
+your web server and that you can eventually cope with it)
+
+
+1 - ### APPLICATION INSTALLATION OR VERSION UPGRADE ###
+
+	(Re)place the openbookings folder (extracted from the downloaded zip file) into the www root folder of your web server. Please, take care of access rights.
+
+2 - ### MYSQL DATABASE SETUP ###
+
+	Using PhpMyAdmin or your favorite MySQL administration tool :
+
+	*** First or new installation:
+	- Create a MySQL database named "openbookings" or "dfposkdfg" or whatever
+	- Execute the "database_setup.sql" file to populate the newly created database
+
+	*** Upgrade from previous version (0.5.*b to 0.6.2b):
+	- Do nothing. Database structure will be magically updated at first connection.
+	  If you're frightened by magic, you'd better do a backup of your database !
+
+3 - ### CONNECTION SETUP ###
+
+	Open the "config.php" file with a text editor and set the correct values for
+	the variables $app_path, $db_server_address, $database_name, $db_user, $db_password, $db_connection_type and $time_offset
+
+4 - ### APPLICATION SETUP ###
+
+	- Access OpenBookings with your web browser (default credentials = admin/admin or your usual credentials in case of version upgrade)
+	- Click on [Settings] at the bottom of the left menu to access application options
+	- Click on [Users] at the bottom of the left menu to add authorised users
+
+
+That's it !
+
+---
+
+INSTALLATION RAPIDE D'OPENBOOKINGS.ORG v0.6.3b
+
+(suppose que vous ayez PHP, MySQL et un outil d'administration comme PhpMyAdmin installés sur
+votre serveur web et que, à défaut d'être un gourou, vous sachiez éventuellement vous en servir)
+
+
+1 - ### INSTALLATION OU MISE A NIVEAU DE L'APPLICATION ###
+
+	(Rem)placez le dossier openbookings (extrait de l'archive zip téléchargée) dans le dossier racine www de votre serveur web. Attention aux permissions.
+
+2 - ### REGLAGES DE LA BASE DE DONNEES MYSQL ###
+
+	A l'aide de PhpMyAdmin ou votre outil d'administration MySQL favori :
+
+	*** Première ou nouvelle installation:
+	- Créez une base de données nommée "openbookings" ou "lkjqnsdflkj" ou ce que vous voulez d'ailleurs.
+	- Exécutez le fichier "database_setup.sql" pour garnir la base nouvellement créée.
+
+	*** Mise à jour depuis une version précédente (0.5.*b à 0.6.2b)
+	- Surtout, ne faites rien ! La structure de la base sera mise à jour par magie lors de votre première connexion.
+	  Si vous avez peur de la magie, faites d'abord une sauvegarde de votre base.
+
+3 - ### REGLAGE DE LA CONNEXION ###
+
+	Ouvrez le fichier "config.php" avec un éditeur de texte et attribuez les valeurs correctes
+	aux variables $app_path, $database_name, $db_user, $db_password, $db_connection_type et $time_offset
+
+4 - ### REGLAGES DE L'APPLICATION ###
+
+	- Accédez à OpenBookings avec votre navigateur web (identifiants par défaut = admin/admin ou vos identifiants habituels si il s'agit d'une mise à jour)
+	- Cliquez sur [Settings] ou [Réglages] en bas du menu de gauche pour accéder aux options de l'application
+	- Cliquez sur [Users] ou [Utilisateurs] en bas du menu de gauche pour ajouter des utilisateurs autorisés
+
+
+C'est fini !
