@@ -26,7 +26,7 @@
 
 	switch($_REQUEST["action_"]) {
 
-		case "login": // **********************************************************************************************
+		case "connect": // **********************************************************************************************
 
 		$sql  = "SELECT user_id, profile_id, locked, language, date_format, user_timezone FROM rs_data_users ";
 		$sql  .= "WHERE login = '" . sqlInjectShield($_REQUEST["username"]) . "' ";
@@ -37,15 +37,15 @@
 		if(!$user_ = fetch_array($user)) {
 
 			// login/password incorrect
-			$error_message = Translate("Login/password incorrect, try again or contact the administrator", 1) . ".";
+			$error_message = Translate("Username/password incorrect, try again or contact the administrator", 1) . ".";
 
 		} else {
 
 			if($user_["locked"]) {
-				$error_message = Translate("Your account is locked, contact your administrator", 1) . ".";
+				$error_message = Translate("Your account is locked out, contact your administrator", 1) . ".";
 			} else {
 
-				// login successful -> sets the cookie
+				// connect successful -> sets the cookie
 				$session_timeout = param_extract("session_timeout");
 
 				if($session_timeout != 0) {
@@ -80,7 +80,7 @@
 
 		break;
 
-		case "create_new_account": // *********************************************************************************
+		case "register": // *********************************************************************************
 
 		$form_fields = array(); $validation_error = false;
 
