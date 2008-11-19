@@ -85,9 +85,16 @@ div.ligne1 {
 	font-size:12px;
 }
 
-#global {
+.global {
 	position: relative;
-	text-align: left;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+#iframe_action {
+	width:0px;
+	height:0px;
+	visibility:hidden;
 }
 
 #notice {
@@ -103,8 +110,8 @@ div.ligne1 {
 
 .colorframe {
 	position: absolute;
-	border:2px groove;
-	background:#dfdfdf;
+	border:1px solid #9EA0A1;
+	background-color:#f7f7f7;
 	padding:20px;
 }
 
@@ -128,4 +135,33 @@ div.ligne1 {
 	padding:0px;
 	border: none;
 	text-align:right;
+}
+
+.tab_set {
+	position:relative;
+	height:22px;
+	padding:0px;
+	margin:0px;
+}
+
+.tab {
+	position:relative;
+	float:right;
+
+	border:1px solid #9EA0A1;
+	border-bottom:none;
+
+	width:100px;
+	height:22px;
+
+	background-color:#dfdfdf;
+
+	font-size:12px;
+	text-align:center;
+	padding:3px;
+	padding-bottom:0px;
+	margin-left:5px;
+	margin-right:0px;
+
+	cursor:pointer;
 }
