@@ -24,7 +24,6 @@
 
 	CheckCookie(); // Resets app to the index page if timeout is reached. This function is implemented in functions.php
 
-	$app_version = param_extract("app_version");
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -98,9 +97,9 @@
 		$objects_list .= ">" . $objets_["object_name"] . "</option>" . chr(10);
 	}
 
-	//gets the login
-	$sql = "SELECT login FROM rs_data_users WHERE user_id = " . $_COOKIE["bookings_user_id"] . ";";
-	$user = db_query($database_name, $sql, "no", "no"); $user_ = fetch_array($user); $login = $user_["login"];
+	// get user from database
+	$sql = "SELECT CONCAT(first_name, ' ', last_name) AS user FROM rs_data_users WHERE user_id = " . $_COOKIE["bookings_user_id"] . ";";
+	$user = db_query($database_name, $sql, "no", "no"); $user_ = fetch_array($user); $user = $user_["user"];
 ?>
 
 <html>
@@ -158,14 +157,11 @@
 
 <center>
 
-<table style="text-align:center" summary="">
-<tr><td colspan="3"><?php echo Translate("User", 1); ?> : <?php echo $login; ?></td></tr>
-<tr>
-	<td style="font-size:12px"><a href="my_profile.php" target="middle_frame"><?php if($_COOKIE["bookings_profile_id"] == "2" || $_COOKIE["bookings_profile_id"] == "3") { echo "[" . Translate("my profile", 1) . "]"; } // shows [My profile] for guests and users ?></a></td>
-	<td style="width:10px"></td>
-	<td style="font-size:12px"><a href="JavaScript:DeLog()">[ <?php echo Translate("disconnect", 1); ?> ]</a></td>
-</tr>
-</table>
+<span class="small_text">
+	<b><?php echo $user; ?></b>
+	<br>
+	<a href="my_profile.php" target="middle_frame"><?php if($_COOKIE["bookings_profile_id"] == "2" || $_COOKIE["bookings_profile_id"] == "3") { echo Translate("my profile", 1) . "&nbsp;|&nbsp;"; } ?></a><a href="JavaScript:DeLog()"><?php echo Translate("disconnect", 1); ?></a>
+</span>
 
 <hr>
 
@@ -198,7 +194,7 @@
 <tr><td>
 
 	<table summary=""><tr>
-	<td><select id="object_id" name="object_id" style="width:155px; font-size:12px">
+	<td><select id="object_id" name="object_id" style="width:155px">
 	<?php echo $objects_list; if($_COOKIE["bookings_profile_id"] == "4") { echo "<option value=\"0\">" . Translate("Add", 1) . "...</option>"; } ?>
 	</select></td>
 	<?php if($_COOKIE["bookings_profile_id"] == "4") { ?><td><button id="show_object" type="button" style="width:16px; height:16px" onClick="ShowObject()"></button></td><?php } ?>
@@ -246,14 +242,14 @@
 
 </form>
 
-<hr>
+<br><br>
 
 <form id="search_form" name="search_form" method="post" action="availables.php" target="middle_frame">
 
 <table summary="">
 
-	<tr><td style="font-size:24px; text-align:left"><?php echo Translate("Availabilities", 1); ?></td></tr>
-	<tr><td style="height:10px"></td></tr>
+	<tr><td><span class="big_text"><?php echo Translate("Availabilities", 1); ?></span></td></tr>
+	<tr><td style="height:12px"></td></tr>
 	<tr><td style="font-weight:bold"><?php echo Translate("Family", 1); ?></td></tr>
 	<tr><td><select id="family_id2" name="family_id" style="width:175px">
 	<?php echo $families_list; ?></select></td>
@@ -289,26 +285,17 @@
 
 </form>
 
+<br>
+
 <?php if($_COOKIE["bookings_profile_id"] == "4") { ?>
 
-	<hr>
-
-	<table style="font-size:12px" summary=""><tr>
-	<td><a href="settings.php" target="middle_frame">[<?php echo Translate("Settings", 1); ?>]</a></td>
-	<td style="width:10px"></td>
-	<td><a href="users.php" target="middle_frame">[<?php echo Translate("Users profiles", 1); ?>]</a></td>
-	</tr></table>
-
-	<br>
-
-<?php } else { ?>
-
-<hr>
+	<span class="small_text"><a href="settings.php" target="middle_frame"><?php echo Translate("Settings", 1); ?></a>&nbsp;|&nbsp;<a href="users.php" target="middle_frame"><?php echo Translate("Users", 1); ?></a></span>
+	<br><br>
 
 <?php } ?>
 
 <table style="font-size:10px;text-align:center" summary="">
-	<tr><td style="color:#808080">OpenBookings.org v<?php echo $app_version; ?><br>&copy; 2005-<?php echo date("Y"); ?> J&eacute;r&ocirc;me Roger</td></tr>
+	<tr><td style="color:#808080">OpenBookings.org v<?php echo param_extract("app_version"); ?><br>&copy; 2005-<?php echo date("Y"); ?> J&eacute;r&ocirc;me Roger</td></tr>
 	<tr><td><a href="http://www.openbookings.org" target="_blank">http://www.openbookings.org</a></td></tr>
 </table>
 

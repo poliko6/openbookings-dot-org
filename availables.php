@@ -98,7 +98,7 @@
 
 <body>
 
-<span id="title_" style="font-size:24px"><?php echo $family_name; ?> <?php echo Translate("availables", 1); ?> <?php echo Translate("from", 1); ?> <?php echo date($date_format . " h:i", strtotime($start)); ?> <?php echo Translate("to", 1); ?> <?php echo date($date_format . " h:i", strtotime($end)); ?></span>
+<span class="big_text" id="title_"><?php echo $family_name; ?> <?php echo Translate("availables", 1); ?> <?php echo Translate("from", 1); ?> <?php echo date($date_format . " h:i", strtotime($start)); ?> <?php echo Translate("to", 1); ?> <?php echo date($date_format . " h:i", strtotime($end)); ?></span>
 
 <table class="table2">
 

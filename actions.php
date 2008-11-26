@@ -193,7 +193,7 @@
 				mail($_REQUEST["email"], Translate("Registration code", 1), $message, $headers);
 
 				$script .= "parent.document.getElementById(\"notice\").innerHTML = \"";
-				$script .= "<span style='font-size:24px'>" . Translate("Registration successful !", 1) . "</span>";
+				$script .= "<span class=\"big_text\">" . Translate("Registration successful !", 1) . "</span>";
 				$script .= "<br><br><br>";
 				$script .= Translate("Your account has been created but is locked", 1) . ". ";
 				$script .= Translate("Here is what to do to unlock it :", 1);

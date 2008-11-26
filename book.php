@@ -334,13 +334,15 @@
 
 <form id="form_ajout_resa" name="form_ajout_resa" method="post" action="book.php">
 
-<div id="global" style="width:520px; height:250px; top:50px">
+<div class="global" style="width:520px; height:250px; top:50px">
 
 	<table><tr><td>
 
-		<table class="table3" style="width:100%"><tr>
-		<td style="font-size:20px"><?php echo Translate($booking_action, 1) . "<br>" . $family_name . " / " . $object_name . " <span style='font-size:12px'>(" . $managers_names . ")</span>"; ?></td>
-		</tr></table>
+		<span class="big_text"><?php echo Translate($booking_action, 1); ?></span>
+		<br>
+
+		<span style="font-weight:bold"><?php echo $family_name . " / " . $object_name . "</span> <span class=\"small_text\">(" . $managers_names . ")</span>"; ?></td>
+
 
 	</td></tr><tr><td>
 
@@ -403,7 +405,7 @@
 			<tr><td style="font-weight:bold" colspan="4">
 
 			<?php echo Translate("Remarks", 1); ?><br>
-			<textarea id="misc_info" name="misc_info" style="width:410px; height:60px; font-size:12px"><?php echo $misc_info; ?></textarea>
+			<textarea id="misc_info" name="misc_info" style="width:410px; height:60px"><?php echo $misc_info; ?></textarea>
 
 			</td></tr></table>
 
@@ -439,8 +441,7 @@
 
 </form>
 
-<br><br><br><br><br><br><br><br>
-<iframe id="iframe_action" style="width:500px; height:200px; visibility:visible"></iframe>
+<iframe id="iframe_action"></iframe>
 
 <script type="text/javascript"><!--
 document.getElementById("start_hour").value = <?php echo $book_start_hour; ?>;

@@ -51,7 +51,7 @@
 <tr><td style="height:50px"></td></tr>
 <tr><td><img src="pictures/<?php echo $logo_file; ?>" alt="Logo picture"></td></tr>
 <tr><td style="height:20px"></td></tr>
-<tr><td style="font-size:48"><?php echo $welcome_message; ?></td></tr>
+<tr><td style="font-size:40"><?php echo $welcome_message; ?></td></tr>
 </table>
 
 </center>

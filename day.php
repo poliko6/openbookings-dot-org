@@ -223,7 +223,7 @@
 ?>
 
 <script type="text/javascript"><!--
-	document.getElementById("title_").innerHTML = "<?php echo date($date_format, $_REQUEST["stamp"]); ?> - " + parent.document.getElementById("title_").value + " <span style='font-size:12px'>(<?php echo $managers_names; ?>)</span>";
+	document.getElementById("title_").innerHTML = "<?php echo date($date_format, $_REQUEST["stamp"]); ?> - " + parent.document.getElementById("title_").value + " <span class=\"small_text\">(<?php echo $managers_names; ?>)</span>";
 --></script>
 
 </body>

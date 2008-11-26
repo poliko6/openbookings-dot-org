@@ -1,22 +1,25 @@
 -- phpMyAdmin SQL Dump
--- version 2.9.1.1
+-- version 2.11.6
 -- http://www.phpmyadmin.net
--- 
--- Serveur: localhost
--- Généré le : Samedi 15 Novembre 2008 à 21:49
--- Version du serveur: 5.0.27
--- Version de PHP: 5.2.0
--- 
--- Base de données: `openbookings`
--- 
+--
+-- Serveur: 127.0.0.1
+-- Généré le : Mer 26 Novembre 2008 à 17:29
+-- Version du serveur: 5.0.51
+-- Version de PHP: 5.1.6
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+
+--
+-- Base de données: `openbookings_current`
+--
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Structure de la table `rs_data_bookings`
--- 
+--
 
-CREATE TABLE `rs_data_bookings` (
+CREATE TABLE IF NOT EXISTS `rs_data_bookings` (
   `book_id` int(10) unsigned NOT NULL auto_increment,
   `rand_code` smallint(5) unsigned default NULL,
   `book_date` datetime NOT NULL default '0000-00-00 00:00:00',
@@ -33,20 +36,20 @@ CREATE TABLE `rs_data_bookings` (
   KEY `book_start` (`book_start`),
   KEY `book_end` (`book_end`),
   KEY `rand_code` (`rand_code`)
-) TYPE=MyISAM  AUTO_INCREMENT=26 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=26 ;
 
--- 
+--
 -- Contenu de la table `rs_data_bookings`
--- 
+--
 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Structure de la table `rs_data_nobookings`
--- 
+--
 
-CREATE TABLE `rs_data_nobookings` (
+CREATE TABLE IF NOT EXISTS `rs_data_nobookings` (
   `n` smallint(5) unsigned NOT NULL default '0',
   `book_end_id` int(10) unsigned NOT NULL default '0',
   `book_end` datetime NOT NULL default '0000-00-00 00:00:00',
@@ -55,20 +58,20 @@ CREATE TABLE `rs_data_nobookings` (
   PRIMARY KEY  (`n`),
   KEY `book_end` (`book_end`),
   KEY `book_start` (`book_start`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- 
+--
 -- Contenu de la table `rs_data_nobookings`
--- 
+--
 
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Structure de la table `rs_data_objects`
--- 
+--
 
-CREATE TABLE `rs_data_objects` (
+CREATE TABLE IF NOT EXISTS `rs_data_objects` (
   `object_id` smallint(5) unsigned NOT NULL auto_increment,
   `rand_code` smallint(5) unsigned default NULL,
   `object_name` varchar(50) NOT NULL default '',
@@ -83,13 +86,13 @@ CREATE TABLE `rs_data_objects` (
   PRIMARY KEY  (`object_id`),
   KEY `rand_code` (`rand_code`),
   KEY `family_id` (`family_id`)
-) TYPE=MyISAM  AUTO_INCREMENT=11 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
 
--- 
+--
 -- Contenu de la table `rs_data_objects`
--- 
+--
 
-INSERT INTO `rs_data_objects` (`object_id`, `rand_code`, `object_name`, `family_id`, `booking_method`, `email_bookings`, `activity_start`, `activity_end`, `activity_step`, `latest_update`, `misc_info`) VALUES 
+INSERT INTO `rs_data_objects` (`object_id`, `rand_code`, `object_name`, `family_id`, `booking_method`, `email_bookings`, `activity_start`, `activity_end`, `activity_step`, `latest_update`, `misc_info`) VALUES
 (1, 0, 'Test car', 1, 'time_based', 'yes', '08:00', '18:00', 60, 0, ''),
 (2, 0, 'Test Room', 2, 'time_based', 'yes', '08:00', '18:00', 15, 0, ''),
 (3, 0, 'Test Notebook', 3, 'time_based', 'yes', '09:00', '17:30', 15, 0, ''),
@@ -99,11 +102,11 @@ INSERT INTO `rs_data_objects` (`object_id`, `rand_code`, `object_name`, `family_
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Structure de la table `rs_data_permissions`
--- 
+--
 
-CREATE TABLE `rs_data_permissions` (
+CREATE TABLE IF NOT EXISTS `rs_data_permissions` (
   `permission_id` smallint(5) unsigned NOT NULL auto_increment,
   `object_id` smallint(5) unsigned NOT NULL default '0',
   `user_id` smallint(5) unsigned NOT NULL default '0',
@@ -113,13 +116,13 @@ CREATE TABLE `rs_data_permissions` (
   KEY `user_id` (`user_id`),
   KEY `object_id` (`object_id`),
   KEY `profile_id` (`profile_id`)
-) TYPE=MyISAM  COMMENT='custom users rights' AUTO_INCREMENT=53 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='custom users rights' AUTO_INCREMENT=53 ;
 
--- 
+--
 -- Contenu de la table `rs_data_permissions`
--- 
+--
 
-INSERT INTO `rs_data_permissions` (`permission_id`, `object_id`, `user_id`, `profile_id`, `permission`) VALUES 
+INSERT INTO `rs_data_permissions` (`permission_id`, `object_id`, `user_id`, `profile_id`, `permission`) VALUES
 (1, 1, 0, 1, 'none'),
 (2, 1, 0, 2, 'view'),
 (3, 1, 0, 3, 'modify'),
@@ -149,11 +152,11 @@ INSERT INTO `rs_data_permissions` (`permission_id`, `object_id`, `user_id`, `pro
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Structure de la table `rs_data_users`
--- 
+--
 
-CREATE TABLE `rs_data_users` (
+CREATE TABLE IF NOT EXISTS `rs_data_users` (
   `user_id` smallint(5) unsigned NOT NULL auto_increment,
   `rand_id` smallint(5) unsigned NOT NULL default '0',
   `last_name` varchar(50) default NULL,
@@ -171,13 +174,13 @@ CREATE TABLE `rs_data_users` (
   UNIQUE KEY `login` (`login`),
   KEY `password` (`password`),
   KEY `profile_id` (`profile_id`)
-) TYPE=MyISAM  AUTO_INCREMENT=221 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=221 ;
 
--- 
+--
 -- Contenu de la table `rs_data_users`
--- 
+--
 
-INSERT INTO `rs_data_users` (`user_id`, `rand_id`, `last_name`, `first_name`, `login`, `profile_id`, `email`, `password`, `locked`, `language`, `date_format`, `user_timezone`, `remarks`) VALUES 
+INSERT INTO `rs_data_users` (`user_id`, `rand_id`, `last_name`, `first_name`, `login`, `profile_id`, `email`, `password`, `locked`, `language`, `date_format`, `user_timezone`, `remarks`) VALUES
 (4, 0, 'Admin', 'Admin', 'admin', 4, 'admin@yourdomain.com', 'admin', 0, 'french', 'd/m/Y', 0, 'Default administrator account'),
 (5, 0, 'user', 'Guest', 'guest', 2, '', 'guest', 0, 'english', 'd/m/Y', 0, 'Example of guest account'),
 (1, 0, 'user', 'Anonymous', 'anonymous', 1, '', 'anonymous', 0, 'english', 'd/m/Y', 0, 'For ''anyone'' read-only access. See ''Application access level'' in the settings'),
@@ -185,58 +188,62 @@ INSERT INTO `rs_data_users` (`user_id`, `rand_id`, `last_name`, `first_name`, `l
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Structure de la table `rs_param`
--- 
+--
 
-CREATE TABLE `rs_param` (
+CREATE TABLE IF NOT EXISTS `rs_param` (
   `param_name` varchar(25) NOT NULL default '',
   `param_value` varchar(50) NOT NULL default '',
   PRIMARY KEY  (`param_name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- 
+--
 -- Contenu de la table `rs_param`
--- 
+--
 
-INSERT INTO `rs_param` (`param_name`, `param_value`) VALUES 
+INSERT INTO `rs_param` (`param_name`, `param_value`) VALUES
 ('users_can_customize_date', 'no'),
-('validated_color', '#00c000'),
-('unvalidated_color', '#ff8000'),
-('app_title', 'Twister'),
+('validated_color', '00c000'),
+('unvalidated_color', 'ff8000'),
+('app_title', 'OpenBookings.org'),
 ('language', 'french'),
 ('session_timeout', '0'),
-('free_color', '#0000ff'),
+('free_color', '0000ff'),
 ('default_date_format', 'd/m/Y'),
-('logo_file', 'diary.png'),
-('welcome_message', ''),
-('background_color', '#eff0f8'),
+('logo_file', 'diary.gif'),
+('welcome_message', 'Welcome to OpenBookings.org'),
+('background_color', 'eff0f8'),
 ('server_timezone', '0'),
-('app_version', '0.7.0 alpha preview'),
-('application_access_level', '1'),
+('app_version', '0.7.0 CVS'),
+('application_access_level', '2'),
 ('admin_email', 'fakeadmin@openbookings.org'),
-('self_registration_mode', 'no_validation'),
-('default_user_timezone', '0');
+('self_registration_mode', 'email_validation'),
+('default_user_timezone', '0'),
+('font_family', 'verdana'),
+('font_size', '14'),
+('small_font_size', '11'),
+('big_font_size', '24');
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Structure de la table `rs_param_families`
--- 
+--
 
-CREATE TABLE `rs_param_families` (
+CREATE TABLE IF NOT EXISTS `rs_param_families` (
   `family_id` tinyint(3) unsigned NOT NULL auto_increment,
   `sort_order` tinyint(3) unsigned NOT NULL default '0',
   `family_name` varchar(50) NOT NULL default '',
   PRIMARY KEY  (`family_id`),
   KEY `ordre` (`sort_order`)
-) TYPE=MyISAM  AUTO_INCREMENT=17 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
 
--- 
+--
 -- Contenu de la table `rs_param_families`
--- 
+--
 
-INSERT INTO `rs_param_families` (`family_id`, `sort_order`, `family_name`) VALUES 
+INSERT INTO `rs_param_families` (`family_id`, `sort_order`, `family_name`) VALUES
 (1, 4, 'Cars'),
 (2, 2, 'Meeting rooms'),
 (3, 1, 'Notebooks'),
@@ -245,11 +252,11 @@ INSERT INTO `rs_param_families` (`family_id`, `sort_order`, `family_name`) VALUE
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Structure de la table `rs_param_lang`
--- 
+--
 
-CREATE TABLE `rs_param_lang` (
+CREATE TABLE IF NOT EXISTS `rs_param_lang` (
   `lang_id` mediumint(8) unsigned NOT NULL auto_increment,
   `english` varchar(255) default NULL,
   `french` varchar(255) default NULL,
@@ -258,13 +265,13 @@ CREATE TABLE `rs_param_lang` (
   KEY `english` (`english`),
   KEY `french` (`french`),
   KEY `deutsch` (`german`)
-) TYPE=MyISAM  AUTO_INCREMENT=837 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=841 ;
 
--- 
+--
 -- Contenu de la table `rs_param_lang`
--- 
+--
 
-INSERT INTO `rs_param_lang` (`lang_id`, `english`, `french`, `german`) VALUES 
+INSERT INTO `rs_param_lang` (`lang_id`, `english`, `french`, `german`) VALUES
 (1, 'Bookings', 'Réservations', 'Reservationen'),
 (2, 'Year', 'Année', 'Jahr'),
 (3, 'Family', 'Famille', 'Gruppe'),
@@ -323,7 +330,7 @@ INSERT INTO `rs_param_lang` (`lang_id`, `english`, `french`, `german`) VALUES
 (57, 'Password', 'Mot de passe', 'Passwort'),
 (58, 'disconnect', 'déconnecter', 'abmelden'),
 (59, 'Settings', 'Réglages', 'Einstellungen'),
-(60, 'Users profiles', 'Profils utilisateurs', 'Benutzerprofile'),
+(60, 'Users', 'Utilisateurs', 'Benutzerprofile'),
 (61, 'Activity start', 'Début d''activité', 'Beginn der Aktivität'),
 (62, 'Activity end', 'Fin d''activité', 'Ende der Aktivität'),
 (63, 'Activity step', 'Incrément', 'Stufe'),
@@ -390,7 +397,7 @@ INSERT INTO `rs_param_lang` (`lang_id`, `english`, `french`, `german`) VALUES
 (206, 'My Bookings', 'Mes réservations', 'Meine Reservierungen'),
 (207, 'Booking date', 'Date réservation', 'Reservierungs Termin'),
 (208, 'Show bookings to guests users', 'Montrer les réservations aux invités', '[Anmeldungen zeigen den Gastbenutzern]'),
-(209, 'Register', 'Enregistrez-vous', 'Registrieren Sie Sie'),
+(209, 'Register', 'Inscription', 'Registrieren'),
 (210, 'Create your account', 'Créez votre compte', NULL),
 (211, 'Update your account', 'Mise à jour de votre compte', NULL),
 (212, 'New booking', 'Nouvelle réservation', NULL),
@@ -419,7 +426,6 @@ INSERT INTO `rs_param_lang` (`lang_id`, `english`, `french`, `german`) VALUES
 (235, 'Modify', 'Modifier', NULL),
 (236, 'Everyone', 'Tout le monde', NULL),
 (237, 'Guests', 'Invités', NULL),
-(238, 'Users', 'Utilisateurs', NULL),
 (239, 'Custom booking permissions (overrides generic booking permissions)', 'Permissions personnalisées (supplante les permissions génériques)', NULL),
 (240, 'Manage', 'Gérer', NULL),
 (244, 'Set all users profiles to this language', 'Régler cette langue dans tous les profils utilisateurs', NULL),
@@ -472,7 +478,6 @@ INSERT INTO `rs_param_lang` (`lang_id`, `english`, `french`, `german`) VALUES
 (301, 'Create account', 'Créer un compte', NULL),
 (302, 'First access only', 'Seulement pour le premier accès', NULL),
 (297, 'WARNING ! Deleting this family will move all its objects in a temporary unclassified family', 'AVERTISSEMENT ! La supression de cet famille entraînera le déplacements de tous ses objets vers la catégorie temporaire ''Non classés''', NULL),
-(303, 'Login/password incorrect, try again or contact your administrator', NULL, NULL),
 (304, 'Default user timezone', 'Fuseau horaire utilisateur par défaut', NULL),
 (306, 'No self-registration (account creation is restricted to admins)', 'Pas d''auto-enregistrement (création de compte réservée aux admins)', NULL),
 (307, 'should not be empty', 'ne doit pas rester vide', NULL),
@@ -490,36 +495,39 @@ INSERT INTO `rs_param_lang` (`lang_id`, `english`, `french`, `german`) VALUES
 (824, 'Booked by', 'Réservé par', NULL),
 (825, 'managed by', 'géré par', NULL),
 (826, 'not managed', 'non administré', NULL),
-(827, 'Look for available slots', NULL, NULL),
-(828, 'Available slots', NULL, NULL),
-(829, 'Show available slots', NULL, NULL),
-(830, 'Start date, start hour and booking duration are required to compute available slots', NULL, NULL),
-(831, 'Please, fill in the corresponding form fields an try again', NULL, NULL),
-(832, 'No limit', NULL, NULL),
-(833, 'Choice', NULL, NULL),
-(834, 'Week', NULL, NULL),
-(835, 'Localization', NULL, NULL),
-(836, 'Show only missing vocabulary', NULL, NULL);
+(827, 'Look for available slots', 'Chercher des crénaux disponibles', NULL),
+(828, 'Available slots', 'Crénaux disponibles', NULL),
+(829, 'Show available slots', 'Montrer les crénaux disponibles', NULL),
+(830, 'Start date, start hour and booking duration are required to compute available slots', 'La date de début, l\\''heure de début et la durée de réservation sont requis pour calculer les crénaux disponibles', NULL),
+(831, 'Please, fill in the corresponding form fields an try again', 'Remplissez les champs de formulaire correspondants et essayez à nouveau', NULL),
+(832, 'No limit', 'Pas de limite', NULL),
+(833, 'Choice', 'Choix', NULL),
+(834, 'Week', 'Semaine', NULL),
+(835, 'Localization', 'Traduction', NULL),
+(836, 'Show only missing vocabulary', 'Afficher seulement le vocabulaire manquant', NULL),
+(837, 'Connect', 'Connexion', 'Verbinden'),
+(838, 'Users profiles', NULL, NULL),
+(840, 'Utilisateurs', NULL, NULL);
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Structure de la table `rs_param_profiles`
--- 
+--
 
-CREATE TABLE `rs_param_profiles` (
-  `profile_id` tinyint(3) unsigned NOT NULL auto_increment,
+CREATE TABLE IF NOT EXISTS `rs_param_profiles` (
+  `profile_id` tinyint(3) unsigned NOT NULL default '0',
   `display_order` tinyint(3) unsigned NOT NULL default '0',
   `profile_name` varchar(100) NOT NULL default '',
   PRIMARY KEY  (`profile_id`),
   KEY `order` (`display_order`)
-) TYPE=MyISAM  AUTO_INCREMENT=5 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- 
+--
 -- Contenu de la table `rs_param_profiles`
--- 
+--
 
-INSERT INTO `rs_param_profiles` (`profile_id`, `display_order`, `profile_name`) VALUES 
+INSERT INTO `rs_param_profiles` (`profile_id`, `display_order`, `profile_name`) VALUES
 (4, 4, 'Administrator'),
 (3, 3, 'User'),
 (2, 2, 'Guest'),

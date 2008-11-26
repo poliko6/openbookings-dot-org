@@ -96,7 +96,7 @@
 		<?php while($vocabulary_ = fetch_array($vocabulary)) { ?><tr>
 			<td><?php echo $vocabulary_[$localize_from]; ?></td>
 			<td>
-				<input id="localize_to_<?php echo $vocabulary_["lang_id"]; ?>" name="localize_to_<?php echo $vocabulary_["lang_id"]; ?>" style="width:400px;font-size:12px" onKeyPress="updateSentence(<?php echo $vocabulary_["lang_id"]; ?>,event)" value="<?php echo $vocabulary_[$localize_to]; ?>">
+				<input id="localize_to_<?php echo $vocabulary_["lang_id"]; ?>" name="localize_to_<?php echo $vocabulary_["lang_id"]; ?>" style="width:400px" onKeyPress="updateSentence(<?php echo $vocabulary_["lang_id"]; ?>,event)" value="<?php echo $vocabulary_[$localize_to]; ?>">
 			</td>
 		</tr><?php } ?>
 

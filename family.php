@@ -181,9 +181,9 @@
 
 <table class="table3"><tr><td>
 
-	<span style="font-size:24px"><?php echo Translate("Family", 1); ?></span><br>
+	<span class="big_text"><?php echo Translate("Family", 1); ?></span><br>
 
-	<table style="border:2px groove; background:#efefef"><tr><td style="padding:10px">
+	<div class="colorframe">
 
 		<table>
 		<tr><td style="font-weight:bold"><?php echo Translate("Family name", 1); ?><br><input id="family_name" name="family_name" style="width:200px; text-align:center" value="<?php echo $family_name; ?>"></td></tr>
@@ -199,7 +199,7 @@
 
 		</table>
 
-	</td></tr></table>
+	</div>
 
 </td></tr>
 
