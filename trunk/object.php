@@ -344,7 +344,7 @@
 
 <body>
 
-<span style="font-size:24px"><?php echo $title; ?></span>
+<span class="big_text"><?php echo $title; ?></span>
 
 <hr>
 
@@ -386,7 +386,7 @@
 		<td style="width:10px"></td>
 		<td style="font-weight:bold" valign="bottom"><input type="checkbox" id="email_bookings" name="email_bookings"<?php echo $email_bookings_checked; ?>>&nbsp;<?php echo Translate("Use email to manage bookings", 1); ?></td>
 	</tr></table>
-	<span style="color:#808080; font-size:12px; font-weight:normal"><?php echo Translate("Tip : for all day long activity, set start and end to 00:00", 1); ?></span><br>
+	<span class="small_text" style="color:#808080"><?php echo Translate("Tip : for all day long activity, set start and end to 00:00", 1); ?></span><br>
 </td>
 
 </tr></table>

@@ -246,7 +246,7 @@
 
 <form id="form_profile" name="form_profile" method="post" action="my_profile.php">
 
-<table><tr><td><span style="font-size:24px"><?php echo $title; ?></span></td></tr>
+<table><tr><td><span class="big_text"><?php echo $title; ?></span></td></tr>
 
 <tr><td>
 

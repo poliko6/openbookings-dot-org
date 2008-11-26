@@ -22,7 +22,7 @@
 	require_once "connect_db.php";
 	require_once "functions.php";
 
-	CheckCookie(); // Resets app to the index page if timeout is reached. This finction is implemented in functions.php
+	CheckCookie(); // Resets app to the index page if timeout is reached. This function is implemented in functions.php
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -84,16 +84,16 @@
 
 <iframe id="iframe_day" name="iframe_day" frameborder="0" scrolling="no" style="background:#<?php echo param_extract("background_color"); ?>; height:90px; width:810px;"></iframe>
 
-<div id="global" style="width:780px">
+<div class="global" style="width:780px">
 
-<table summary=""><tr>
+<table class="small_text" border summary=""><tr>
 
 <?php
 	for($month=1;$month<=12;$month++) {
 		$day = 1;
 ?>
 
-<td VALIGN="TOP" style="font-size:13px; font-weight:bold; width:58px; padding:0px">
+<td VALIGN="TOP" style="font-weight:bold; width:62px; padding:0px">
 
 <?php echo Translate(date("F", strtotime($year . "-" . $month . "-" . $day)), 1); ?><br>
 

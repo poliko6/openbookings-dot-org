@@ -84,7 +84,7 @@
 	$sql = "SELECT family_name FROM rs_param_families WHERE family_id = '". $_REQUEST["family_id"] . "';";
 	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 
-	$html = "<span style=\"font-size:24px\">" . $temp_["family_name"] . " - " . Translate("Week #", 1) . " " . $_GET["week"]. "/". $_GET["year"] . "</span><br>";
+	$html = "<span class=\"big_text\">" . $temp_["family_name"] . " - " . Translate("Week #", 1) . " " . $_GET["week"]. "/". $_GET["year"] . "</span><br>";
 
 	// gets monday's date of selected week
 	$monday = strtotime(FormatDate($_GET["week"], "debut"));

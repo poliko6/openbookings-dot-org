@@ -49,6 +49,10 @@
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 
+<style type="text/css">
+	input { width:180px }
+</style>
+
 <?php if(isset($_COOKIE["bookings_user_id"])) { // cookie is set : user is already logged ?>
 
 <frameset cols="210,*">
@@ -124,33 +128,37 @@
 <div class="global" style="width:300px;top:50px">
 
 	<div class="tab_set" style="width:300px">
-		<?php if($self_registration_mode != "no_self_registration") { ?><div class="tab" id="register" onMouseOver="highLightTab(this.id, event)" onMouseOut="highLightTab(this.id, event)" onClick="changeTab(this.id)">Register</div><?php } ?>
-		<div class="tab" id="connect" onMouseOver="highLightTab(this.id, event)" onMouseOut="highLightTab(this.id, event)" onClick="changeTab(this.id)">Connect</div>
+		<?php if($self_registration_mode != "no_self_registration") { ?><div class="tab" id="register" onMouseOver="highLightTab(this.id, event)" onMouseOut="highLightTab(this.id, event)" onClick="changeTab(this.id)"><?php echo Translate("Register",1); ?></div><?php } ?>
+		<div class="tab" id="connect" onMouseOver="highLightTab(this.id, event)" onMouseOut="highLightTab(this.id, event)" onClick="changeTab(this.id)"><?php echo Translate("Connect",1); ?></div>
 	</div>
 
-	<div class="colorframe" style="width:260px">
+	<div class="colorframe" style="text-align:center">
+
+		<div class="global" style="width:260px;padding:20px">
 
 		<center>
 
-		<table class="table3" summary="">
+		<table>
 			<tr><td id="td_username"><?php echo Translate("Username", 1); ?><br><input type="text" id="username" name="username"></td></tr>
 			<tr><td id="td_password"><?php echo Translate("Password", 1); ?><br><input type="password" id="password" name="password"></td></tr>
 			<tr><td id="td_verify_password"></td></tr>
 			<tr><td id="td_first_name"></td></tr>
 			<tr><td id="td_last_name"></td></tr>
 			<tr><td id="td_email"></td></tr>
-			<tr><td style="height:10px"></td></tr>
+			<tr><td style="height:20px"></td></tr>
 			<tr><td><center><button id="submit_button" type="button" style="width:150px" onClick="connect()"><?php echo Translate("Connect", 1); ?></button></center></td></tr>
 		</table>
 
 		</center>
 
+		</div>
+
 	</div>
 
-</div>
+	<div style="position:relative">
 
 	<table>
-		<tr><td colspan="3"style="height:20px"></td></tr>
+		<tr><td colspan="3" style="height:20px"></td></tr>
 		<tr>
 			<td><a href="http://www.php.net" target="_blank"><img src="pictures/php_logo.gif" alt="This software was written in PHP !" height="36" width="69"></a></td>
 			<td style="width:10px">
@@ -160,7 +168,11 @@
 		</tr>
 	</table>
 
-	<?php if($error_message != "") { echo "<div style=\"top:" . (360 + $height_offset) . "px; width:" . (304 + $width_offset) . "px; color:#ff0000; text-align:center\">" . $error_message . "</div>\n"; } // shows error message at the bottom of the form if any ?>
+	</div>
+
+	<?php if($error_message != "") { echo "<div style=\"color:#ff0000; text-align:center\">" . $error_message . "</div>\n"; } // shows error message at the bottom of the form if any ?>
+
+</div>
 
 <input type="hidden" id="action_" name="action_" value="">
 

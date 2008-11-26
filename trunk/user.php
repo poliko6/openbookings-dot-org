@@ -193,7 +193,7 @@
 <form id="form_user" name="form_user" method="post" action="users.php">
 
 
-<table><tr><td><span style="font-size:24px"><?php echo $title; ?></span></td></tr>
+<table><tr><td><span class="big_text"><?php echo $title; ?></span></td></tr>
 
 <tr><td>
 

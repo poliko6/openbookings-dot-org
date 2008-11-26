@@ -155,9 +155,9 @@
 
 <center>
 
-<table style="width:700px"><tr><td>
+<table style="width:800px"><tr><td>
 
-	<span style="font-size:24px"><?php echo Translate("Application settings", 1); ?></span><br>
+	<span class="big_text"><?php echo Translate("Application settings", 1); ?></span><br>
 
 	<table class="table2"><tr><td style="padding:10px">
 

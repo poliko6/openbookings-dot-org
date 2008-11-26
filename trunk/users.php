@@ -160,7 +160,7 @@
 
 <?php if($error_message != "") { echo $error_message . "<p>"; } ?><p>
 
-<span style="font-size:24px"><?php echo Translate("Users list", 1); ?></span>
+<span class="big_text"><?php echo Translate("Users list", 1); ?></span>
 
 <table class="table2">
 

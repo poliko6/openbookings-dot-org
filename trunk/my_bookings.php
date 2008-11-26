@@ -59,7 +59,7 @@
 
 <body style="margin:10px; text-align:left">
 
-<span style="font-size:24px"><?php echo Translate("All bookings from", 1) ?> <?php echo $user_name; ?></span><br>
+<span class="big_text"><?php echo Translate("All bookings from", 1) ?> <?php echo $user_name; ?></span><br>
 
 <table class="table2" summary="">
 
