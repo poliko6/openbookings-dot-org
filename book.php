@@ -374,15 +374,13 @@
 
 				<?php switch($booking_method) { case "time_based": ?>
 
-				<table class="table3">
-					<tr>
-						<td style="font-weight:bold; text-align:right"><?php echo Translate("Start", 1); ?> :<br><input type="text" id="start_date" name="start_date" style="width:80px" value="<?php echo $book_start_day; ?>"></td>
-						<td><select id="start_hour" name="start_hour"><?php echo $hours_list; ?></select></td>
-					</tr><tr>
-						<td style="font-weight:bold; text-align:right;"><?php echo Translate("End", 1); ?> :<br><input type="text" id="end_date" name="end_date" style="width:80px" value="<?php echo $book_end_day; ?>"></td>
-						<td><select id="end_hour" name="end_hour"><?php echo $hours_list; ?></select></td>
-					</tr>
-				</table>
+				<?php echo Translate("Start", 1); ?> :<br>
+				<input type="text" id="start_date" name="start_date" style="width:80px" value="<?php echo $book_start_day; ?>">
+				<select id="start_hour" name="start_hour"><?php echo $hours_list; ?></select>
+
+				<?php echo Translate("End", 1); ?> :<br>
+				<input type="text" id="end_date" name="end_date" style="width:80px" value="<?php echo $book_end_day; ?>">
+				<select id="end_hour" name="end_hour"><?php echo $hours_list; ?></select>
 
 				<?php break; case "stacking": ?>
 
@@ -446,7 +444,7 @@
 <script type="text/javascript"><!--
 document.getElementById("start_hour").value = <?php echo $book_start_hour; ?>;
 <?php
-	if($booking_method == "time_based") { echo "document.getElementById(\"end_hour\").value = \"" . $book_end_hour . "\";"; }
+	if($booking_method == "time_based") { echo "document.getElementById(\"end_hour\").value = \"" . $book_end_hour . "\";\n"; }
 	if(isset($booker_id)) { echo "document.getElementById(\"booker_id\").value = " . $booker_id . ";\n"; }
 ?>
 --></script>

@@ -295,7 +295,7 @@
 <?php } ?>
 
 <table style="font-size:10px;text-align:center" summary="">
-	<tr><td style="color:#808080">OpenBookings.org v<?php echo param_extract("app_version"); ?><br>&copy; 2005-<?php echo date("Y"); ?> J&eacute;r&ocirc;me Roger</td></tr>
+	<tr><td style="color:#808080">OpenBookings.org <?php echo param_extract("app_version"); ?><br>&copy; 2005-<?php echo date("Y"); ?> J&eacute;r&ocirc;me Roger</td></tr>
 	<tr><td><a href="http://www.openbookings.org" target="_blank">http://www.openbookings.org</a></td></tr>
 </table>
 
