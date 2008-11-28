@@ -91,20 +91,7 @@
 
 <title><?php echo $app_title . " :: " . $object_family . " / " . $object_name . " - " . Translate("Week #", 1) . " " . $_REQUEST["week"]; ?></title>
 
-<style type="text/css">
-a:link {color:black; text-decoration: none; }
-a:visited {color:black; text-decoration: none; }
-a:hover {color:red; text-decoration: none; }
-table { border-collapse: collapse; }
-td { padding: 0px; }
-div { position:absolute; }
-.hour_tag { top:58px; font-family: arial; font-size:10px; }
-.line { top:56px; width:1px; height:3px; font-size:0px; background:black; }
-.info { top:30px; visibility:hidden; background:#ffffcc; color:#000000; border: 1px ridge; padding:0px 3px 0px 3px; width:200px; font-size:12px;}
-</style>
-
-<script type="text/javascript"><!--
---></script>
+<link rel="stylesheet" type="text/css" href="styles.php">
 
 </head>
 
@@ -140,7 +127,7 @@ div { position:absolute; }
 
 			// hour boxes
 			$top = ($step_size + $line_offset) * $n + $vertical_offset + 14;
-			$html .= "<div id=\"step_" . $step_id . "\" style=\"font-size:8px; height:" . $step_size . "px; width:" . $column_width . "px; top:" . $top . "px; left:" . $left . "px; background:" . $free_color . "\"></div>" . chr(10);
+			$html .= "<div id=\"step_" . $step_id . "\" style=\"font-size:8px; height:" . $step_size . "px; width:" . $column_width . "px; top:" . $top . "px; left:" . $left . "px; background:#" . $free_color . "\"></div>" . chr(10);
 		}
 	}
 
@@ -209,7 +196,7 @@ div { position:absolute; }
 				$height = ($step_size + $line_offset) * ($end - $start + 1) - 1;
 
 				// draws the coloured range over the scale to show the booking
-				if($start != 0) { $div .= "<div valign=\"center\" id=\"booking_" . $n . "\" style=\"font-size:12px; vertical-align:center;background:" . $color . "; top:" . $top . "px; left:" . $left . "px; width:" . $column_width . "px; height:" . $height . "\">" . $booking_info . "</div>" . chr(10); }
+				if($start != 0) { $div .= "<div valign=\"center\" id=\"booking_" . $n . "\" style=\"font-size:12px; vertical-align:center;background:#" . $color . "; top:" . $top . "px; left:" . $left . "px; width:" . $column_width . "px; height:" . $height . "\">" . $booking_info . "</div>" . chr(10); }
 			} // for
 		} // while
 	} // if

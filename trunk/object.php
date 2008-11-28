@@ -205,7 +205,6 @@
 
 			if($_REQUEST["new_user_id"] != "" && $_REQUEST["new_custom_permission"] != "") {
 				$sql = "INSERT INTO rs_data_permissions ( object_id, user_id, profile_id, permission ) VALUES ( " . $object_id . ", " . $_REQUEST["new_user_id"] . ", 0, '" . $_REQUEST["new_custom_permission"] .  "' );";
-				echo $sql;
 				db_query($database_name, $sql, "no", "no");
 			}
 
@@ -216,10 +215,11 @@
 		case "delete_custom_permission":
 
 			$sql = "DELETE FROM rs_data_permissions WHERE permission_id = " . $_REQUEST["permission_id"] . " AND object_id = " . $object_id . ";";
-			echo $sql;
 			db_query($database_name, $sql, "no", "no");
 
 			$reload_location = "object.php?object_id=" . $object_id;
+
+			break;
 
 		} // switch($_REQUEST["action_"])
 
@@ -230,12 +230,12 @@
 		} else {
 			// no errors, action successful, refreshing both menu and object frames
 			echo "<script type=\"text/javascript\"><!--\n";
-				echo "top.frames[0].location = \"menu.php?object_id=" . $object_id . "&family_id=" . $_REQUEST["family_id"] . "\";\n";
+				echo "top.frames[0].location = \"menu.php?object_id=" . $object_id . "&family_id=" . $family_id . "\";\n";
 				echo "top.frames[1].location = \"" . $reload_location . "\";\n";
 			echo "--></script>\n";
 		}
 
-	} else { // isset($_REQUEST["action_"])
+	} else { // !isset($_REQUEST["action_"])
 
 	// extracts object families list
 	$sql = "SELECT family_id, family_name, sort_order FROM rs_param_families ORDER BY sort_order;";

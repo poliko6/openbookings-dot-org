@@ -25,51 +25,121 @@ body {
 
 div {
 	position:absolute;
-	margin-left:auto;
-	margin-right:auto
 }
 
 table {
 	border-collapse:collapse;
-	font-size:<?php echo $font_size; ?>px
+	font-size:<?php echo $font_size; ?>px;
 }
 
-td { padding:0px }
-th { text-align:center }
-img { border:0px }
+td { padding:0px; }
+th { text-align:center; }
+img { border:0px; }
 
-textarea { font-size:<?php echo $small_font_size; ?>px }
+textarea {
+	font-size:<?php echo $small_font_size; ?>px;
+}
 
 form {
 	padding:0px;
-	margin:0px
+	margin:0px;
 }
 
-.small_text { font-size:<?php echo $small_font_size; ?>px }
-.big_text { font-size:<?php echo $big_font_size; ?>px }
+.small_text {
+	font-size:<?php echo $small_font_size; ?>px;
+}
 
-.table1 { background:#f7f7f7; font-size:<?php echo $small_font_size; ?>px; }
-.table1 td { padding-right:1px; border: 1px solid #6f6f6f; }
+.big_text {
+	font-size:<?php echo $big_font_size; ?>px;
+}
 
-.table2 { width:100%; background:#f7f7f7; }
-.table2 th { padding: 3px; border:1px solid #9EA0A1; background:#dfdfdf; }
-.table2 td { padding: 3px; border:1px solid #9EA0A1; }
+.table1 {
+	background:#f7f7f7;
+	font-size:<?php echo $small_font_size; ?>px;
+}
 
-.table3 td { padding: 3px; border: none; }
+.table1 td {
+	padding-right:1px;
+	border:1px solid #6f6f6f;
+}
 
-.table4 td { padding: 0px; border: none; font-size:<?php echo $small_font_size; ?>px; }
+.table2 {
+	width:100%;
+	background:#f7f7f7;
+}
 
-.table5 { font-size:<?php echo $small_font_size; ?>px; background:#f7f7f7 }
-.table5 th { padding:0px; border:1px solid black; font-weight:normal; background:#dfdfdf }
-.table5 td { padding:0px; border:1px solid black }
+.table2 th {
+	padding:3px;
+	border:1px solid #9EA0A1;
+	background:#dfdfdf;
+}
 
-.table6 { font-size:<?php echo $small_font_size; ?>px; background:#f7f7f7 }
-.table6 th { padding:2px; border:1px solid black; background:#dfdfdf }
-.table6 td { padding:2px; border:1px solid black }
+.table2 td {
+	padding:3px;
+	border:1px solid #9EA0A1;
+}
 
-.list_table { width: 100%; font-size:<?php echo $small_font_size; ?>px; background: #f7f7f7; }
-.list_table th { padding:3px; border:1px solid #9EA0A1; background:#dfdfdf; }
-.list_table td { padding:3px; border:1px solid #9EA0A1; text-align:center; }
+.table3 td {
+	padding:3px;
+	border:none;
+}
+
+.table4 td {
+	padding:0px;
+	border:none;
+	font-size:<?php echo $small_font_size; ?>px;
+}
+
+.table5 {
+	font-size:<?php echo $small_font_size; ?>px;
+	background:#f7f7f7;
+}
+
+.table5 th {
+	padding:0px;
+	border:1px solid black;
+	font-weight:normal;
+	background:#dfdfdf;
+}
+
+.table5 td {
+	padding:0px;
+	border:1px solid black;
+}
+
+.table6 {
+	font-size:<?php echo $small_font_size; ?>px;
+	background:#f7f7f7
+}
+
+.table6 th {
+	padding:2px;
+	border:1px solid black;
+	background:#dfdfdf;
+}
+
+.table6 td {
+	padding:2px;
+	border:1px solid black;
+}
+
+.list_table {
+	width:100%;
+	font-size:<?php echo $small_font_size; ?>px;
+	background: #f7f7f7;
+}
+
+.list_table th {
+	padding:3px;
+	border:1px solid #9EA0A1;
+	background:#dfdfdf;
+}
+
+.list_table td {
+	padding:3px;
+	border:1px solid #9EA0A1;
+	text-align:center;
+}
 
 .object_line {
 	position:relative;
@@ -143,6 +213,11 @@ div.ligne1 {
 	padding:0px;
 }
 
+.marginframe {
+	position:relative;
+	margin:20px
+}
+
 .div_error_info {
 	padding:0px;
 	font-size:<?php echo $small_font_size; ?>px;
@@ -192,4 +267,29 @@ div.ligne1 {
 	margin-right:0px;
 
 	cursor:pointer;
+}
+
+/* used in week.php */
+
+.hour_tag {
+	top:58px
+}
+
+.line {
+	top:56px;
+	width:1px;
+	height:3px;
+	font-size:0px;
+	background:black;
+}
+
+.info {
+	top:30px;
+	visibility:hidden;
+	background:#ffffcc;
+	color:#000000;
+	border: 1px ridge;
+	padding:0px 3px 0px 3px;
+	width:200px;
+	font-size:12px;
 }

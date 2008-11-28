@@ -186,8 +186,8 @@
 	changeTab("connect");
 </script>
 
-<?php } ?>
-
 </body>
+
+<?php } ?>
 
 </html>

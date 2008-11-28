@@ -135,7 +135,7 @@
 			$bookings = db_query($database_name, $sql, "no", "no");
 
 			$html .= "<td style=\"text-align:left; height:" . $cells_height . "px; width:" . $day_width . "\">\n";
-			$html .= "<div class=\"object_line\" style=\"background:" . $free_color . "; left:0px; height:" . $bookline_height . "px; width:" . $day_width  . "px\">\n";
+			$html .= "<div class=\"object_line\" style=\"background:#" . $free_color . "; left:0px; height:" . $bookline_height . "px; width:" . $day_width  . "px\">\n";
 
 			while($bookings_ = fetch_array($bookings)) {
 
@@ -164,7 +164,7 @@
 
 				$booking_dates = dateRange($bookings_["book_start"], $bookings_["book_end"]);
 
-				$html .= "<div class=\"booking_line\" style=\"background:" . $booking_color . "; height:" . $bookline_height . "px; left:" . $booking_left . "px; width:" . $booking_width . "px\" ";
+				$html .= "<div class=\"booking_line\" style=\"background:#" . $booking_color . "; height:" . $bookline_height . "px; left:" . $booking_left . "px; width:" . $booking_width . "px\" ";
 				$html .= "onMouseOver=\"ShowInfos(event,'" . $booking_user_name . "','" . $booking_dates . "','" . $booking_info . "')\" onMouseOut=\"HideInfos()\"></div>\n";
 
 			}

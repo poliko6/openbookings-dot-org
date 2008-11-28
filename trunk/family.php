@@ -145,18 +145,17 @@
 	} else { // !isset($_REQUEST["action_"])
 
 		// extracts families list
-		$families_list = "<select id='sort_order' name='sort_order'>";
 		$sql  = "SELECT sort_order, family_name FROM rs_param_families ";
 		$sql .= "WHERE family_id <> " . $family_id . " ";
 		$sql .= "ORDER BY sort_order;";
 		$temp = db_query($database_name, $sql, "no", "no");
 
+		$families_list = "";
+
 		while($temp_ = fetch_array($temp)) {
 			if($temp_["sort_order"] == $sort_order) { $selected = " selected"; } else { $selected = ""; }
 			$families_list .= "<option value='" . $temp_["sort_order"] . "'" . $selected . ">" . $temp_["family_name"] . "</option>";
 		}
-
-		$families_list .= "</select>";
 
 ?>
 
@@ -185,19 +184,23 @@
 
 	<div class="colorframe">
 
-		<table>
-		<tr><td style="font-weight:bold"><?php echo Translate("Family name", 1); ?><br><input id="family_name" name="family_name" style="width:200px; text-align:center" value="<?php echo $family_name; ?>"></td></tr>
-		<tr><td style="height:10px"></td></tr>
-		<tr><td style="font-weight:bold"><?php echo Translate("Position in list", 1); ?><br>
+		<div class="marginframe">
 
-		<table><tr>
-			<td><input type="radio" id="postype_before" name="postype" value="-1" checked><?php echo Translate("Before", 1); ?></td>
-			<td><input type="radio" id="postype_after" name="postype" value="0"><?php echo Translate("After", 1); ?></td>
-		</tr></table>
+		<b><?php echo Translate("Family name", 1); ?></b><br>
+		<input id="family_name" name="family_name" style="width:200px; text-align:center" value="<?php echo $family_name; ?>">
 
-		<tr><td><?php echo $families_list; ?></td></tr>
+		<br><br>
 
-		</table>
+		<b><?php echo Translate("Position in list", 1); ?></b><br>
+
+		<input type="radio" id="postype_before" name="postype" value="-1" checked><?php echo Translate("Before", 1); ?>
+		<input type="radio" id="postype_after" name="postype" value="0"><?php echo Translate("After", 1); ?>
+
+		<br>
+
+		<select id="sort_order" name="sort_order" style="width:200px"><?php echo $families_list; ?></select>
+
+		</div>
 
 	</div>
 
