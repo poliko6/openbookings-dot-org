@@ -206,6 +206,12 @@ div.ligne1 {
 
 }
 
+.error_message {
+	position:relative;
+	color:#ff0000;
+	text-align:left;
+}
+
 .colorframe {
 	position: relative;
 	border:1px solid #9EA0A1;

@@ -56,8 +56,7 @@
 
 	function checkForm($form_fields, $post) {
 
-		$error_msg = "";
-		global $errors_array;
+		$return_array = array();
 
 		foreach($form_fields as $field_name=>$field_content) {
 
@@ -97,8 +96,10 @@
 				}
 			}
 
-			$errors_array[] = array($field_name, $error_msg);
+			$return_array[] = array($field_content[2], $error_msg);
 		}
+
+		return $return_array;
 	}
 
 	function getGenericPermissions($profile_id, $object_id) {

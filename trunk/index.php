@@ -26,10 +26,6 @@
 	// self_registration_mode : no_validation, email_validation, admin_validation, no_self_registration
 
 	$self_registration_mode = param_extract("self_registration_mode");
-
-	// Account creation errors
-	if(isset($_POST["error_message"]) && $_POST["error_message"] != "") { $error_message = $_POST["error_message"]; } else { $error_message = ""; }
-
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -155,6 +151,8 @@
 
 	</div>
 
+	<div class="error_message" id="error_message"></div>
+
 	<div style="position:relative">
 
 	<table>
@@ -170,8 +168,6 @@
 
 	</div>
 
-	<?php if($error_message != "") { echo "<div style=\"color:#ff0000; text-align:center\">" . $error_message . "</div>\n"; } // shows error message at the bottom of the form if any ?>
-
 </div>
 
 <input type="hidden" id="action_" name="action_" value="">
@@ -179,6 +175,8 @@
 </form>
 
 </center>
+
+
 
 <iframe id="iframe_action" name="iframe_action"></iframe>
 
