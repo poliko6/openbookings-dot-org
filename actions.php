@@ -86,31 +86,24 @@
 
 		$form_fields["first_name"] = array("alphanum", 1, Translate("First name", 1));
 		$form_fields["last_name"] = array("alphanum", 1, Translate("Last name", 1));
-		$form_fields["new_username"] = array("alphanum", 3, Translate("Username", 1));
-		$form_fields["new_email"] = array("email", 1, Translate("Email", 1));
-		$form_fields["new_password"] = array("alphanum", 6, Translate("Password", 1));
-		$form_fields["verify_new_password"] = array("alphanum", "new_password", Translate("Verify password", 1));
+		$form_fields["username"] = array("alphanum", 3, Translate("Username", 1));
+		$form_fields["password"] = array("alphanum", 6, Translate("Password", 1));
+		$form_fields["verify_password"] = array("alphanum", "password", Translate("Verify password", 1));
+		$form_fields["email"] = array("email", 1, Translate("Email", 1));
+		
+		$errors_array = checkForm($form_fields, $_POST); // gets errors in an array
 
-		$errors_array = array(); checkForm($form_fields, $_POST); // stores errors in $errors_array
+		$html = "";
 
 		foreach($errors_array as $error) {
 
 			if($error[1] != "") {
-
 				$validation_error = true;
-
-				$script .= "parent.document.getElementById(\"" . $error[0] . "_info\").innerHTML = \"";
-				$script .= "<table class='error_info'><tr>";
-				$script .= "<th><img src='pictures/red_triangle.png'></th>";
-				$script .= "<td>" . $error[1] . "</td>";
-				$script .= "</tr></table>\";\n";
-				$script .= "parent.document.getElementById(\"" . $error[0] . "_info\").style.visibility = 'visible';\n";
-
-			} else {
-
-				$script .= "parent.document.getElementById(\"" . $error[0] . "_info\").style.visibility = 'hidden';\n";
+				$html .= "- " . $error[0] . " " . $error[1] . "<br>";	
 			}
 		}
+
+		$script .= "parent.document.getElementById(\"error_message\").innerHTML = \"" . $html . "\";\n";
 
 		if(!$validation_error) {
 

@@ -86,7 +86,7 @@
 
 <div class="global" style="width:780px">
 
-<table class="small_text" border summary=""><tr>
+<table class="small_text" summary=""><tr>
 
 <?php
 	for($month=1;$month<=12;$month++) {
