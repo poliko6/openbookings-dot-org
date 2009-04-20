@@ -83,27 +83,47 @@
 
 </head>
 
-<body style="margin:10px; text-align:left">
+<body>
 
 <form id="languages_form" method="post" action="localize.php">
 
-	<table class="table6" style="text-align:left" summary="">
-		<tr>
-			<th style="text-align:left"><select id="localize_from" name="localize_from" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
-			<th style="text-align:left"><select id="localize_to" name="localize_to" onChange="changeColumns()"><?php echo $languages_list; ?></select>&nbsp;&nbsp;<input type="checkbox" id="show_only_missing" name="show_only_missing" <?php echo $show_only_missing; ?> onChange="changeColumns()"><?php echo Translate("Show only missing vocabulary", 0); ?></th>
-		</tr>
+	<div class="global" style="width:800px">
+	
+		<table style="width:100%"><tr>
+			<td><span class="big_text"><?php echo Translate("Localization", 0); ?></span></td>
+			<td style="text-align:right"><button type="button" onClick="extractCvs()"><?php echo Translate("Extract to CSV file", 0); ?></button></td>
+		</tr></table>
 
-		<?php while($vocabulary_ = fetch_array($vocabulary)) { ?><tr>
-			<td><?php echo $vocabulary_[$localize_from]; ?></td>
-			<td>
-				<input id="localize_to_<?php echo $vocabulary_["lang_id"]; ?>" name="localize_to_<?php echo $vocabulary_["lang_id"]; ?>" style="width:400px" onKeyPress="updateSentence(<?php echo $vocabulary_["lang_id"]; ?>,event)" value="<?php echo $vocabulary_[$localize_to]; ?>">
-			</td>
-		</tr><?php } ?>
+		<center>
+	
+		<table class="localize_list" style="text-align:left">
+			<tr>
+				<th style="width:400px">Source language : <select id="localize_from" name="localize_from" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
+				<th style="width:400px">Target language : <select id="localize_to" name="localize_to" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
+			</tr><tr>
+				<td colspan="2" style="text-align:center">
+					<input type="checkbox" id="show_only_missing" name="show_only_missing" <?php echo $show_only_missing; ?> onChange="changeColumns()"><?php echo Translate("Show only missing vocabulary", 0); ?>
+				</td>
+			</tr><tr>
+				<td></td>
+				<th><span class="small_text"><?php echo Translate("Press enter to validate each modification", 0); ?></span></th>
+			</tr>
 
-	</table>
+			<?php while($vocabulary_ = fetch_array($vocabulary)) { ?><tr>
+				<td><?php echo $vocabulary_[$localize_from]; ?></td>
+				<td>
+					<input class="localize_input" id="localize_to_<?php echo $vocabulary_["lang_id"]; ?>" name="localize_to_<?php echo $vocabulary_["lang_id"]; ?>" onKeyPress="updateSentence(<?php echo $vocabulary_["lang_id"]; ?>,event)" value="<?php echo $vocabulary_[$localize_to]; ?>">
+				</td>
+			</tr><?php } ?>
 
-	<input type="hidden" id="lang_id" name="lang_id">
-	<input type="hidden" id="action_" name="action_" value="">
+		</table>
+	
+		</center>
+
+		<input type="hidden" id="lang_id" name="lang_id">
+		<input type="hidden" id="action_" name="action_" value="">
+		
+	</div>
 
 </form>
 

@@ -16,11 +16,9 @@ a:visited { color:blue; text-decoration:none; }
 a:hover { color:red; text-decoration:none; }
 
 body {
-	margin: 0px;
 	background:#<?php echo param_extract("background_color"); ?>;
 	font-family:<?php echo param_extract("font_family"); ?>;
 	font-size:<?php echo param_extract("font_size"); ?>px;
-	text-align: center /* IE bug workaround */
 }
 
 div {
@@ -123,6 +121,28 @@ form {
 	border:1px solid black;
 }
 
+.localize_list {
+	font-size:<?php echo $medium_font_size; ?>px;
+	background:#f7f7f7;
+}
+
+.localize_list th {
+	padding:2px;
+	border:1px solid black;
+	background:#dfdfdf;
+}
+
+.localize_list td {
+	padding:2px;
+	border:1px solid black;
+}
+
+.localize_input {
+	width:400px;
+	background-color:#ffffff;
+	font-size:<?php echo $medium_font_size; ?>px;
+}
+
 .list_table {
 	width:100%;
 	font-size:<?php echo $small_font_size; ?>px;
@@ -203,7 +223,6 @@ div.ligne1 {
 	padding:10px;
 	border:2px outset;
 	background:#ffffcc;
-
 }
 
 .error_message {
