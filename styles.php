@@ -122,7 +122,7 @@ form {
 }
 
 .localize_list {
-	font-size:<?php echo $medium_font_size; ?>px;
+	font-size:<?php echo $font_size; ?>px;
 	background:#f7f7f7;
 }
 
@@ -140,7 +140,7 @@ form {
 .localize_input {
 	width:400px;
 	background-color:#ffffff;
-	font-size:<?php echo $medium_font_size; ?>px;
+	font-size:<?php echo $font_size; ?>px;
 }
 
 .list_table {
@@ -207,12 +207,6 @@ div.ligne1 {
 	width:0px;
 	height:0px;
 	visibility:hidden;
-}
-
-#iframe_action_ {
-	width:500px;
-	height:200px;
-	visibility:visible;
 }
 
 #notice {

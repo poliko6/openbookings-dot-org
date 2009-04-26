@@ -306,6 +306,47 @@
 		db_query($database_name, $sql, "no", "no");
 		break;
 
+		case "export_localization":
+		
+			$absolute_csvfile_path = dirname($_SERVER["SCRIPT_FILENAME"]) . "/openbookings_localization.csv";
+			
+			$handle = fopen($absolute_csvfile_path, "w");
+			
+			fwrite($handle, "THIS IS AN OPENBOOKINGS.ORG " . param_extract("app_version") . " LOCALIZATION EXCHANGE FILE (see http://www.openbookings.org for informations).\n");
+			
+			$columns_list_sql = ""; $columns_array = array();
+			
+			$sql = "SHOW COLUMNS FROM rs_param_lang";
+			$columns = db_query($database_name, $sql, "no", "no");
+			
+			$line = ""; while($columns_ = fetch_array($columns)) {
+				if($columns_["Field"] != "lang_id") {
+					$columns_array[] = $columns_["Field"];
+					$line .= "\"" . $columns_["Field"] . "\";";
+				}
+			}
+			
+			fwrite($handle, substr($line, 0, -1) . "\n");
+			
+			$sql = "SELECT " . implode(",", $columns_array) . " FROM rs_param_lang;";
+			$localization = db_query($database_name, $sql, "no", "no");
+			
+			
+			while($localization_ = fetch_array($localization)) {
+			
+				$line = ""; foreach($columns_array as $column_name) {
+					$line .= "\"" . $localization_[$column_name] . "\";";
+				}
+				
+				fwrite($handle, $line . "\n");
+			}
+
+			fclose($handle);
+			
+			$script = "document.location = \"openbookings_localization.csv\";\n";
+			
+		break;
+		
 		case "show_available_slots": // ****************************************************************************
 
 		// $_GET["object_id"], $_GET["start_date"], $_GET["start_hour"], $_GET["book_duration"]

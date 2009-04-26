@@ -61,22 +61,43 @@
 	<title><?php echo Translate("Localization", 1); ?></title>
 
 	<link rel="stylesheet" type="text/css" href="styles.php">
+	
+	<style type="text/css">
+		#iframe_action_ {
+			width:500px;
+			height:200px;
+			visibility:visible;
+		}
+	</style>
 
 	<script type="text/javascript"><!--
 
-		function changeColumns() { document.getElementById("languages_form").submit(); }
+		function $(id) { return document.getElementById(id); }
+		
+		function changeColumns() {
+			$("languages_form").action = "localize.php";
+			$("languages_form").target = "";
+			$("languages_form").submit();
+		}
 
 		function updateSentence(lang_id, e) {
 			if(e.keyCode == 13) {
-				document.getElementById("languages_form").action = "actions.php";
-				document.getElementById("languages_form").target = "iframe_action";
-				document.getElementById("action_").value = "update_localization";
-				document.getElementById("lang_id").value = lang_id;
-				document.getElementById("languages_form").submit();
-				document.getElementById("localize_to_" + lang_id).style.background = "white";
+				$("languages_form").action = "actions.php";
+				$("languages_form").target = "iframe_action";
+				$("action_").value = "update_localization";
+				$("lang_id").value = lang_id;
+				$("languages_form").submit();
+				$("localize_to_" + lang_id).style.background = "white";
 			} else {
-				document.getElementById("localize_to_" + lang_id).style.background = "orange";
+				$("localize_to_" + lang_id).style.background = "orange";
 			}
+		}
+		
+		function exportLocalization() {
+			$("languages_form").action = "actions.php";
+			$("languages_form").target = "iframe_action";
+			$("action_").value = "export_localization";
+			$("languages_form").submit();
 		}
 
 	--></script>
@@ -91,7 +112,7 @@
 	
 		<table style="width:100%"><tr>
 			<td><span class="big_text"><?php echo Translate("Localization", 0); ?></span></td>
-			<td style="text-align:right"><button type="button" onClick="extractCvs()"><?php echo Translate("Extract to CSV file", 0); ?></button></td>
+			<td style="text-align:right"><button type="button" onClick="exportLocalization()"><?php echo Translate("Extract to CSV file", 0); ?></button></td>
 		</tr></table>
 
 		<center>
@@ -127,11 +148,11 @@
 
 </form>
 
-<iframe id="iframe_action" name="iframe_action" style="visibility:hidden;width:0px;height:0px"></iframe>
+<iframe id="iframe_action" name="iframe_action"></iframe>
 
 <script type="text/javascript"><!--
-	document.getElementById("localize_from").value = "<?php echo $localize_from; ?>";
-	document.getElementById("localize_to").value = "<?php echo $localize_to; ?>";
+	$("localize_from").value = "<?php echo $localize_from; ?>";
+	$("localize_to").value = "<?php echo $localize_to; ?>";
 --></script>
 
 </body>
