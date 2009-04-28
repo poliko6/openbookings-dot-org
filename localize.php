@@ -61,9 +61,9 @@
 	<title><?php echo Translate("Localization", 1); ?></title>
 
 	<link rel="stylesheet" type="text/css" href="styles.php">
-	
+
 	<style type="text/css">
-		#iframe_action_ {
+		#iframe_action {
 			width:500px;
 			height:200px;
 			visibility:visible;
@@ -73,7 +73,7 @@
 	<script type="text/javascript"><!--
 
 		function $(id) { return document.getElementById(id); }
-		
+
 		function changeColumns() {
 			$("languages_form").action = "localize.php";
 			$("languages_form").target = "";
@@ -92,7 +92,7 @@
 				$("localize_to_" + lang_id).style.background = "orange";
 			}
 		}
-		
+
 		function exportLocalization() {
 			$("languages_form").action = "actions.php";
 			$("languages_form").target = "iframe_action";
@@ -106,17 +106,27 @@
 
 <body>
 
-<form id="languages_form" method="post" action="localize.php">
-
 	<div class="global" style="width:800px">
-	
-		<table style="width:100%"><tr>
-			<td><span class="big_text"><?php echo Translate("Localization", 0); ?></span></td>
-			<td style="text-align:right"><button type="button" onClick="exportLocalization()"><?php echo Translate("Extract to CSV file", 0); ?></button></td>
-		</tr></table>
+
+		<form method="post" enctype="multipart/form-data" action="actions.php" target="iframe_action">
+
+			<input type="hidden" name="MAX_FILE_SIZE" value="30000">
+			<input type="hidden" name="action_" value="import_localization">
+
+			<table style="width:100%"><tr>
+				<td><span class="big_text"><?php echo Translate("Localization", 0); ?></span></td>
+				<td style="text-align:right">Import from CSV file :</td>
+				<td><input type="file" name="localization_file"></td>
+				<td><button type="submit">Import</button></td>
+				<td style="text-align:right"><button type="button" onClick="exportLocalization()"><?php echo Translate("Export to CSV file", 0); ?></button></td>
+			</tr></table>
+
+		</form>
+
+		<form id="languages_form" method="post" action="localize.php">
 
 		<center>
-	
+
 		<table class="localize_list" style="text-align:left">
 			<tr>
 				<th style="width:400px">Source language : <select id="localize_from" name="localize_from" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
@@ -138,12 +148,12 @@
 			</tr><?php } ?>
 
 		</table>
-	
+
 		</center>
 
 		<input type="hidden" id="lang_id" name="lang_id">
 		<input type="hidden" id="action_" name="action_" value="">
-		
+
 	</div>
 
 </form>
