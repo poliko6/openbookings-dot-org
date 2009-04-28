@@ -90,7 +90,7 @@
 		$form_fields["password"] = array("alphanum", 6, Translate("Password", 1));
 		$form_fields["verify_password"] = array("alphanum", "password", Translate("Verify password", 1));
 		$form_fields["email"] = array("email", 1, Translate("Email", 1));
-		
+
 		$errors_array = checkForm($form_fields, $_POST); // gets errors in an array
 
 		$html = "";
@@ -99,7 +99,7 @@
 
 			if($error[1] != "") {
 				$validation_error = true;
-				$html .= "- " . $error[0] . " " . $error[1] . "<br>";	
+				$html .= "- " . $error[0] . " " . $error[1] . "<br>";
 			}
 		}
 
@@ -205,6 +205,7 @@
 		break;
 
 		case "add_booking": // ****************************************************************************************
+
 		// the function AddBooking() is implemented in the file "functions.php"
 		AddBooking($_REQUEST["manager_email"], $_REQUEST["booker_id"], $_REQUEST["object_id"], $_REQUEST["booking_start"], $_REQUEST["booking_end"], $_REQUEST["misc_info"], $_REQUEST["validated"]);
 		break;
@@ -306,47 +307,6 @@
 		db_query($database_name, $sql, "no", "no");
 		break;
 
-		case "export_localization":
-		
-			$absolute_csvfile_path = dirname($_SERVER["SCRIPT_FILENAME"]) . "/openbookings_localization.csv";
-			
-			$handle = fopen($absolute_csvfile_path, "w");
-			
-			fwrite($handle, "THIS IS AN OPENBOOKINGS.ORG " . param_extract("app_version") . " LOCALIZATION EXCHANGE FILE (see http://www.openbookings.org for informations).\n");
-			
-			$columns_list_sql = ""; $columns_array = array();
-			
-			$sql = "SHOW COLUMNS FROM rs_param_lang";
-			$columns = db_query($database_name, $sql, "no", "no");
-			
-			$line = ""; while($columns_ = fetch_array($columns)) {
-				if($columns_["Field"] != "lang_id") {
-					$columns_array[] = $columns_["Field"];
-					$line .= "\"" . $columns_["Field"] . "\";";
-				}
-			}
-			
-			fwrite($handle, substr($line, 0, -1) . "\n");
-			
-			$sql = "SELECT " . implode(",", $columns_array) . " FROM rs_param_lang;";
-			$localization = db_query($database_name, $sql, "no", "no");
-			
-			
-			while($localization_ = fetch_array($localization)) {
-			
-				$line = ""; foreach($columns_array as $column_name) {
-					$line .= "\"" . $localization_[$column_name] . "\";";
-				}
-				
-				fwrite($handle, $line . "\n");
-			}
-
-			fclose($handle);
-			
-			$script = "document.location = \"openbookings_localization.csv\";\n";
-			
-		break;
-		
 		case "show_available_slots": // ****************************************************************************
 
 		// $_GET["object_id"], $_GET["start_date"], $_GET["start_hour"], $_GET["book_duration"]
@@ -445,7 +405,90 @@
 		}
 
 		$script = "parent.document.getElementById(\"available_slots\").innerHTML = \"" . $availables_slots_list . "\";\n";
+
+		case "export_localization": // ****************************************************************************
+
+			$absolute_csvfile_path = dirname($_SERVER["SCRIPT_FILENAME"]) . "/openbookings_localization.csv";
+
+			$handle = fopen($absolute_csvfile_path, "w");
+
+			fwrite($handle, "THIS IS AN OPENBOOKINGS.ORG " . param_extract("app_version") . " LOCALIZATION EXCHANGE FILE (see http://www.openbookings.org for informations).\n");
+
+			$columns_list_sql = ""; $columns_array = array();
+
+			$sql = "SHOW COLUMNS FROM rs_param_lang";
+			$columns = db_query($database_name, $sql, "no", "no");
+
+			$line = ""; while($columns_ = fetch_array($columns)) {
+				if($columns_["Field"] != "lang_id") {
+					$columns_array[] = $columns_["Field"];
+					$line .= "\"" . $columns_["Field"] . "\";";
+				}
+			}
+
+			fwrite($handle, substr($line, 0, -1) . "\n");
+
+			$sql = "SELECT " . implode(",", $columns_array) . " FROM rs_param_lang;";
+			$localization = db_query($database_name, $sql, "no", "no");
+
+
+			while($localization_ = fetch_array($localization)) {
+
+				$line = ""; foreach($columns_array as $column_name) {
+					$line .= "\"" . $localization_[$column_name] . "\";";
+				}
+
+				fwrite($handle, $line . "\n");
+			}
+
+			fclose($handle);
+
+			$script = "document.location = \"openbookings_localization.csv\";\n";
+
+		break;
+
+		case "import_localization": // ****************************************************************************
+
+		// get the absolute path app root folder
+		$app_root_path = dirname($_SERVER["SCRIPT_FILENAME"]);
+
+		// get the name of the uploaded file
+		$file_name = basename($_FILES["localization_file"]["name"]);
+
+		// move uploaded file to app root folder if file extension is .csv
+		if(substr($file_name, strlen($file_name)-4) == ".csv") {
+			move_uploaded_file($_FILES["localization_file"]["tmp_name"], $app_root_path . "/" . $file_name);
+		}
+
+		// open uploaded file in read mode
+		$handle = fopen($app_root_path . "/" . $file_name, "r");
+
+		if($handle) {
+
+			// skip first line (reserved for file informations)
+			$buffer = fgets($handle);
+
+			// gets columns/languages names
+			$buffer = fgets($handle);
+
+
+
+			while (!feof($handle)) {
+				$buffer = fgets($handle);
+
+
+
+
+			}
+
+			fclose($handle);
+		}
+
+
+
+
 	}
+
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
