@@ -465,29 +465,57 @@
 
 		if($handle) {
 
+			// ensures there is no temp localization table left
+			$sql = "DROP TABLE IF EXISTS rs_temp_lang";
+			db_query($database_name, $sql, "no", "no");
+
 			// skip first line (reserved for file informations)
 			$buffer = fgets($handle);
 
 			// gets columns/languages names
 			$buffer = fgets($handle);
 
+			// constructs temp table structure according to columns found in csv file
+			$sql  = "CREATE TABLE rs_temp_lang ( ";
+			$sql .= "lang_id mediumint(8) unsigned NOT NULL auto_increment, ";
 
+			$buffer = str_replace("\"", "", $buffer); // removes "
+			$array_buffer = explode(",", $buffer);
 
-			while (!feof($handle)) {
+			foreach($array_buffer as $column_name) {
+				$sql .= $column_name . " varchar(255) default NULL, ";
+			}
+
+			$sql .= "PRIMARY KEY (lang_id), ";
+
+			foreach($array_buffer as $column_name) {
+				$sql .= "KEY " . $column_name . " (" . $column_name . ") ";
+			}
+
+			$sql .= " ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;";
+
+			db_query($database_name, $sql, "no", "no");
+
+			while (!feof($handle)) { // fills temp table with csv file content
+
 				$buffer = fgets($handle);
+				$array_buffer = explode(",", $buffer);
 
+				$sql  = "INSERT INTO rs_temp_lang ( "
+				foreach($array_buffer as $column_name) { $sql .= $column_name . ","; }
+				$sql .= substr($sql, 0, -1) // removes last comma (,)
+				$sql .= " ) VALUES ( ";
+				foreach($array_buffer as $column_value) { $sql .= $column_value . ","; }
+				$sql .= substr($sql, 0, -1) // removes last comma (,)
+				$sql .= ");";
 
-
-
+				db_query($database_name, $sql, "no", "no");
 			}
 
 			fclose($handle);
 		}
 
-
-
-
-	}
+	} // end switch
 
 ?>
 
