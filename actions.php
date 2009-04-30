@@ -410,9 +410,9 @@
 
 			$absolute_csvfile_path = dirname($_SERVER["SCRIPT_FILENAME"]) . "/openbookings_localization.csv";
 
-			$handle = fopen($absolute_csvfile_path, "w");
+			$file_handle = fopen($absolute_csvfile_path, "w");
 
-			fwrite($handle, "THIS IS AN OPENBOOKINGS.ORG " . param_extract("app_version") . " LOCALIZATION EXCHANGE FILE (see http://www.openbookings.org for informations).\n");
+			fwrite($file_handle, "THIS IS AN OPENBOOKINGS.ORG " . param_extract("app_version") . " LOCALIZATION EXCHANGE FILE (see http://www.openbookings.org for informations).\n");
 
 			$columns_list_sql = ""; $columns_array = array();
 
@@ -426,7 +426,7 @@
 				}
 			}
 
-			fwrite($handle, substr($line, 0, -1) . "\n");
+			fwrite($file_handle, substr($line, 0, -1) . "\n");
 
 			$sql = "SELECT " . implode(",", $columns_array) . " FROM rs_param_lang;";
 			$localization = db_query($database_name, $sql, "no", "no");
@@ -434,14 +434,13 @@
 
 			while($localization_ = fetch_array($localization)) {
 
-				$line = ""; foreach($columns_array as $column_name) {
-					$line .= "\"" . $localization_[$column_name] . "\";";
-				}
+				$line = ""; foreach($columns_array as $column_name) { $line .= "\"" . $localization_[$column_name] . "\";"; }
+				$line = substr($line, 0, -1);
 
-				fwrite($handle, $line . "\n");
+				fwrite($file_handle, $line . "\n");
 			}
 
-			fclose($handle);
+			fclose($file_handle);
 
 			$script = "document.location = \"openbookings_localization.csv\";\n";
 
@@ -461,58 +460,70 @@
 		}
 
 		// open uploaded file in read mode
-		$handle = fopen($app_root_path . "/" . $file_name, "r");
+		$file_handle = fopen($app_root_path . "/" . $file_name, "r");
 
-		if($handle) {
+		if($file_handle) {
 
 			// ensures there is no temp localization table left
 			$sql = "DROP TABLE IF EXISTS rs_temp_lang";
 			db_query($database_name, $sql, "no", "no");
 
 			// skip first line (reserved for file informations)
-			$buffer = fgets($handle);
+			$buffer = fgets($file_handle);
 
 			// gets columns/languages names
-			$buffer = fgets($handle);
+			$buffer = fgets($file_handle);
 
 			// constructs temp table structure according to columns found in csv file
 			$sql  = "CREATE TABLE rs_temp_lang ( ";
 			$sql .= "lang_id mediumint(8) unsigned NOT NULL auto_increment, ";
 
 			$buffer = str_replace("\"", "", $buffer); // removes "
-			$array_buffer = explode(",", $buffer);
+			$array_columns = explode(";", $buffer);
 
-			foreach($array_buffer as $column_name) {
-				$sql .= $column_name . " varchar(255) default NULL, ";
-			}
+			foreach($array_columns as $column_name) { $sql .= $column_name . " varchar(255) default NULL, "; }
+			$sql = substr($sql, 0, -1); // removes last comma (,)
 
 			$sql .= "PRIMARY KEY (lang_id), ";
 
-			foreach($array_buffer as $column_name) {
-				$sql .= "KEY " . $column_name . " (" . $column_name . ") ";
-			}
+			foreach($array_columns as $column_name) { $sql .= "KEY " . $column_name . " (" . $column_name . "),"; }
+			$sql = substr($sql, 0, -1); // removes last comma (,)
 
 			$sql .= " ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;";
 
 			db_query($database_name, $sql, "no", "no");
 
-			while (!feof($handle)) { // fills temp table with csv file content
+			while (!feof($file_handle)) { // fills temp table with csv file data
 
-				$buffer = fgets($handle);
-				$array_buffer = explode(",", $buffer);
+				$buffer = fgets($file_handle);
+				$array_values = explode(";", $buffer);
 
-				$sql  = "INSERT INTO rs_temp_lang ( "
-				foreach($array_buffer as $column_name) { $sql .= $column_name . ","; }
-				$sql .= substr($sql, 0, -1) // removes last comma (,)
+				$sql  = "INSERT INTO rs_temp_lang ( ";
+				foreach($array_columns as $column_name) { $sql .= $column_name . ","; }
+				$sql = substr($sql, 0, -1); // removes last comma (,)
 				$sql .= " ) VALUES ( ";
-				foreach($array_buffer as $column_value) { $sql .= $column_value . ","; }
-				$sql .= substr($sql, 0, -1) // removes last comma (,)
+				foreach($array_values as $value) { $sql .= $value . ","; }
+				$sql = substr($sql, 0, -1); // removes last comma (,)
 				$sql .= ");";
 
 				db_query($database_name, $sql, "no", "no");
 			}
 
-			fclose($handle);
+			fclose($file_handle);
+
+
+			// replace localization_table (rs_param_lang) with temp table
+			$sql = "RENAME TABLE rs_param_lang TO rs_backup_lang;";
+			db_query($database_name, $sql, "no", "no");
+
+			$sql = "RENAME TABLE rs_temp_lang TO rs_param_lang;";
+			db_query($database_name, $sql, "no", "no");
+
+			$sql = "DROP TABLE rs_backup_lang;";
+			db_query($database_name, $sql, "no", "no");
+
+			$sql = "DROP TABLE rs_temp_lang";
+			db_query($database_name, $sql, "no", "no");
 		}
 
 	} // end switch
