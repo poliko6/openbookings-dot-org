@@ -115,9 +115,13 @@
 
 			<table style="width:100%"><tr>
 				<td><span class="big_text"><?php echo Translate("Localization", 0); ?></span></td>
-				<td style="text-align:right">Import from CSV file :</td>
-				<td><input type="file" name="localization_file"></td>
-				<td><button type="submit">Import</button></td>
+
+				<td>
+					<span class="simple_layout"><?php echo Translate("Import CSV file", 0); ?> : <input type="file" name="localization_file"> <button type="submit"><?php echo Translate("Import", 0); ?></button></span>
+				</td>
+
+
+
 				<td style="text-align:right"><button type="button" onClick="exportLocalization()"><?php echo Translate("Export to CSV file", 0); ?></button></td>
 			</tr></table>
 
@@ -129,8 +133,8 @@
 
 		<table class="localize_list" style="text-align:left">
 			<tr>
-				<th style="width:400px">Source language : <select id="localize_from" name="localize_from" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
-				<th style="width:400px">Target language : <select id="localize_to" name="localize_to" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
+				<th style="width:400px"><?php echo Translate("Source language", 0); ?> : <select id="localize_from" name="localize_from" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
+				<th style="width:400px"><?php echo Translate("Target language", 0); ?> : <select id="localize_to" name="localize_to" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
 			</tr><tr>
 				<td colspan="2" style="text-align:center">
 					<input type="checkbox" id="show_only_missing" name="show_only_missing" <?php echo $show_only_missing; ?> onChange="changeColumns()"><?php echo Translate("Show only missing vocabulary", 0); ?>

@@ -203,6 +203,10 @@ div.ligne1 {
 	margin-right:auto;
 }
 
+.simple_layout {
+	position:relative
+}
+
 #iframe_action {
 	width:0px;
 	height:0px;
