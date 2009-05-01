@@ -69,7 +69,8 @@
 
 	if(isset($_POST["action_"])) {
 
-		if(isset($_POST["users_can_customize_date"])) { $users_can_customize_date = "yes"; } else { $users_can_customize_date = "no"; }
+		if(isset($_POST["users_can_customize_date_format"])) { $users_can_customize_date_format = "yes"; } else { $users_can_customize_date_format = "no"; }
+		if(isset($_POST["users_can_customize_timezone"])) { $users_can_customize_timezone = "yes"; } else { $users_can_customize_timezone = "no"; }
 
 		$sql = "UPDATE rs_param SET param_value = '" . $_POST["server_timezone"] . "' WHERE param_name = 'server_timezone';"; db_query($database_name, $sql, "no", "no");
 		$sql = "UPDATE rs_param SET param_value = '" . $_POST["default_user_timezone"] . "' WHERE param_name = 'default_user_timezone';"; db_query($database_name, $sql, "no", "no");
@@ -77,7 +78,8 @@
 		$sql = "UPDATE rs_param SET param_value = '" . $_POST["self_registration_mode"] . "' WHERE param_name = 'self_registration_mode';"; db_query($database_name, $sql, "no", "no");
 		$sql = "UPDATE rs_param SET param_value = '" . $_POST["admin_email"] . "' WHERE param_name = 'admin_email';"; db_query($database_name, $sql, "no", "no");
 		$sql = "UPDATE rs_param SET param_value = '" . $_POST["default_date_format"] . "' WHERE param_name = 'default_date_format';"; db_query($database_name, $sql, "no", "no");
-		$sql = "UPDATE rs_param SET param_value = '" . $users_can_customize_date . "' WHERE param_name = 'users_can_customize_date';"; db_query($database_name, $sql, "no", "no");
+		$sql = "UPDATE rs_param SET param_value = '" . $users_can_customize_date_format . "' WHERE param_name = 'users_can_customize_date_format';"; db_query($database_name, $sql, "no", "no");
+		$sql = "UPDATE rs_param SET param_value = '" . $users_can_customize_timezone . "' WHERE param_name = 'users_can_customize_timezone';"; db_query($database_name, $sql, "no", "no");
 		$sql = "UPDATE rs_param SET param_value = '" . $_POST["logo_file"] . "' WHERE param_name = 'logo_file';"; db_query($database_name, $sql, "no", "no");
 		$sql = "UPDATE rs_param SET param_value = '" . $_POST["welcome_message"] . "' WHERE param_name = 'welcome_message';"; db_query($database_name, $sql, "no", "no");
 		$sql = "UPDATE rs_param SET param_value = '" . $_POST["app_title"] . "' WHERE param_name = 'app_title';"; db_query($database_name, $sql, "no", "no");
@@ -117,11 +119,12 @@
 
 	$server_timezone = param_extract("server_timezone");
 	$default_user_timezone = param_extract("default_user_timezone");
+	$users_can_customize_timezone = param_extract("users_can_customize_timezone");
 	$application_access_level = param_extract("application_access_level");
 	$self_registration_mode = param_extract("self_registration_mode");
 	$admin_email = param_extract("admin_email");
 	$default_date_format = param_extract("default_date_format");
-	$users_can_customize_date = param_extract("users_can_customize_date");
+	$users_can_customize_date_format = param_extract("users_can_customize_date_format");
 	$logo_file = param_extract("logo_file");
 	$welcome_message = param_extract("welcome_message");
 	$app_title = param_extract("app_title");
@@ -144,7 +147,16 @@
 <link rel="stylesheet" type="text/css" href="styles.php">
 
 <script type="text/javascript"><!--
-	<?php if(isset($_POST["action_"])) { ?>parent.frames[0].location = "menu.php";<?php } ?>
+
+	function localizeApp() {
+		document.location = "localize.php";
+	}
+	
+	<?php if(isset($_POST["action_"])) { ?>
+		parent.frames[0].location = "menu.php";
+		parent.frames[1].location = "intro.php";
+	<?php } ?>
+
 --></script>
 
 </head>
@@ -164,9 +176,17 @@
 		<table class="table3">
 			<tr><td style="text-align:right"><?php echo Translate("Server timezone", 1); ?> :</td><td colspan="2"><select id="server_timezone" name="server_timezone" style="font-size:12px"><?php echo $timezones_list; ?></select></td></tr>
 			<tr><td style="text-align:right"><?php echo Translate("Default user timezone", 1); ?> :</td><td colspan="2"><select id="default_user_timezone" name="default_user_timezone" style="font-size:12px"><?php echo $timezones_list; ?></select></td></tr>
-			<tr><td style="text-align:right"><?php echo Translate("Default language", 1); ?> :</td><td><select id="language" name="language"><?php echo $languages_list; ?></select></td><td style="font-size:12px"><input type="checkbox" id="reset_languages" name="reset_languages"><?php echo Translate("Replace in all users profiles", 1); ?></td></tr>
+			<tr><td></td><td colspan="2" class="small_text"><input type="checkbox" id="users_can_customize_timezone" name="users_can_customize_timezone"<?php if($users_can_customize_timezone == "yes") { echo " checked"; } ?>><?php echo Translate("Users can customize timezone", 1); ?></td></tr>
+			<tr><td style="text-align:right"><?php echo Translate("Default language", 1); ?> :</td><td><select id="language" name="language"><?php echo $languages_list; ?></select></td><td class="small_text"><input type="checkbox" id="reset_languages" name="reset_languages"><?php echo Translate("Replace in all users profiles", 1); ?></td></tr>
 			<tr><td colspan="3" style="height:10px"></td></tr>
-			<tr><td style="text-align:right"><?php echo Translate("Default date format", 1); ?> :</td><td><input id="default_date_format" name="default_date_format" style="width:70px; text-align:center" value="<?php echo $default_date_format; ?>"></td><td><table class="table4"><tr><td><input type="checkbox" id="users_can_customize_date" name="users_can_customize_date"<?php if($users_can_customize_date == "yes") { echo " checked"; } ?>></td><td><?php echo Translate("Users can customize date format", 1); ?></td></tr><tr><td><input type="checkbox" id="reset_date_format" name="reset_date_format"></td><td><?php echo Translate("Replace in all users profiles", 1); ?></td></tr></table></td></tr>
+			
+			<tr><td style="text-align:right"><?php echo Translate("Default date format", 1); ?> :</td><td><input id="default_date_format" name="default_date_format" style="width:70px; text-align:center" value="<?php echo $default_date_format; ?>"></td>
+				<td class="small_text">
+					<input type="checkbox" id="users_can_customize_date_format" name="users_can_customize_date_format"<?php if($users_can_customize_date_format == "yes") { echo " checked"; } ?>> <?php echo Translate("Users can customize date format", 1); ?><br>
+					<input type="checkbox" id="reset_date_format" name="reset_date_format"> <?php echo Translate("Replace in all users profiles", 1); ?>
+				</td>
+			</tr>
+			
 			<tr><td colspan="3" style="height:10px"></td></tr>
 			<tr><td style="text-align:right"><?php echo Translate("Logo file", 1); ?> : [<?php echo Translate("app root folder", 1); ?>]/pictures /</td><td colspan="2"><input id="logo_file" name="logo_file" style="width:120px" value="<?php echo $logo_file; ?>"></td></tr>
 			<tr><td style="text-align:right"><?php echo Translate("Application title", 1); ?> :</td><td colspan="2"><input id="app_title" name="app_title" style="width:280px" value="<?php echo $app_title; ?>"></td></tr>
@@ -189,11 +209,12 @@
 
 </td></tr>
 
-<tr><td style="height:10px"></td></tr>
-
-<tr><td style="text-align:center"><button type="submit"<?php if(!isset($_COOKIE["bookings_profile_id"]) || intval($_COOKIE["bookings_profile_id"]) < 2) { echo " disabled"; } ?>><?php echo Translate("Save changes", 1); ?></button></td></tr>
-
 </table>
+
+<br>
+
+<button type="submit"<?php if(!isset($_COOKIE["bookings_profile_id"]) || intval($_COOKIE["bookings_profile_id"]) < 2) { echo " disabled"; } ?>><?php echo Translate("Save changes", 1); ?></button>
+<button type="button" onClick="localizeApp()"><?php echo Translate("Localize the application", 1); ?></button>
 
 <input type="hidden" id="action_" name="action_" value="save_settings">
 

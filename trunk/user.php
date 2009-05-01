@@ -220,7 +220,7 @@
 			<tr><td colspan="5"><?php echo Translate("Date format", 1); ?><br><input id="date_format" name="date_format" style="width:70px; text-align:center" value="<?php echo $date_format; ?>" title="<?php echo $help["date_format"] ?>">&nbsp;( <?php echo Translate("Example", 1); ?> : <?php echo $date_format . " = " . date($date_format); ?> )</td></tr>
 			<tr><td colspan="5"><?php echo Translate("User timezone", 1); ?><br><select id="user_timezone" name="user_timezone" style="width:520px"><?php echo $timezones_list; ?></select></td></tr>
 			<tr><td colspan="5" style="height:10px"></td></tr>
-			<tr><td colspan="5"><input type="text" id="remarks" name="remarks" style="width:520px; height:50px" value="<?php echo $remarks; ?>"></td></tr>
+			<tr><td colspan="5"><?php echo Translate("Remarks", 1); ?><br><input type="text" id="remarks" name="remarks" style="width:520px; height:50px" value="<?php echo $remarks; ?>"></td></tr>
 
 			<tr>
 

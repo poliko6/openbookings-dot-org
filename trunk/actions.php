@@ -406,6 +406,15 @@
 
 		$script = "parent.document.getElementById(\"available_slots\").innerHTML = \"" . $availables_slots_list . "\";\n";
 
+		case "delete_localization":
+		
+			$sql = "DELETE FROM rs_param_lang WHERE lang_id = " . $_POST["lang_id"] . ";";
+			db_query($database_name, $sql, "no", "no");
+			
+			$script = "parent.document.location = \"localize.php\";\n";
+		
+		break;
+		
 		case "export_localization": // ****************************************************************************
 
 			$absolute_csvfile_path = dirname($_SERVER["SCRIPT_FILENAME"]) . "/openbookings_localization.csv";
@@ -511,7 +520,6 @@
 
 			fclose($file_handle);
 
-
 			// replace localization_table (rs_param_lang) with temp table
 			$sql = "RENAME TABLE rs_param_lang TO rs_backup_lang;";
 			db_query($database_name, $sql, "no", "no");
@@ -524,6 +532,9 @@
 
 			$sql = "DROP TABLE rs_temp_lang";
 			db_query($database_name, $sql, "no", "no");
+			
+			$script  = "parent.document.location = \"localize.php\";\n";
+			$script .= "alert(\"" . Translate("Import Successful", 1) . "\");\n";
 		}
 
 	} // end switch
