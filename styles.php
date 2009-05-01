@@ -138,7 +138,7 @@ form {
 }
 
 .localize_input {
-	width:400px;
+	width:450px;
 	background-color:#ffffff;
 	font-size:<?php echo $font_size; ?>px;
 }

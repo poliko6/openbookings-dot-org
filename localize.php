@@ -63,7 +63,7 @@
 	<link rel="stylesheet" type="text/css" href="styles.php">
 
 	<style type="text/css">
-		#iframe_action {
+		#iframe_action_ {
 			width:500px;
 			height:200px;
 			visibility:visible;
@@ -99,6 +99,17 @@
 			$("action_").value = "export_localization";
 			$("languages_form").submit();
 		}
+		
+		function DeleteLocalization(lang_id) {
+		
+			if(window.confirm("<?php echo Translate("Delete this line ?", 0); ?>")) {
+				$("languages_form").action = "actions.php";
+				$("languages_form").target = "iframe_action";
+				$("lang_id").value = lang_id;
+				$("action_").value = "delete_localization";
+				$("languages_form").submit();
+			}
+		}
 
 	--></script>
 
@@ -106,7 +117,7 @@
 
 <body>
 
-	<div class="global" style="width:800px">
+	<div class="global" style="width:900px">
 
 		<form method="post" enctype="multipart/form-data" action="actions.php" target="iframe_action">
 
@@ -114,15 +125,15 @@
 			<input type="hidden" name="action_" value="import_localization">
 
 			<table style="width:100%"><tr>
-				<td><span class="big_text"><?php echo Translate("Localization", 0); ?></span></td>
+				<td><span class="big_text"><?php echo Translate("Localization", 1); ?></span></td>
 
 				<td>
-					<span class="simple_layout"><?php echo Translate("Import CSV file", 0); ?> : <input type="file" name="localization_file"> <button type="submit"><?php echo Translate("Import", 0); ?></button></span>
+					<span class="simple_layout"><?php echo Translate("Import CSV file", 1); ?> : <input type="file" name="localization_file"> <button type="submit"><?php echo Translate("Import", 1); ?></button></span>
 				</td>
 
 
 
-				<td style="text-align:right"><button type="button" onClick="exportLocalization()"><?php echo Translate("Export to CSV file", 0); ?></button></td>
+				<td style="text-align:right"><button type="button" onClick="exportLocalization()"><?php echo Translate("Export to CSV file", 1); ?></button></td>
 			</tr></table>
 
 		</form>
@@ -133,18 +144,22 @@
 
 		<table class="localize_list" style="text-align:left">
 			<tr>
-				<th style="width:400px"><?php echo Translate("Source language", 0); ?> : <select id="localize_from" name="localize_from" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
-				<th style="width:400px"><?php echo Translate("Target language", 0); ?> : <select id="localize_to" name="localize_to" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
+				<th style="width:15px"></th>
+				<th style="width:435px"><?php echo Translate("Source language", 1); ?> : <select id="localize_from" name="localize_from" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
+				<th style="width:450px"><?php echo Translate("Target language", 1); ?> : <select id="localize_to" name="localize_to" onChange="changeColumns()"><?php echo $languages_list; ?></select></th>
 			</tr><tr>
+				<td></td>
 				<td colspan="2" style="text-align:center">
-					<input type="checkbox" id="show_only_missing" name="show_only_missing" <?php echo $show_only_missing; ?> onChange="changeColumns()"><?php echo Translate("Show only missing vocabulary", 0); ?>
+					<input type="checkbox" id="show_only_missing" name="show_only_missing" <?php echo $show_only_missing; ?> onChange="changeColumns()"><?php echo Translate("Show only missing vocabulary", 1); ?>
 				</td>
 			</tr><tr>
 				<td></td>
-				<th><span class="small_text"><?php echo Translate("Press enter to validate each modification", 0); ?></span></th>
+				<td></td>
+				<th><span class="small_text"><?php echo Translate("Press enter to validate each modification", 1); ?></span></th>
 			</tr>
 
 			<?php while($vocabulary_ = fetch_array($vocabulary)) { ?><tr>
+				<td><a href="JavaScript:DeleteLocalization(<?php echo $vocabulary_["lang_id"]; ?>)"><img src="pictures/delete.gif"></a></td>
 				<td><?php echo $vocabulary_[$localize_from]; ?></td>
 				<td>
 					<input class="localize_input" id="localize_to_<?php echo $vocabulary_["lang_id"]; ?>" name="localize_to_<?php echo $vocabulary_["lang_id"]; ?>" onKeyPress="updateSentence(<?php echo $vocabulary_["lang_id"]; ?>,event)" value="<?php echo $vocabulary_[$localize_to]; ?>">

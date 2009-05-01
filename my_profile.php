@@ -34,8 +34,6 @@
 		if($first_name == "") { $first_name = $last_name; }
 		if($last_name == "") { $last_name = $first_name; }
 
-		if($_REQUEST["remarks"] != "") { $remarks = "'" . addslashes($_REQUEST["remarks"]) . "'"; } else { $remarks = "NULL"; }
-
 		switch($_REQUEST["action_"]) {
 
 			case "update_my_profile":
@@ -56,8 +54,7 @@
 			$sql .= "email = '" . $_POST["email"] . "', ";
 			$sql .= "language = '" . $_POST["language"] . "', ";
 			$sql .= "date_format = '" . $_POST["date_format"] . "', ";
-			$sql .= "user_timezone = " . $_POST["user_timezone"] . ", ";
-			$sql .= "remarks = " . $remarks . " ";
+			$sql .= "user_timezone = " . $_POST["user_timezone"] . " ";
 			$sql .= "WHERE user_id = " . $_COOKIE["bookings_user_id"] . ";";
 			db_query($database_name, $sql, "no", "no");
 
@@ -75,7 +72,7 @@
 			}
 
 			$script .= "top.frames[0].location = \"menu.php\";\n";
-			$script .= "top.frames[1].location = \"my_profile.php\";\n";
+			$script .= "top.frames[1].location = \"intro.php\";\n";
 
 			break;
 
@@ -167,7 +164,7 @@
 		$timezones_list .= "<option value=\"+46800\">(GMT+13) Nuku'alofa</option>";
 
 		// gets user infos
-		$sql  = "SELECT user_id, login, last_name, first_name, email, locked, profile_id, language, date_format, user_timezone, remarks ";
+		$sql  = "SELECT user_id, login, last_name, first_name, email, locked, profile_id, language, date_format, user_timezone ";
 		$sql .= "FROM rs_data_users WHERE user_id = " . $_COOKIE["bookings_user_id"] . ";";
 		$user = db_query($database_name, $sql, "no", "no"); $user_ = fetch_array($user);
 
@@ -180,7 +177,6 @@
 		$language = $user_["language"];
 		if($user_["date_format"] != "") { $date_format = $user_["date_format"]; } else { $date_format = "d/m/Y"; }
 		$user_timezone = $user_["user_timezone"];
-		$remarks = stripslashes($user_["remarks"]);
 
 		$languages_list = "";
 		$sql = "SHOW COLUMNS FROM rs_param_lang";
@@ -257,7 +253,7 @@
 		<table class="table3">
 
 			<tr>
-			<td><?php echo Translate("Login", 1); ?><br><input type="text" id="login" name="login" style="width:160px" value="<?php echo $login; ?>" disabled></td>
+			<td><?php echo Translate("Username", 1); ?><br><input type="text" id="login" name="login" style="width:160px" value="<?php echo $login; ?>" disabled></td>
 			<td style="width:10px"></td>
 			<td><?php echo Translate("Password", 1); ?><br><input type="password" id="password" name="password" style="width:160px" value=""></td>
 			<td style="width:10px"></td>
@@ -272,21 +268,21 @@
 
 			<tr><td colspan="5">
 
-				<table><tr><td>
-					<?php echo Translate("Language", 1); ?><br><select id="language" name="language"><?php echo $languages_list; ?></select>
-				</td><td>
-
-				<?php echo Translate("Date format", 1); ?><br><input id="date_format" name="date_format" style="width:70px; text-align:center" value="<?php echo $date_format; ?>" title="<?php echo $help["date_format"] ?>">&nbsp;( <?php echo Translate("Example", 1); ?> : <?php echo $date_format . " = " . date($date_format); ?> )
-
-				</td></tr></table>
+				<table><tr>
+					<td>
+						<?php echo Translate("Language", 1); ?><br><select id="language" name="language"><?php echo $languages_list; ?></select>
+					</td>
+				
+					<?php if(param_extract("users_can_customize_date") == "yes") { ?><td>
+					<?php echo Translate("Date format", 1); ?><br><input id="date_format" name="date_format" style="width:70px; text-align:center" value="<?php echo $date_format; ?>" title="<?php echo $help["date_format"] ?>">&nbsp;( <?php echo Translate("Example", 1); ?> : <?php echo $date_format . " = " . date($date_format); ?> )
+					</td><?php } ?>
+					
+				</tr></table>
 
 			</td></tr>
 
-			<tr><td colspan="5"><?php echo Translate("User timezone", 1); ?><br><select id="user_timezone" name="user_timezone" style="width:520px"><?php echo $timezones_list; ?></select></td></tr>
-			<tr><td colspan="5" style="height:10px"></td></tr>
-			<tr><td colspan="5"><input type="text" id="remarks" name="remarks" style="width:520px; height:50px" value="<?php echo $remarks; ?>"></td></tr>
-			<tr><td colspan="5" style="height:10px"></td></tr>
-
+			<tr><td colspan="5"><?php echo Translate("Timezone", 1); ?><br><select id="user_timezone" name="user_timezone" style="width:520px"><?php echo $timezones_list; ?></select></td></tr>
+			<tr><td style="height:10px"></td></tr>
 		</td></tr></table>
 
 		</center>
