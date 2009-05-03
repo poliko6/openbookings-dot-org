@@ -50,10 +50,9 @@
 
 <?php
 
-	$sql = "SELECT booking_method, activity_start, activity_end, activity_step FROM rs_data_objects WHERE object_id = " . $_REQUEST["object_id"] . ";";
+	$sql = "SELECT activity_start, activity_end, activity_step FROM rs_data_objects WHERE object_id = " . $_REQUEST["object_id"] . ";";
 	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 
-	$booking_method = $temp_["booking_method"];
 	$start_hour = $temp_["activity_start"];
 	$end_hour = $temp_["activity_end"];
 	$activity_step = $temp_["activity_step"] * 60;
@@ -71,19 +70,8 @@
 	if(isset($_REQUEST["action_"])) {
 
 		$booking_start = DateAndHour(DateReformat($_REQUEST["start_date"]), $_REQUEST["start_hour"]);
-
-		switch($booking_method) {
-
-			case "time_based":
-			$booking_end = DateAndHour(DateReformat($_REQUEST["end_date"]), $_REQUEST["end_hour"]);
-			break;
-
-			case "stacking":
-			$timestamp_duration = strtotime("1970-01-01 " . $_REQUEST["book_duration"]); // duration in seconds
-			$booking_end = date("Y-m-d H:i:s", strtotime($booking_start) + $timestamp_duration);
-
-		} //switch
-
+		$booking_end = DateAndHour(DateReformat($_REQUEST["end_date"]), $_REQUEST["end_hour"]);
+	
 		switch($_REQUEST["action_"]) {
 
 			case "insert_new_booking":
@@ -154,22 +142,23 @@
 
 		if($error_msg == "") { // no error, the booking was saved
 
-			echo "<script type=\"text/javascript\"><!--" . chr(10);
-			//echo "document.location = \"calendar.php?stamp=" . $stamp . "&object_id=" . $_REQUEST["object_id"] . "\";" . chr(10);
-			echo "--></script>" . chr(10);
-			echo "</head>" . chr(10);
-			echo "<body>" . chr(10);
-			echo "</html>";
+			echo "<script type=\"text/javascript\"><!--\n";
+			echo "document.location = \"calendar.php?stamp=" . $stamp . "&object_id=" . $_REQUEST["object_id"] . "\";" . chr(10);
+			echo "--></script>\n";
+			echo "</head>\n";
+			echo "<body>\n";
+			echo "</html>\n";
 
 		} else { // an error has occured (typically the new booking covers another one)
+		
 			echo "</head>" . chr(10);
-			echo "<body style=\"text-align:center\"><center>" . chr(10);
-			echo "<table style=\"text-align:center\">" . chr(10);
-			echo "<tr><td style=\"height:60px\"></td></tr>" . chr(10);
-			echo "<tr><td>$error_msg</td></tr>" . chr(10);
-			echo "<tr><td style=\"height:20px\"></td></tr>" . chr(10);
-			echo "<tr><td><button onClick=\"window.history.back();\">" . Translate("Back", 1) . "</button></td></tr>";
-			echo "</center></body>" . chr(10);
+			echo "<body style=\"text-align:center\"><center>\n";
+			echo "<table style=\"text-align:center\">\n";
+			echo "<tr><td style=\"height:60px\"></td></tr>\n";
+			echo "<tr><td>$error_msg</td></tr>\n";
+			echo "<tr><td style=\"height:20px\"></td></tr>\n";
+			echo "<tr><td><button onClick=\"window.history.back();\">" . Translate("Back", 1) . "</button></td></tr>\n";
+			echo "</center></body>\n";
 		}
 
 	} else { // !isset($_REQUEST["action_"])
@@ -336,67 +325,43 @@
 
 <div class="global" style="width:520px; height:250px; top:50px">
 
-	<table><tr><td>
+	<span class="big_text"><?php echo Translate($booking_action, 1); ?></span>
+	<br>
+	<span style="font-weight:bold"><?php echo $family_name . " / " . $object_name . "</span> <span class=\"small_text\">(" . $managers_names . ")</span>"; ?>
+	<div class="colorframe" style="padding:10px">
+	
+		<table class="table3">
 
-		<span class="big_text"><?php echo Translate($booking_action, 1); ?></span>
-		<br>
+			<tr>
+				<?php if(getObjectInfos($_REQUEST["object_id"], "object_is_managed") || intval($_COOKIE["bookings_profile_id"]) > 3) { ?>
 
-		<span style="font-weight:bold"><?php echo $family_name . " / " . $object_name . "</span> <span class=\"small_text\">(" . $managers_names . ")</span>"; ?></td>
-
-
-	</td></tr><tr><td>
-
-		<table class="table1"><tr><td style="padding:10px">
-
-			<table class="table3">
-
-			<tr><td colspan="3" style="height:10px"></td></tr>
-
-			<tr><td colspan="3" style="text-align:center"><center>
-
-			<?php if(getObjectInfos($_REQUEST["object_id"], "object_is_managed") || intval($_COOKIE["bookings_profile_id"]) > 3) { ?>
-				<table class="table3"><tr>
-				<td style="font-weight:bold; text-align:right;"><?php echo Translate("Booker", 1); ?> :</td>
-				<td><select id="booker_id" name="booker_id"><?php echo $users_list; ?></select></td>
-				<td style="width:10px"></td>
+				<td><?php echo Translate("Booker", 1); ?><br><select id="booker_id" name="booker_id"><?php echo $users_list; ?></select></td>
 				<td><input type="checkbox" id="validated" name="validated" <?php if($validated) { echo "checked"; } ?>> <?php echo Translate("Request validated", 1); ?></td>
-				</tr></table>
-			<?php } else { ?>
-				<table class="table3"><tr>
-				<td style="font-weight:bold; text-align:right;"><?php echo Translate("Booker", 1); ?> :</td>
-				<td><select disabled><?php echo $users_list; ?></select><input type="hidden" id="booker_id" name="booker_id" value="<?php echo $_COOKIE["bookings_user_id"]; ?>"></td>
-				</tr></table>
-			<?php } ?>
 
-			</center></td></tr>
+				<?php } else { ?>
 
-			<tr><td colspan="4">
+				<td colspan="2">
+					<?php echo Translate("Booker", 1); ?><br><input id="booker_display" name="booker_display" locked>
+					<input type="hidden" id="booker_id" name="booker_id" value="<?php echo $_COOKIE["bookings_user_id"]; ?>">
+				</td>
+			
+				<?php } ?>
 
-				<?php switch($booking_method) { case "time_based": ?>
-
-				<?php echo Translate("Start", 1); ?> :<br>
+			</tr><tr>
+				<td>
+			
+				<?php echo Translate("Start", 1); ?><br>
 				<input type="text" id="start_date" name="start_date" style="width:80px" value="<?php echo $book_start_day; ?>">
 				<select id="start_hour" name="start_hour"><?php echo $hours_list; ?></select>
 
-				<?php echo Translate("End", 1); ?> :<br>
+				</td><td>
+			
+				<?php echo Translate("End", 1); ?><br>
 				<input type="text" id="end_date" name="end_date" style="width:80px" value="<?php echo $book_end_day; ?>">
 				<select id="end_hour" name="end_hour"><?php echo $hours_list; ?></select>
-
-				<?php break; case "stacking": ?>
-
-					<table class="table3">
-						<tr>
-							<td style="font-weight:bold"><?php echo Translate("Start", 1); ?> :<br><input type="text" id="start_date" name="start_date" style="text-align:center; width:80px" value="<?php echo $book_start_day; ?>"></td>
-							<td valign="bottom"><select id="start_hour" name="start_hour"><?php echo $hours_list; ?></select></td>
-							<td style="font-weight:bold"><?php echo Translate("Duration", 1); ?> :<br><input type="text" id="book_duration" name="book_duration" style="width:80px; text-align:center" value="<?php echo seconds_to_time($book_duration); ?>"></td>
-							<td valign="bottom"><button type="button" onClick="showAvailableSlots()"><?php echo Translate("Show available slots", 1); ?></button></td>
-						</tr>
-
-					</table>
-
-				<?php } ?>
-
-			</td></tr>
+			
+				</td>
+			</tr>
 
 			<tr><td id="available_slots" colspan="4"></td></tr>
 
@@ -406,23 +371,13 @@
 			<textarea id="misc_info" name="misc_info" style="width:410px; height:60px"><?php echo $misc_info; ?></textarea>
 
 			</td></tr></table>
+		
+		</div>
 
-		</td></tr></table>
-
-		<br><center>
-
-		<table class="table3"><tr>
-		<td><button type="submit" style="width:100px" <?php echo $update_status; ?>><?php echo Translate("OK", 1); ?></button></td>
-
-		<?php if($action_ == "update_booking") { ?>
-			<td style="width:20px"></td>
-			<td><button type="button" style="width:100px" onCLick="DelBooking()" <?php echo $update_status; ?>><?php echo Translate("Delete", 1); ?></button></td>
-		<?php } ?>
-		</tr></table>
-
-		</center>
-
-	</td></tr></table>
+	<br>
+	
+	<button type="button" style="width:100px" onCLick="DelBooking()" <?php echo $update_status; ?>><?php echo Translate("Delete", 1); ?></button>
+	<button type="button" style="width:100px" onCLick="DelBooking()" <?php echo $update_status; ?>><?php echo Translate("Delete", 1); ?></button>
 
 </div>
 
@@ -444,7 +399,6 @@
 <script type="text/javascript"><!--
 document.getElementById("start_hour").value = <?php echo $book_start_hour; ?>;
 <?php
-	if($booking_method == "time_based") { echo "document.getElementById(\"end_hour\").value = \"" . $book_end_hour . "\";\n"; }
 	if(isset($booker_id)) { echo "document.getElementById(\"booker_id\").value = " . $booker_id . ";\n"; }
 ?>
 --></script>
