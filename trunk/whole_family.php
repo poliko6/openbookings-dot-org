@@ -87,7 +87,7 @@
 	$html = "<span class=\"big_text\">" . $temp_["family_name"] . " - " . Translate("Week #", 1) . " " . $_GET["week"]. "/". $_GET["year"] . "</span><br>";
 
 	// gets monday's date of selected week
-	$monday = strtotime(FormatDate($_GET["week"], "debut"));
+	$monday = getMonday($_GET["year"], $_GET["week"]);
 
 	$html .= "<div id=\"div_main\" style=\"width:" . ($object_column_width + $day_width * 7) . "px\">";
 
