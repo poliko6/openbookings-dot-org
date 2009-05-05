@@ -80,13 +80,16 @@
 
 </head>
 
-<body style="margin-top:5px;margin-bottom:0px;">
+<body>
+
+
+<div class="global" style="width:810px">
 
 <iframe id="iframe_day" name="iframe_day" frameborder="0" scrolling="no" style="background:#<?php echo param_extract("background_color"); ?>; height:90px; width:810px;"></iframe>
 
-<div class="global" style="width:780px">
+<center>
 
-<table class="small_text" summary=""><tr>
+<table class="small_text" style="margin-left:6px"><tr>
 
 <?php
 	for($month=1;$month<=12;$month++) {
