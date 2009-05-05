@@ -192,12 +192,11 @@
 		$sql .= "OR (book_start < '" . date("Y-m-d H:i:s", strtotime($booking_start) + $time_offset) . "' ";
 		$sql .= "AND book_end > '" . date("Y-m-d H:i:s", strtotime($booking_end) + $time_offset) . "')) ";
 
-		// end of new code after #6
-
 		$sql .= "AND book_id <> '" . $book_id . "';";
+		
 		$temp = db_query($database_name, $sql, "no", "no");
-
-		if($temp_ = fetch_array($temp)) {
+		
+		if(num_rows($temp)) {
 			$error_msg = Translate("This booking cannot be recorded as is covers another one", 1) . ".";
 		}
 
@@ -296,10 +295,7 @@
 
 		global $time_offset;
 
-		//return date("Y-m-d H:i:s", strtotime($date) + $hour + 3600);
-
-		return date("Y-m-d H:i", strtotime($date . " " . $hour) + $time_offset);
-
+		return date("Y-m-d H:i", strtotime($date) + $hour + $time_offset);
 	}
 
 	function DateReformat($date) { // changes date to mysql-compliant format using $date_format setting

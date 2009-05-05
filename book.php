@@ -68,7 +68,7 @@
 	$error_msg = ""; $script = ""; $update_status = "disabled";
 
 	if(isset($_REQUEST["action_"])) {
-
+		
 		$booking_start = DateAndHour(DateReformat($_REQUEST["start_date"]), $_REQUEST["start_hour"]);
 		$booking_end = DateAndHour(DateReformat($_REQUEST["end_date"]), $_REQUEST["end_hour"]);
 	
@@ -260,7 +260,7 @@
 		$hours_list = "";
 
 		for($h=$activity_start;$h<=$activity_end;$h+=$activity_step) {
-			$hours_list .= "<option value=\"" . $h . "\">" . date("H:i", $h) . "</option>" . chr(10);
+			$hours_list .= "<option value=\"" . $h . "\">" . date("H:i", $h) . "</option>\n";
 		}
 
 		// extracts users list
@@ -301,7 +301,8 @@
 		}
 	}
 
-	function showAvailableSlots() {
+	
+	/* function showAvailableSlots() {
 
 		if(document.getElementById("start_date").value != "" && document.getElementById("start_hour").value != "" && document.getElementById("book_duration").value != "") {
 			document.getElementById("iframe_action").src = "actions.php?action_=show_available_slots&object_id=<?php echo $_REQUEST["object_id"]; ?>&start_date=" + document.getElementById("start_date").value + "&start_hour=" + document.getElementById("start_hour").value + "&book_duration=" + document.getElementById("book_duration").value;
@@ -313,7 +314,7 @@
 				echo "alert(\"" . $message . "\");\n";
 			?>
 		}
-	}
+	} */
 
 --></script>
 
@@ -323,7 +324,7 @@
 
 <form id="form_ajout_resa" name="form_ajout_resa" method="post" action="book.php">
 
-<div class="global" style="width:520px; height:250px; top:50px">
+<div class="global" style="width:440px; height:250px; top:50px">
 
 	<span class="big_text"><?php echo Translate($booking_action, 1); ?></span>
 	<br>
@@ -335,30 +336,31 @@
 			<tr>
 				<?php if(getObjectInfos($_REQUEST["object_id"], "object_is_managed") || intval($_COOKIE["bookings_profile_id"]) > 3) { ?>
 
-				<td><?php echo Translate("Booker", 1); ?><br><select id="booker_id" name="booker_id"><?php echo $users_list; ?></select></td>
-				<td><input type="checkbox" id="validated" name="validated" <?php if($validated) { echo "checked"; } ?>> <?php echo Translate("Request validated", 1); ?></td>
-
+				<td><?php echo Translate("Booker", 1); ?><br><select id="booker_id" name="booker_id" style="width:200px"><?php echo $users_list; ?></select></td>
+				
 				<?php } else { ?>
 
-				<td colspan="2">
+				<td>
 					<?php echo Translate("Booker", 1); ?><br><input id="booker_display" name="booker_display" locked>
 					<input type="hidden" id="booker_id" name="booker_id" value="<?php echo $_COOKIE["bookings_user_id"]; ?>">
 				</td>
-			
+				
 				<?php } ?>
+				
+				<td>
+					<?php echo Translate("Start", 1); ?><br>
+					<input type="text" id="start_date" name="start_date" style="width:80px" value="<?php echo $book_start_day; ?>">
+					<select id="start_hour" name="start_hour"><?php echo $hours_list; ?></select>
+				</td>
 
 			</tr><tr>
+				<td style="text-align:center"><input type="checkbox" id="validated" name="validated" <?php if($validated) { echo "checked"; } ?>> <?php echo Translate("Request validated", 1); ?></td>
+				
 				<td>
 			
-				<?php echo Translate("Start", 1); ?><br>
-				<input type="text" id="start_date" name="start_date" style="width:80px" value="<?php echo $book_start_day; ?>">
-				<select id="start_hour" name="start_hour"><?php echo $hours_list; ?></select>
-
-				</td><td>
-			
-				<?php echo Translate("End", 1); ?><br>
-				<input type="text" id="end_date" name="end_date" style="width:80px" value="<?php echo $book_end_day; ?>">
-				<select id="end_hour" name="end_hour"><?php echo $hours_list; ?></select>
+					<?php echo Translate("End", 1); ?><br>
+					<input type="text" id="end_date" name="end_date" style="width:80px" value="<?php echo $book_end_day; ?>">
+					<select id="end_hour" name="end_hour"><?php echo $hours_list; ?></select>
 			
 				</td>
 			</tr>
@@ -376,8 +378,10 @@
 
 	<br>
 	
+	<center>
+	<button type="submit" style="width:100px" <?php echo $update_status; ?>><?php echo Translate("Save", 1); ?></button>
 	<button type="button" style="width:100px" onCLick="DelBooking()" <?php echo $update_status; ?>><?php echo Translate("Delete", 1); ?></button>
-	<button type="button" style="width:100px" onCLick="DelBooking()" <?php echo $update_status; ?>><?php echo Translate("Delete", 1); ?></button>
+	</center>
 
 </div>
 
