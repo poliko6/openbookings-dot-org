@@ -27,7 +27,6 @@
 	$start = DateAndHour(DateReformat($_REQUEST["search_start_date"]), $_REQUEST["search_start_hour"] + $time_offset);
 	$end = DateAndHour(DateReformat($_REQUEST["search_end_date"]), $_REQUEST["search_end_hour"] + $time_offset);
 
-
 	echo DateAndHour(DateReformat($_REQUEST["search_start_date"]), $_REQUEST["search_start_hour"]);
 
 	$start_ = date("Y-m-d H:i", strtotime($start));
@@ -66,7 +65,7 @@
 	if($disallowed_objects_list != "") { $disallowed_objects_list = substr($disallowed_objects_list ,0 ,-1); }
 
 	// lists objects which are NOT booked in the specified time range
-	$sql  = "SELECT DISTINCT object_id, object_name, manager_id ";
+	$sql  = "SELECT DISTINCT object_id, object_name, booking_method ";
 	$sql .= "FROM rs_data_objects ";
 	$sql .= "WHERE rs_data_objects.family_id = " . $_REQUEST["family_id"] . " ";
 	if($unavailable_list != "") { $sql .= "AND rs_data_objects.object_id NOT IN ( " . $unavailable_list . " )"; }
@@ -89,8 +88,8 @@
 <link rel="stylesheet" type="text/css" href="styles.php">
 
 <script type="text/javascript"><!--
-		function OpenBooking(object_id) {
-			window.open("book.php?book_id=0&object_id=" + object_id + "&start=<?php echo strtotime($start); ?>&end=<?php echo strtotime($end); ?>", "ajout_resa", "width=500, height=250, left=" + (screen.width-400)/2 + ", top=" + (screen.height-250)/2);
+		function openBooking(object_id, booking_method) {
+			window.open(booking_method + "book.php?book_id=0&object_id=" + object_id + "&start=<?php echo strtotime($start); ?>&end=<?php echo strtotime($end); ?>", "ajout_resa", "width=500, height=250, left=" + (screen.width-400)/2 + ", top=" + (screen.height-250)/2);
 		}
 --></script>
 
@@ -108,32 +107,24 @@
 	<th style="width:90px">&nbsp;</th>
 </tr>
 
-
-
-
 <?php while($available_objets_ = fetch_array($available_objects)) {
 
-	if($available_objets_["manager_id"] != 0) {
+	//extracts objects manager
+	$sql  = "SELECT user_id, last_name, first_name, email FROM rs_data_users ";
+	$sql .= "LEFT JOIN rs_data_permissions ON rs_data_users.user_id = rs_data_permissions.user_id ";
+	$sql .= "WHERE object_id = " . $available_objets_["object_id"] . " ";
+	$sql .= "AND rs_data_permissions.permission = 'manage';";
 
-		// gets the manager name using manager id as parameter
-		$sql  = "SELECT last_name, first_name, email FROM rs_data_users ";
-		$sql .= "WHERE user_id = " . $available_objets_["manager_id"] . ";";
-		$manager = db_query($database_name, $sql, "no", "no"); $manager_ = fetch_array($manager);
+	$managers = db_query($database_name, $sql, "no", "no");
 
-		$manager_name = $manager_["first_name"] . " " . $manager_["last_name"];
-		$manager_email = $manager_["email"];
-
-	} else {
-
-		$manager_name = Translate("None", 1);
-		$manager_email = "";
-	}
+	$manager_name = Translate("None", 1);
+	$manager_email = "";
 
 ?><tr>
 
 <td><?php echo $available_objets_["object_name"]; ?></td>
 <td><?php if($manager_email != "") { ?><a href="mailto:<?php echo $manager_email; ?>"><?php } ?><?php echo $manager_name; ?><?php if($manager_email != "") { ?></a><?php } ?></td>
-<td style="text-align:center"><button onClick="OpenBooking(<?php echo $available_objets_["object_id"]; ?>)"><?php echo Translate("Book it !", 1); ?></button></td>
+<td style="text-align:center"><button onClick="openBooking(<?php echo $available_objets_["object_id"]; ?>,<?php echo $available_objets_["booking_method"]; ?>)"><?php echo Translate("Book it !", 1); ?></button></td>
 </tr><?php } ?>
 
 </table>

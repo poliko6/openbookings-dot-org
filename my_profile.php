@@ -175,7 +175,7 @@
 		$first_name = stripslashes($user_["first_name"]);
 		$email = $user_["email"];
 		$language = $user_["language"];
-		if($user_["date_format"] != "") { $date_format = $user_["date_format"]; } else { $date_format = "d/m/Y"; }
+		if($user_["date_format"] != "") { $date_format = $user_["date_format"]; } else { $date_format = param_extract("default_date_format"); }
 		$user_timezone = $user_["user_timezone"];
 
 		$languages_list = "";
@@ -272,11 +272,11 @@
 					<td>
 						<?php echo Translate("Language", 1); ?><br><select id="language" name="language"><?php echo $languages_list; ?></select>
 					</td>
-				
+
 					<?php if(param_extract("users_can_customize_date") == "yes") { ?><td>
 					<?php echo Translate("Date format", 1); ?><br><input id="date_format" name="date_format" style="width:70px; text-align:center" value="<?php echo $date_format; ?>" title="<?php echo $help["date_format"] ?>">&nbsp;( <?php echo Translate("Example", 1); ?> : <?php echo $date_format . " = " . date($date_format); ?> )
 					</td><?php } ?>
-					
+
 				</tr></table>
 
 			</td></tr>
