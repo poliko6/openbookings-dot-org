@@ -193,9 +193,9 @@
 		$sql .= "AND book_end > '" . date("Y-m-d H:i:s", strtotime($booking_end) + $time_offset) . "')) ";
 
 		$sql .= "AND book_id <> '" . $book_id . "';";
-		
+
 		$temp = db_query($database_name, $sql, "no", "no");
-		
+
 		if(num_rows($temp)) {
 			$error_msg = Translate("This booking cannot be recorded as is covers another one", 1) . ".";
 		}
@@ -244,9 +244,9 @@
 	    $MondayOffset = (11-date('w',$Jan1))%7-3;
 	    $desiredMonday = strtotime(($week-1) . ' weeks '.$MondayOffset.' days', $Jan1);
 	    return $desiredMonday;
-	} 
-	
-	
+	}
+
+
 	function FormatDate($date_a_verifier, $debutfin) {
 
 		// modif semaine sur un seul chiffre
@@ -476,7 +476,7 @@
 
 	// extracts colors from the table which holds parameters
 	$app_title = param_extract("app_title");
-	if(isset($_COOKIE["bookings_date_format"])) { $date_format = $_COOKIE["bookings_date_format"]; } else { $date_format = "d/m/Y"; }
+	if(isset($_COOKIE["bookings_date_format"])) { $date_format = $_COOKIE["bookings_date_format"]; } else { $date_format = param_extract("default_date_format"); }
 	$application_access_level = param_extract("application_access_level");
 	if(isset($_COOKIE["bookings_time_offset"])) { $time_offset = $_COOKIE["bookings_time_offset"]; } else { $time_offset = 0; }
 ?>

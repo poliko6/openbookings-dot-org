@@ -26,7 +26,7 @@ OPENBOOKINGS.ORG 0.7.0b todo list
 - [done] Use frames rather than popups to simplify the user interface
 - [done] Use the htmlentities() function to avoid storing html special chars into the localization database
 - [pending] Allow stacking booking
-- [pending] Allow users to edit their profile (thanks Matteo from Switzerland)
+- [done] Allow users to edit their profile (thanks Matteo from Switzerland)
 
 
 - Any idea ? jerome@openbookings.org

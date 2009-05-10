@@ -87,7 +87,7 @@
 		$profile_id = 0;
 		$language = "english";
 		$user_timezone = 0;
-		$date_format = "d/m/Y";
+		$date_format = param_extract("default_date_format");
 		$remarks = "";
 
 	} else {
@@ -108,7 +108,7 @@
 		$locked = $user_["locked"];
 		$profile_id = $user_["profile_id"];
 		$language = $user_["language"];
-		if($user_["date_format"] != "") { $date_format = $user_["date_format"]; } else { $date_format = "d/m/Y"; }
+		if($user_["date_format"] != "") { $date_format = $user_["date_format"]; } else { $date_format = param_extract("default_date_format"); }
 		$user_timezone = $user_["user_timezone"];
 		$remarks = stripslashes($user_["remarks"]);
 	}

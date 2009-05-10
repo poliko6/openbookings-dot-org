@@ -37,9 +37,13 @@
 	$validated_color = param_extract("validated_color");
 	$unvalidated_color = param_extract("unvalidated_color");
 
-	$sql = "SELECT activity_start, activity_end, activity_step FROM rs_data_objects WHERE object_id = " . $_REQUEST["object_id"] . ";";
+	// extracts infos about the selected object
+	$sql  = "SELECT rs_param_families.family_name, rs_data_objects.object_name, booking_method, activity_start, activity_end, activity_step ";
+	$sql .= "FROM rs_data_objects INNER JOIN rs_param_families ON rs_data_objects.family_id = rs_param_families.family_id ";
+	$sql .= "WHERE rs_data_objects.object_id = " . $_REQUEST["object_id"] . ";";
 	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 
+	$booking_method = $temp_["booking_method"];
 	$start_hour = $temp_["activity_start"];
 	$end_hour = $temp_["activity_end"];
 	$activity_step = $temp_["activity_step"] * 60;
@@ -64,12 +68,6 @@
 
 	// calculates the width of one hour in pixels
 	$hour_step_size = $step_size * (60 / $temp_["activity_step"]);
-
-	// extracts infos about the selected object
-	$sql  = "SELECT rs_param_families.family_name, rs_data_objects.object_name ";
-	$sql .= "FROM rs_data_objects INNER JOIN rs_param_families ON rs_data_objects.family_id = rs_param_families.family_id ";
-	$sql .= "WHERE rs_data_objects.object_id = " . $_REQUEST["object_id"] . ";";
-	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 ?>
 
 <html>
@@ -123,7 +121,7 @@
 
 	function openBooking(stamp) {
 			var book_id = document.getElementById("s" + stamp).value;
-			top.frames[1].location = "book.php?book_id=" + book_id + "&object_id=<?php echo $_REQUEST["object_id"]; ?>&stamp=" + stamp;
+			top.frames[1].location = "<?php echo $booking_method; ?>_book.php?book_id=" + book_id + "&object_id=<?php echo $_REQUEST["object_id"]; ?>&stamp=" + stamp;
 	}
 
 --></script>

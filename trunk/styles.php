@@ -178,7 +178,7 @@ form {
 #booking_infos {
 	text-align:left;
 	font-size:<?php echo $small_font_size; ?>px;
-	border:2px groove;
+	border:1px solid #9ea0a1;
 	color:#000000;
 	background:#ffffcc;
 	padding:2px 5px 2px 5px;
@@ -311,7 +311,7 @@ div.ligne1 {
 	visibility:hidden;
 	background:#ffffcc;
 	color:#000000;
-	border: 1px ridge;
+	border: 1px solid #9ea0a1;
 	padding:0px 3px 0px 3px;
 	width:200px;
 	font-size:12px;
