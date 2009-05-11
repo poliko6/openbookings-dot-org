@@ -301,21 +301,6 @@
 		}
 	}
 
-	
-	/* function showAvailableSlots() {
-
-		if(document.getElementById("start_date").value != "" && document.getElementById("start_hour").value != "" && document.getElementById("book_duration").value != "") {
-			document.getElementById("iframe_action").src = "actions.php?action_=show_available_slots&object_id=<?php echo $_REQUEST["object_id"]; ?>&start_date=" + document.getElementById("start_date").value + "&start_hour=" + document.getElementById("start_hour").value + "&book_duration=" + document.getElementById("book_duration").value;
-		} else {
-			<?php
-				$message  = Translate("Start date, start hour and booking duration are required to compute available slots", 1) . ".";
-				$message .= "\\n";
-				$message .= Translate("Please, fill in the corresponding form fields an try again", 1) . ".";
-				echo "alert(\"" . $message . "\");\n";
-			?>
-		}
-	} */
-
 --></script>
 
 </head>

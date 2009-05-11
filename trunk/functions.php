@@ -202,6 +202,36 @@
 
 		return $error_msg;
 	}
+	
+	function findFirstAvailability($object_id, $start_date, $duration) { // used for stacking booking
+
+		$sql  = "SELECT book_id, book_start, book_end FROM rs_data_bookings ";
+		$sql .= "WHERE object_id = " . $object_id . " ";
+		$sql .= "AND book_end >= '" . $start_date . "' ";
+		$sql .= "ORDER BY book_end ASC;";
+		$temp = db_query($database_name, $sql, "no", "no");
+
+		$book_start = "";
+		$previous_book_end = $start_date;
+		
+		while($temp_ = fetch_array($temp)) {
+			
+			$hole_start = strtotime($previous_book_end);
+			$hole_end = strtotime($temp_["book_start"]);
+			
+			if($duration <= ($hole_end - $hole_start)) {
+				
+				$book_start = $hole_start;
+				break; // exits while loop
+			}
+	
+			$previous_book_end = $temp_["book_end"];
+			
+			$n++;
+		}
+		
+		return $book_start;
+	}
 
 	function Translate($english, $special_chars_to_html) {
 
@@ -245,7 +275,6 @@
 	    $desiredMonday = strtotime(($week-1) . ' weeks '.$MondayOffset.' days', $Jan1);
 	    return $desiredMonday;
 	}
-
 
 	function FormatDate($date_a_verifier, $debutfin) {
 

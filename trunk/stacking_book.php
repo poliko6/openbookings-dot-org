@@ -55,20 +55,6 @@
 		return array("days"=>$days, "hours"=>$hours, "minutes"=>$minutes);
 	}
 
-	function  findFirstAvailability($object_id, $start_date, $duration) {
-
-		$sql  = "SELECT book_id, book_start, book_end FROM rs_data_bookings ";
-		$sql .= "WHERE object_id = " . $object_id . " ";
-		$sql .= "AND book_end >= '" . $start_date . "' ";
-		$sql .= "ORDER BY book_end ASC;";
-		$temp = db_query($database_name, $sql, "no", "no");
-
-		while($temp_ = fetch_array($temp)) {
-
-			$hole_start = $temp_["book_end"];
-
-		}
-	}
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -89,6 +75,14 @@
 	</style>
 
 	<script type="text/javascript"><!--
+	
+		function $(id) { return document.getElementById(id); }
+		
+		function showFirstAvailability() {
+			$("iframe_action").src = "actions.php?
+			
+		}
+	
 	--></script>
 
 </head>
@@ -125,9 +119,11 @@
 
 	<br>
 
-	<button type="button">Show first availability</button>
+	<button type="button" onClick="showFirstAvailability()">Show first availability</button>
 
 	</center></div>
+	
+	<iframe id="iframe_action"></iframe>
 
 </body>
 
