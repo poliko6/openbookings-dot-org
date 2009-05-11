@@ -35,11 +35,11 @@
 	$start_date = date($date_format, $_GET["stamp"]);
 	$start_hour = date("H:i", $_GET["stamp"]);
 
-	$duration = getDuration($activity_step * 60);
+	$array_duration = getDuration($activity_step * 60);
 
-	$duration_days = $duration["days"];
-	$duration_hours = $duration["hours"];
-	$duration_minutes = $duration["minutes"];
+	$duration_days = $array_duration["days"];
+	$duration_hours = $array_duration["hours"];
+	$duration_minutes = $array_duration["minutes"];
 
 	function getDuration($seconds) {
 
@@ -72,17 +72,17 @@
 	<style type="text/css">
 		.date { text-align:center; width:100px }
 		.duration { text-align:center; width:50px }
+		#iframe_action { visibility:visible; width:500px; height:200px }
 	</style>
 
 	<script type="text/javascript"><!--
-	
+
 		function $(id) { return document.getElementById(id); }
-		
+
 		function showFirstAvailability() {
-			$("iframe_action").src = "actions.php?
-			
+			$("iframe_action").src = "actions.php?action_=show_first_availability&object_id=<?php echo $_REQUEST["object_id"]; ?>&start_stamp=<?php echo $_GET["stamp"]; ?>&duration=<?php echo $duration_days . "|" . $duration_hours . "|" . $duration_minutes; ?>;\n";
 		}
-	
+
 	--></script>
 
 </head>
@@ -112,6 +112,8 @@
 			<td>Days<br><input class="duration" type="text" id="duration_days" name="duration_days" value="<?php echo $duration_days; ?>"></td>
 			<td>Hours<br><input class="duration" type="text" id="duration_hours" name="duration_hours" value="<?php echo $duration_hours; ?>"></td>
 			<td>Minutes<br><input class="duration" type="text" id="duration_minutes" name="duration_minutes" value="<?php echo $duration_minutes; ?>"></td>
+		</tr><tr>
+			<td colspan="3" id="slot_display"></td>
 		</tr>
 	</table>
 
@@ -122,7 +124,7 @@
 	<button type="button" onClick="showFirstAvailability()">Show first availability</button>
 
 	</center></div>
-	
+
 	<iframe id="iframe_action"></iframe>
 
 </body>

@@ -307,9 +307,17 @@
 		db_query($database_name, $sql, "no", "no");
 		break;
 
-		case "show_available_slots": // ****************************************************************************
+		case "show_first_availability":
 
-		// $_GET["object_id"], $_GET["start_date"], $_GET["start_hour"], $_GET["book_duration"]
+			$first_availability = findFirstAvailability($_GET("object_id"), $_GET("start_stamp"), $_GET("duration"));
+
+			$script = "parent.document.getElementById(\"slot_display\").innerHTML = \"" . $first_availability . "\";\n";
+
+		break;
+
+		/* case "show_available_slots": // ****************************************************************************
+
+		//$_GET["object_id"], $_GET["start_date"], $_GET["start_hour"], $_GET["book_duration"]
 
 		global $date_format;
 
@@ -407,14 +415,14 @@
 		$script = "parent.document.getElementById(\"available_slots\").innerHTML = \"" . $availables_slots_list . "\";\n";
 
 		case "delete_localization":
-		
+
 			$sql = "DELETE FROM rs_param_lang WHERE lang_id = " . $_POST["lang_id"] . ";";
 			db_query($database_name, $sql, "no", "no");
-			
+
 			$script = "parent.document.location = \"localize.php\";\n";
-		
-		break;
-		
+
+		break; */
+
 		case "export_localization": // ****************************************************************************
 
 			$absolute_csvfile_path = dirname($_SERVER["SCRIPT_FILENAME"]) . "/openbookings_localization.csv";
@@ -532,7 +540,7 @@
 
 			$sql = "DROP TABLE rs_temp_lang";
 			db_query($database_name, $sql, "no", "no");
-			
+
 			$script  = "parent.document.location = \"localize.php\";\n";
 			$script .= "alert(\"" . Translate("Import Successful", 1) . "\");\n";
 		}
