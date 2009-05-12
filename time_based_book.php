@@ -2,7 +2,7 @@
 
 	/* OpenBookings.org - Copyright (C) 2005 Jérôme ROGER (jerome@openbookings.org)
 
-	book.php - This file is part of OpenBookings.org (http://www.openbookings.org)
+	time_based_book.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 
     OpenBookings.org is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -68,10 +68,10 @@
 	$error_msg = ""; $script = ""; $update_status = "disabled";
 
 	if(isset($_REQUEST["action_"])) {
-		
+
 		$booking_start = DateAndHour(DateReformat($_REQUEST["start_date"]), $_REQUEST["start_hour"]);
 		$booking_end = DateAndHour(DateReformat($_REQUEST["end_date"]), $_REQUEST["end_hour"]);
-	
+
 		switch($_REQUEST["action_"]) {
 
 			case "insert_new_booking":
@@ -150,7 +150,7 @@
 			echo "</html>\n";
 
 		} else { // an error has occured (typically the new booking covers another one)
-		
+
 			echo "</head>" . chr(10);
 			echo "<body style=\"text-align:center\"><center>\n";
 			echo "<table style=\"text-align:center\">\n";
@@ -297,7 +297,7 @@
 
 	function DelBooking() {
 		if(window.confirm("<?php echo Translate("Do you really want to delete this booking ?", 0); ?>")) {
-			document.location = "book.php?action_=delete_booking&book_id=<?php echo $book_id; ?>&stamp=<?php echo $stamp; ?>&object_id=<?php echo $object_id; ?>";
+			document.location = "time_based_book.php?action_=delete_booking&book_id=<?php echo $book_id; ?>&stamp=<?php echo $stamp; ?>&object_id=<?php echo $object_id; ?>";
 		}
 	}
 
@@ -307,7 +307,7 @@
 
 <body>
 
-<form id="form_ajout_resa" name="form_ajout_resa" method="post" action="book.php">
+<form id="form_ajout_resa" name="form_ajout_resa" method="post" action="time_based_book.php">
 
 <div class="global" style="width:440px; height:250px; top:50px">
 
@@ -315,23 +315,23 @@
 	<br>
 	<span style="font-weight:bold"><?php echo $family_name . " / " . $object_name . "</span> <span class=\"small_text\">(" . $managers_names . ")</span>"; ?>
 	<div class="colorframe" style="padding:10px">
-	
+
 		<table class="table3">
 
 			<tr>
 				<?php if(getObjectInfos($_REQUEST["object_id"], "object_is_managed") || intval($_COOKIE["bookings_profile_id"]) > 3) { ?>
 
 				<td><?php echo Translate("Booker", 1); ?><br><select id="booker_id" name="booker_id" style="width:200px"><?php echo $users_list; ?></select></td>
-				
+
 				<?php } else { ?>
 
 				<td>
 					<?php echo Translate("Booker", 1); ?><br><input id="booker_display" name="booker_display" locked>
 					<input type="hidden" id="booker_id" name="booker_id" value="<?php echo $_COOKIE["bookings_user_id"]; ?>">
 				</td>
-				
+
 				<?php } ?>
-				
+
 				<td>
 					<?php echo Translate("Start", 1); ?><br>
 					<input type="text" id="start_date" name="start_date" style="width:80px" value="<?php echo $book_start_day; ?>">
@@ -340,13 +340,13 @@
 
 			</tr><tr>
 				<td style="text-align:center"><input type="checkbox" id="validated" name="validated" <?php if($validated) { echo "checked"; } ?>> <?php echo Translate("Request validated", 1); ?></td>
-				
+
 				<td>
-			
+
 					<?php echo Translate("End", 1); ?><br>
 					<input type="text" id="end_date" name="end_date" style="width:80px" value="<?php echo $book_end_day; ?>">
 					<select id="end_hour" name="end_hour"><?php echo $hours_list; ?></select>
-			
+
 				</td>
 			</tr>
 
@@ -358,11 +358,11 @@
 			<textarea id="misc_info" name="misc_info" style="width:410px; height:60px"><?php echo $misc_info; ?></textarea>
 
 			</td></tr></table>
-		
+
 		</div>
 
 	<br>
-	
+
 	<center>
 	<button type="submit" style="width:100px" <?php echo $update_status; ?>><?php echo Translate("Save", 1); ?></button>
 	<button type="button" style="width:100px" onCLick="DelBooking()" <?php echo $update_status; ?>><?php echo Translate("Delete", 1); ?></button>

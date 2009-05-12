@@ -18,6 +18,11 @@
     along with OpenBookings.org; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA */
 
+	$application_access_level = param_extract("application_access_level");
+
+	if(isset($_COOKIE["bookings_date_format"])) { $date_format = $_COOKIE["bookings_date_format"]; } else { $date_format = param_extract("default_date_format"); }
+	if(isset($_COOKIE["bookings_time_offset"])) { $time_offset = $_COOKIE["bookings_time_offset"]; } else { $time_offset = 0; }
+
 	// refeshes the cookie (resets timeout)
 	if(isset($_COOKIE["bookings_user_id"])) {
 		$session_timeout = param_extract("session_timeout");
@@ -26,8 +31,11 @@
 		if(isset($_COOKIE["bookings_profile_id"])) { setcookie("bookings_profile_id", $_COOKIE["bookings_profile_id"], (time() + $session_timeout)); }
 		if(isset($_COOKIE["bookings_language"])) { setcookie("bookings_language", $_COOKIE["bookings_language"], (time() + $session_timeout)); }
 		if(isset($_COOKIE["bookings_time_offset"])) { setcookie("bookings_time_offset", $_COOKIE["bookings_time_offset"], (time() + $session_timeout)); }
-		if(isset($_COOKIE["bookings_date_format"])) { setcookie("bookings_date_format", $_COOKIE["bookings_date_format"], (time() + $session_timeout)); }
+		if(isset($_COOKIE["bookings_date_format"])) { setcookie("bookings_date_format", $date_format, (time() + $session_timeout)); }
 	}
+
+	// extracts colors from the table which holds parameters
+	$app_title = param_extract("app_title");
 
 	function dateRange($start_date, $end_date) {
 
@@ -202,13 +210,13 @@
 
 		return $error_msg;
 	}
-	
+
 	function getAvailability($object_id, $start_stamp, $duration) { // used for stacking booking
-		
-		global $database_name;
-		
+
+		global $database_name, $date_format;
+
 		$start_date = date("Y-m-d H:i:s", $start_stamp);
-	
+
 		$array_duration = explode("|", $duration); // d|h|i
 		$duration_stamp = $array_duration[0] * 86400 + $array_duration[1] * 3600 + $array_duration[2] * 60;
 
@@ -220,23 +228,30 @@
 
 		$book_start = "";
 		$previous_book_end = $start_date;
-		
-		while($temp_ = fetch_array($temp)) {
-			
-			$hole_start = strtotime($previous_book_end);
-			$hole_end = strtotime($temp_["book_start"]);
-			
-			if($duration_stamp <= ($hole_end - $hole_start)) {
-				
-				$book_start = $hole_start;
-				break; // exits while loop
+
+		if(num_rows($temp)) {
+
+			while($temp_ = fetch_array($temp)) {
+
+				$hole_start = strtotime($previous_book_end);
+				$hole_end = strtotime($temp_["book_start"]);
+
+				if($duration_stamp <= ($hole_end - $hole_start)) {
+
+					$book_start = $hole_start;
+					break; // exits while loop
+				}
+
+				$previous_book_end = $temp_["book_end"];
+
+				$n++;
 			}
-	
-			$previous_book_end = $temp_["book_end"];
-			
-			$n++;
+
+		} else {
+
+			$book_start = date($date_format . " H:i", strtotime($start_date));
 		}
-		
+
 		return $book_start;
 	}
 
@@ -304,7 +319,7 @@
 			switch($debutfin) {
 
 				case "debut": return date("Y-m-d", $timestamp); break; // date du premier jour de la semaine
-				case "fin": return date("Y-m-d", strtotime("+6 days", $timestamp); break; // date du dernier jour de la semaine
+				case "fin": return date("Y-m-d", strtotime("+6 days", $timestamp)); break; // date du dernier jour de la semaine
 
 				case "debut_annee":
 				$ts = strtotime(date("Y", $timestamp) . "-01-01");
@@ -509,10 +524,4 @@
 			return true;
 		}
 	}
-
-	// extracts colors from the table which holds parameters
-	$app_title = param_extract("app_title");
-	if(isset($_COOKIE["bookings_date_format"])) { $date_format = $_COOKIE["bookings_date_format"]; } else { $date_format = param_extract("default_date_format"); }
-	$application_access_level = param_extract("application_access_level");
-	if(isset($_COOKIE["bookings_time_offset"])) { $time_offset = $_COOKIE["bookings_time_offset"]; } else { $time_offset = 0; }
 ?>

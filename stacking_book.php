@@ -113,7 +113,9 @@
 			<td>Hours<br><input class="duration" type="text" id="duration_hours" name="duration_hours" value="<?php echo $duration_hours; ?>"></td>
 			<td>Minutes<br><input class="duration" type="text" id="duration_minutes" name="duration_minutes" value="<?php echo $duration_minutes; ?>"></td>
 		</tr><tr>
-			<td colspan="3" id="slot_display"></td>
+			<td colspan="3" style="font-weight:bold; padding-top:20px">First availability</td>
+		</tr><tr>
+			<td colspan="3" id="slot_display" style="text-align:center"></td>
 		</tr>
 	</table>
 
