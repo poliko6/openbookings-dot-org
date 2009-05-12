@@ -80,7 +80,7 @@
 		function $(id) { return document.getElementById(id); }
 
 		function showFirstAvailability() {
-			$("iframe_action").src = "actions.php?action_=show_first_availability&object_id=<?php echo $_REQUEST["object_id"]; ?>&start_stamp=<?php echo $_GET["stamp"]; ?>&duration=<?php echo $duration_days . "|" . $duration_hours . "|" . $duration_minutes; ?>;\n";
+			$("iframe_action").src = "actions.php?action_=show_first_availability&object_id=<?php echo $_REQUEST["object_id"]; ?>&start_date=" + $("start_date").value + "&start_hour=" + $("start_hour").value + "&duration=" + $("duration_days").value + "|" + $("duration_hours").value + "|" + $("duration_minutes").value;
 		}
 
 	--></script>

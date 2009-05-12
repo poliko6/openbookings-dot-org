@@ -203,7 +203,14 @@
 		return $error_msg;
 	}
 	
-	function findFirstAvailability($object_id, $start_date, $duration) { // used for stacking booking
+	function getAvailability($object_id, $start_stamp, $duration) { // used for stacking booking
+		
+		global $database_name;
+		
+		$start_date = date("Y-m-d H:i:s", $start_stamp);
+	
+		$array_duration = explode("|", $duration); // d|h|i
+		$duration_stamp = $array_duration[0] * 86400 + $array_duration[1] * 3600 + $array_duration[2] * 60;
 
 		$sql  = "SELECT book_id, book_start, book_end FROM rs_data_bookings ";
 		$sql .= "WHERE object_id = " . $object_id . " ";
@@ -219,7 +226,7 @@
 			$hole_start = strtotime($previous_book_end);
 			$hole_end = strtotime($temp_["book_start"]);
 			
-			if($duration <= ($hole_end - $hole_start)) {
+			if($duration_stamp <= ($hole_end - $hole_start)) {
 				
 				$book_start = $hole_start;
 				break; // exits while loop
@@ -290,23 +297,23 @@
 
 			$timestamp = strtotime($annee . "-01-01"); // timestamp du premier janvier de l'année choisie
 
-			while(intval(date("W",$timestamp)) != 1) { $timestamp += 86400; } // Avancer jusqu'à la semaine 1 (année-01-01 peut être en semaine 53)
+			while(intval(date("W",$timestamp)) != 1) { $timestamp = strtotime("+1 days", $timestamp); } // Avancer jusqu'à la semaine 1 (année-01-01 peut être en semaine 53)
 
-			while(intval(date("W", $timestamp)) != $date_a_verifier) { $timestamp += 604800; } // avancer semaine par semaine jusqu'à la semaine spécifiée par l'utilisateur
+			while(intval(date("W", $timestamp)) != $date_a_verifier) { $timestamp = strtotime("+1 weeks", $timestamp); } // avancer semaine par semaine jusqu'à la semaine spécifiée par l'utilisateur
 
 			switch($debutfin) {
 
 				case "debut": return date("Y-m-d", $timestamp); break; // date du premier jour de la semaine
-				case "fin": return date("Y-m-d", $timestamp + 86400 * 6); break; // date du dernier jour de la semaine
+				case "fin": return date("Y-m-d", strtotime("+6 days", $timestamp); break; // date du dernier jour de la semaine
 
 				case "debut_annee":
 				$ts = strtotime(date("Y", $timestamp) . "-01-01");
-				while(intval(date("W",$ts)) != 1) { $ts += 86400; }
+				while(intval(date("W",$ts)) != 1) { $ts = strtotime("+1 days", $ts); }
 				return date("Y-m-d", $ts); break;
 
 				case "fin_annee":
 				$ts = strtotime(date("Y", $timestamp) . "-12-31");
-				while(intval(date("W",$ts)) != 52) { $ts -= 86400; }
+				while(intval(date("W",$ts)) != 52) { $ts = strtotime("-1 days", $ts); }
 				return date("Y-m-d", $ts); break;
 			}
 		}

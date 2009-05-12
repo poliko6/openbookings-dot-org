@@ -300,16 +300,19 @@
 
 		break;
 
-		case "update_localization":
+		case "update_localization": // ****************************************************************************
+		
 		$sql = "UPDATE rs_param_lang SET ";
 		$sql .= $_REQUEST["localize_to"] . " = '" . addslashes($_REQUEST["localize_to_" . $_REQUEST["lang_id"]]) . "' ";
 		$sql .= "WHERE lang_id = " . $_REQUEST["lang_id"] . ";";
 		db_query($database_name, $sql, "no", "no");
 		break;
 
-		case "show_first_availability":
+		case "show_first_availability": // ****************************************************************************
 
-			$first_availability = findFirstAvailability($_GET("object_id"), $_GET("start_stamp"), $_GET("duration"));
+			$start_stamp = strtotime($_GET["start_date"] . " " . $_GET["start_hour"]);
+			
+			$first_availability = getAvailability($_GET["object_id"], $start_stamp, $_GET["duration"]);
 
 			$script = "parent.document.getElementById(\"slot_display\").innerHTML = \"" . $first_availability . "\";\n";
 
