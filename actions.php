@@ -310,9 +310,9 @@
 
 		case "show_first_availability": // ****************************************************************************
 
-			$start_stamp = strtotime($_GET["start_date"] . " " . $_GET["start_hour"]);
+			$start_date = DateReformat($_GET["start_date"]) . " " . $_GET["start_hour"] . ":00";
 
-			$first_availability = getAvailability($_GET["object_id"], $start_stamp, $_GET["duration"]);
+			$first_availability = getAvailability($_GET["object_id"], $start_date, $_GET["duration"]);
 
 			$script = "parent.document.getElementById(\"slot_display\").innerHTML = \"" . $first_availability . "\";\n";
 

@@ -211,18 +211,16 @@
 		return $error_msg;
 	}
 
-	function getAvailability($object_id, $start_stamp, $duration) { // used for stacking booking
+	function getAvailability($object_id, $start_date, $duration) { // used for stacking booking
 
 		global $database_name, $date_format;
-
-		$start_date = date("Y-m-d H:i:s", $start_stamp);
 
 		$array_duration = explode("|", $duration); // d|h|i
 		$duration_stamp = $array_duration[0] * 86400 + $array_duration[1] * 3600 + $array_duration[2] * 60;
 
 		$sql  = "SELECT book_id, book_start, book_end FROM rs_data_bookings ";
 		$sql .= "WHERE object_id = " . $object_id . " ";
-		$sql .= "AND book_end >= '" . $start_date . "' ";
+		$sql .= "AND book_end > '" . $start_date . "' ";
 		$sql .= "ORDER BY book_end ASC;";
 		$temp = db_query($database_name, $sql, "no", "no");
 
@@ -247,12 +245,17 @@
 				$n++;
 			}
 
+			$hole_start = strtotime($previous_book_end);
+			$hole_end = strtotime($temp_["book_start"]);
+
+			$book_start = $hole_start;
+
 		} else {
 
 			$book_start = date($date_format . " H:i", strtotime($start_date));
 		}
 
-		return $book_start;
+		return date("Y-m-d H:i:s", $book_start);
 	}
 
 	function Translate($english, $special_chars_to_html) {
