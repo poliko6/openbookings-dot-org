@@ -175,7 +175,6 @@
 				for($n=1; $n<=$_REQUEST["custom_permissions_nb"]; $n++) {
 					$sql = "UPDATE rs_data_permissions SET permission = '" . $_REQUEST["custom_permission_" . $n] . "' WHERE permission_id = " . $_REQUEST["permission_id_" . $n] . ";";
 					db_query($database_name, $sql, "no", "no");
-					echo $sql;
 				}
 
 				$reload_location = "object.php?object_id=" . $object_id;
@@ -288,13 +287,15 @@
 		$custom_permissions_table .= "<td><input type=\"radio\" id=\"manage_" . $n . "\" name=\"custom_permission_" . $n . "\" value=\"manage\">\n";
 		$custom_permissions_table .= "<td>&nbsp;</td>";
 		$custom_permissions_table .= "</tr>\n";
-		$custom_permissions_script .= "document.getElementById(\"" . $custom_permissions_["permission"] . "_" . $n . "\").checked = true;\n";
+		$custom_permissions_script .= "$(\"" . $custom_permissions_["permission"] . "_" . $n . "\").checked = true;\n";
 	}
 
 	$custom_permissions_nb = $n;
 ?>
 
 <script type="text/javascript"><!--
+
+	<?php includeCommonScripts(); ?>
 
 	function CheckFormat(value_to_check, filter){
 	   var re = new RegExp(filter,"i");
@@ -306,32 +307,32 @@
 
 		var allow_submit = true;
 
-		if(CheckFormat(document.getElementById("activity_start").value, "^(([0-9]{1})|([0-1][0-9])|([1-2][0-3])):([0-5][0-9])$") == null) {
+		if(CheckFormat($("activity_start").value, "^(([0-9]{1})|([0-1][0-9])|([1-2][0-3])):([0-5][0-9])$") == null) {
 			alert("<?php echo Translate("Activity start format is not valid (should be hh:mm)", 0); ?>");
 			allow_submit = false;
 		}
 
-		if(CheckFormat(document.getElementById("activity_end").value, "^(([0-9]{1})|([0-1][0-9])|([1-2][0-3])):([0-5][0-9])$") == null) {
+		if(CheckFormat($("activity_end").value, "^(([0-9]{1})|([0-1][0-9])|([1-2][0-3])):([0-5][0-9])$") == null) {
 			alert("<?php echo Translate("Activity end format is not valid (should be hh:mm)", 0); ?>");
 			allow_submit = false;
 		}
 
-		if(CheckFormat(document.getElementById("activity_step").value, "^[1-9][0-9]{0,2}$") == null) {
+		if(CheckFormat($("activity_step").value, "^[1-9][0-9]{0,2}$") == null) {
 			alert("<?php echo Translate("Activity step format is not valid (should be an integer between 1 and 999)", 0); ?>");
 			allow_submit = false;
 		}
 
-		if(allow_submit) { document.getElementById("form_object").submit(); }
+		if(allow_submit) { $("form_object").submit(); }
 	}
 
 	function DeleteObject() {
 		rep = window.confirm("<?php echo Translate("WARNING ! Deleting an object will destroy all attached bookings", 0); ?>.\n\n <?php echo Translate("Do you really want to delete this object ?", 0); ?>");
-		if(rep) { document.getElementById("action_").value = "delete_object"; document.getElementById("form_object").submit(); }
+		if(rep) { $("action_").value = "delete_object"; $("form_object").submit(); }
 	}
 
 	function AddCustomPermission() {
-		document.getElementById("action_").value = "add_custom_permission";
-		document.getElementById("form_object").submit();
+		$("action_").value = "add_custom_permission";
+		$("form_object").submit();
 	}
 
 	function DeleteCustomPermission(permission_id) {
@@ -483,10 +484,10 @@
 
 <script type="text/javascript"><!--
 
-	document.getElementById("booking_method").value = "<?php echo $booking_method; ?>";
-	document.getElementById("everyone_<?php echo $everyone_generic_permissions; ?>").checked = true;
-	document.getElementById("guests_<?php echo $guests_generic_permissions; ?>").checked = true;
-	document.getElementById("users_<?php echo $users_generic_permissions; ?>").checked = true;
+	$("booking_method").value = "<?php echo $booking_method; ?>";
+	$("everyone_<?php echo $everyone_generic_permissions; ?>").checked = true;
+	$("guests_<?php echo $guests_generic_permissions; ?>").checked = true;
+	$("users_<?php echo $users_generic_permissions; ?>").checked = true;
 
 	<?php echo $custom_permissions_script; ?>
 

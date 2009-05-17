@@ -72,7 +72,7 @@
 
 	<script type="text/javascript"><!--
 
-		function $(id) { return document.getElementById(id); }
+		<?php includeCommonScripts(); ?>
 
 		function changeColumns() {
 			$("languages_form").action = "localize.php";
@@ -99,9 +99,9 @@
 			$("action_").value = "export_localization";
 			$("languages_form").submit();
 		}
-		
+
 		function DeleteLocalization(lang_id) {
-		
+
 			if(window.confirm("<?php echo Translate("Delete this line ?", 0); ?>")) {
 				$("languages_form").action = "actions.php";
 				$("languages_form").target = "iframe_action";

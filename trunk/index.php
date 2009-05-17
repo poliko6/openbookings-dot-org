@@ -18,8 +18,6 @@
     along with OpenBookings.org; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA */
 
-
-
 	require_once "config.php";
 	require_once "connect_db.php";
 	require_once "functions.php";
@@ -64,9 +62,9 @@
 
 	<?php if($application_access_level == "1") { echo "function AnonymousAccess() { document.location = \"index.php?rand=" . rand(1,9999) . "&action_=login&user=anonymous&password=anonymous\"; }\n"; } ?>
 
-		var current_tab_id = "";
+		<?php includeCommonScripts(); ?>
 
-		function $(id) { return document.getElementById(id); }
+		var current_tab_id = "";
 
 		function highLightTab(id, e) {
 
@@ -182,9 +180,9 @@
 
 <iframe id="iframe_action" name="iframe_action"></iframe>
 
-<script type="text/javascript">
+<script type="text/javascript"><!--
 	changeTab("connect");
-</script>
+--></script>
 
 </body>
 

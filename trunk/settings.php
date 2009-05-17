@@ -148,10 +148,12 @@
 
 <script type="text/javascript"><!--
 
+	<?php includeCommonScripts(); ?>
+
 	function localizeApp() {
 		document.location = "localize.php";
 	}
-	
+
 	<?php if(isset($_POST["action_"])) { ?>
 		parent.frames[0].location = "menu.php";
 		parent.frames[1].location = "intro.php";
@@ -179,14 +181,14 @@
 			<tr><td></td><td colspan="2" class="small_text"><input type="checkbox" id="users_can_customize_timezone" name="users_can_customize_timezone"<?php if($users_can_customize_timezone == "yes") { echo " checked"; } ?>><?php echo Translate("Users can customize timezone", 1); ?></td></tr>
 			<tr><td style="text-align:right"><?php echo Translate("Default language", 1); ?> :</td><td><select id="language" name="language"><?php echo $languages_list; ?></select></td><td class="small_text"><input type="checkbox" id="reset_languages" name="reset_languages"><?php echo Translate("Replace in all users profiles", 1); ?></td></tr>
 			<tr><td colspan="3" style="height:10px"></td></tr>
-			
+
 			<tr><td style="text-align:right"><?php echo Translate("Default date format", 1); ?> :</td><td><input id="default_date_format" name="default_date_format" style="width:70px; text-align:center" value="<?php echo $default_date_format; ?>"></td>
 				<td class="small_text">
 					<input type="checkbox" id="users_can_customize_date_format" name="users_can_customize_date_format"<?php if($users_can_customize_date_format == "yes") { echo " checked"; } ?>> <?php echo Translate("Users can customize date format", 1); ?><br>
 					<input type="checkbox" id="reset_date_format" name="reset_date_format"> <?php echo Translate("Replace in all users profiles", 1); ?>
 				</td>
 			</tr>
-			
+
 			<tr><td colspan="3" style="height:10px"></td></tr>
 			<tr><td style="text-align:right"><?php echo Translate("Logo file", 1); ?> : [<?php echo Translate("app root folder", 1); ?>]/pictures /</td><td colspan="2"><input id="logo_file" name="logo_file" style="width:120px" value="<?php echo $logo_file; ?>"></td></tr>
 			<tr><td style="text-align:right"><?php echo Translate("Application title", 1); ?> :</td><td colspan="2"><input id="app_title" name="app_title" style="width:280px" value="<?php echo $app_title; ?>"></td></tr>
@@ -223,9 +225,9 @@
 </center>
 
 <script type="text/javascript"><!--
-	document.getElementById("server_timezone").value = "<?php echo $server_timezone; ?>";
-	document.getElementById("default_user_timezone").value = "<?php echo $default_user_timezone; ?>";
-	document.getElementById("self_registration_mode").value = "<?php echo $self_registration_mode; ?>";
+	$("server_timezone").value = "<?php echo $server_timezone; ?>";
+	$("default_user_timezone").value = "<?php echo $default_user_timezone; ?>";
+	$("self_registration_mode").value = "<?php echo $self_registration_mode; ?>";
 --></script>
 
 </body>

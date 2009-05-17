@@ -33,6 +33,9 @@
 
 <title><?php echo $app_title . " :: " . Translate("Family", 1); ?></title>
 
+	<script type="text/javascript"><!--
+		<?php includeCommonScripts(); ?>
+	--></script>
 <?php
 	$family_id = $_REQUEST["family_id"];
 
@@ -156,7 +159,6 @@
 			if($temp_["sort_order"] == $sort_order) { $selected = " selected"; } else { $selected = ""; }
 			$families_list .= "<option value='" . $temp_["sort_order"] . "'" . $selected . ">" . $temp_["family_name"] . "</option>";
 		}
-
 ?>
 
 	<link rel="stylesheet" type="text/css" href="styles.php">
@@ -164,8 +166,8 @@
 	<?php if($family_id != "0" && $_COOKIE["bookings_profile_id"] == "4") { ?><script type="text/javascript"><!--
 		function DeleteFamily() {
 			if(window.confirm("<?php echo Translate("WARNING ! Deleting this family will move all its objects in a temporary 'Unclassified' family", 0); ?>")) {
-				document.getElementById("action_").value = "delete_family";
-				document.getElementById("form_family").submit();
+				$("action_").value = "delete_family";
+				$("form_family").submit();
 			}
 		}
 	--></script><?php } ?>

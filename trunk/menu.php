@@ -76,7 +76,7 @@
 	if($temp_ = fetch_array($temp)) {
 		$families_list .= "<option value=\"255\"";
 		if($family_id == 255) { $families_list .= " selected"; }
-		$families_list .= ">&lt;" . Translate("Unclassified", 1) . "&gt;</option>" . chr(10);
+		$families_list .= ">&lt;" . Translate("Unclassified", 1) . "&gt;</option>\n";
 	}
 
 	// extracts allowed objects list for current user
@@ -94,7 +94,7 @@
 
 		$objects_list .= "<option value=\"" . $objets_["object_id"] . "\"";
 		if($objets_["object_id"] == $object_id) { $objects_list .= " selected"; }
-		$objects_list .= ">" . $objets_["object_name"] . "</option>" . chr(10);
+		$objects_list .= ">" . $objets_["object_name"] . "</option>\n";
 	}
 
 	// get user from database
@@ -114,40 +114,42 @@
 
 <script type="text/javascript"><!--
 
+	<?php includeCommonScripts(); ?>
+
 	function ChangeFamily(FamilyId) {
 
 		if(FamilyId !=0) {
-			document.location = "menu.php?user_id=<?php echo $_COOKIE["bookings_user_id"]; ?>&family_id=" + FamilyId + "&annee=" + document.getElementById("annee").value;
+			document.location = "menu.php?user_id=<?php echo $_COOKIE["bookings_user_id"]; ?>&family_id=" + FamilyId + "&annee=" + $("annee").value;
 		} else {
-			document.getElementById("object_id").disabled = true;
-			document.getElementById("show_object").disabled = true;
-			document.getElementById("show_year").disabled = true;
-			document.getElementById("show_week").disabled = true;
+			$("object_id").disabled = true;
+			$("show_object").disabled = true;
+			$("show_year").disabled = true;
+			$("show_week").disabled = true;
 		}
 	}
 
 	function ChangeObject(ObjectId) {
 
 		if(ObjectId == 0) {
-			document.getElementById("family_id").disabled = true;
-			document.getElementById("show_family").disabled = true;
-			document.getElementById("show_year").disabled = true;
-			document.getElementById("show_week").disabled = true;
+			$("family_id").disabled = true;
+			$("show_family").disabled = true;
+			$("show_year").disabled = true;
+			$("show_week").disabled = true;
 		} else {
-			document.getElementById("family_id").disabled = false;
-			document.getElementById("show_family").disabled = false;
-			document.getElementById("show_year").disabled = false;
-			document.getElementById("show_week").disabled = false;
+			$("family_id").disabled = false;
+			$("show_family").disabled = false;
+			$("show_year").disabled = false;
+			$("show_week").disabled = false;
 		}
 	}
 
-	function ShowFamily() { top.frames[1].location = "family.php?user_id=<?php echo $_COOKIE["bookings_user_id"]; ?>&family_id=" + document.getElementById("family_id").value; }
-	function ShowObject() { top.frames[1].location = "object.php?object_id=" + document.getElementById("object_id").value + "&user_id=<?php echo $_COOKIE["bookings_user_id"]; ?>&family_id=" + document.getElementById("family_id").value; }
-	function AvailabilitySearch() { document.getElementById("search_form").submit(); }
+	function ShowFamily() { top.frames[1].location = "family.php?user_id=<?php echo $_COOKIE["bookings_user_id"]; ?>&family_id=" + $("family_id").value; }
+	function ShowObject() { top.frames[1].location = "object.php?object_id=" + $("object_id").value + "&user_id=<?php echo $_COOKIE["bookings_user_id"]; ?>&family_id=" + $("family_id").value; }
+	function AvailabilitySearch() { $("search_form").submit(); }
 	function ShowCalendar(filename) {
-		document.getElementById("form_resa").action = filename; document.getElementById("form_resa").submit();
+		$("form_resa").action = filename; $("form_resa").submit();
 	}
-	function DeLog() { document.getElementById("iframe_action").src = "actions.php?action_=delog"; }
+	function DeLog() { $("iframe_action").src = "actions.php?action_=delog"; }
 
 --></script>
 
@@ -219,7 +221,7 @@
 	<td style="font-weight:bold"><?php echo Translate("Week #", 1); ?></td>
 	<td><input id="n_semaine" name="n_semaine"  style="width:24px; text-align:center" value="<?php echo date("W"); ?>"></td>
 	<td></td>
-	<td><button id="show_week" type="button" style="width:60px" onClick="ShowCalendar('week.php?year=' + document.getElementById('annee').value + '&amp;week=' + document.getElementById('n_semaine').value)"><?php echo Translate("Show", 1); ?></button></td>
+	<td><button id="show_week" type="button" style="width:60px" onClick="ShowCalendar('week.php?year=' + $('annee').value + '&amp;week=' + $('n_semaine').value)"><?php echo Translate("Show", 1); ?></button></td>
 </tr></table>
 
 </td></tr>
@@ -228,7 +230,7 @@
 <tr><td style="height:10px"></td></tr>
 <tr><td style="text-align:center">- <?php echo Translate("or", 1); ?> -</td></tr>
 <tr><td style="height:10px"></td></tr>
-<tr><td><button id="show_whole_family" type="button" style="width:160px" onClick="ShowCalendar('whole_family.php?family_id=' + document.getElementById('family_id').value + '&amp;year=' + document.getElementById('annee').value + '&amp;week=' + document.getElementById('n_semaine').value)"><?php echo Translate("Whole family", 1); ?></button></td></tr>
+<tr><td><button id="show_whole_family" type="button" style="width:160px" onClick="ShowCalendar('whole_family.php?family_id=' + $('family_id').value + '&amp;year=' + $('annee').value + '&amp;week=' + $('n_semaine').value)"><?php echo Translate("Whole family", 1); ?></button></td></tr>
 <tr><td style="height:10px"></td></tr>
 <tr><td><button id="show_my_bookings" type="button" style="width:160px" onClick="ShowCalendar('my_bookings.php')"><?php echo Translate("My Bookings", 1); ?></button></td></tr>
 <?php } ?>
@@ -289,7 +291,7 @@
 
 <?php if($_COOKIE["bookings_profile_id"] == "4") { ?>
 
-	<span class="small_text"><a href="settings.php" target="middle_frame"><?php echo Translate("Settings", 1); ?></a>&nbsp;|&nbsp;<a href="users.php" target="middle_frame"><?php echo Translate("Users", 1); ?></a></span>
+	<span class="small_text"><a href="settings.php" target="middle_frame"><?php echo Translate("Settings", 1); ?></a> | <a href="users.php" target="middle_frame"><?php echo Translate("Users", 1); ?></a></span>
 	<br><br>
 
 <?php } ?>
@@ -304,8 +306,8 @@
 <iframe id="iframe_action" name="iframe_action" style="width:0px; height:0px; visibility:hidden"></iframe>
 
 <script type="text/javascript"><!--
-document.getElementById("screen_width").value = screen.width;
-document.getElementById("screen_height").value = screen.height;
+$("screen_width").value = screen.width;
+$("screen_height").value = screen.height;
 --></script>
 
 </body>

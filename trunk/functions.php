@@ -37,6 +37,11 @@
 	// extracts colors from the table which holds parameters
 	$app_title = param_extract("app_title");
 
+	function includeCommonScripts() {
+		$common_scripts = "function $(id) { return document.getElementById(id); }\n";
+		echo $common_scripts;
+	}
+
 	function dateRange($start_date, $end_date) {
 
 		global $date_format;
@@ -241,8 +246,6 @@
 				}
 
 				$previous_book_end = $temp_["book_end"];
-
-				$n++;
 			}
 
 			$hole_start = strtotime($previous_book_end);
@@ -255,7 +258,7 @@
 			$book_start = date($date_format . " H:i", strtotime($start_date));
 		}
 
-		return date("Y-m-d H:i:s", $book_start);
+		return date($date_format . " H:i", $book_start);
 	}
 
 	function Translate($english, $special_chars_to_html) {
@@ -299,6 +302,22 @@
 	    $MondayOffset = (11-date('w',$Jan1))%7-3;
 	    $desiredMonday = strtotime(($week-1) . ' weeks '.$MondayOffset.' days', $Jan1);
 	    return $desiredMonday;
+	}
+
+	function getDuration($seconds) { // converts a number of seconds into a days|hours|minutes array.
+
+		$days = floor($seconds / 86400);
+
+		$seconds -= ($days * 86400);
+		$hours = floor($seconds / 3600);
+
+
+		$seconds -= ($hours * 3600);
+		$minutes = floor($seconds / 60);
+
+		$seconds -=  ($minutes * 60);
+
+		return array("days"=>$days, "hours"=>$hours, "minutes"=>$minutes, "seconds"=>$seconds);
 	}
 
 	function FormatDate($date_a_verifier, $debutfin) {
@@ -395,15 +414,15 @@
 
 		if(!isset($_COOKIE["bookings_user_id"])) {
 
-			echo "<html><head>" . chr(10);
-			echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">" . chr(10);
-			echo "<title>Session has expired</title>" . chr(10);
-			echo "<script type=\"text/javascript\"><!-- " . chr(10);
-			echo "top.location = \"index.php\";" . chr(10);
-			echo " --></script>" . chr(10);
-			echo "</head>" . chr(10);
-			echo "<body></body>" . chr(10);
-			echo "</html>" . chr(10);
+			echo "<html><head>\n";
+			echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+			echo "<title>Session has expired</title>\n";
+			echo "<script type=\"text/javascript\"><!-- \n";
+			echo "top.location = \"index.php\";\n";
+			echo " --></script>\n";
+			echo "</head>\n";
+			echo "<body></body>\n";
+			echo "</html>\n";
 
 			exit();
 		}
@@ -486,39 +505,39 @@
 				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 				$headers .= "From: " . $booker_name . " <" . $booker_email . ">\r\n";
 
-				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">" . chr(10);
-				$message .= "<html>" . chr(10);
-				$message .= "<head>" . chr(10);
-				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">" . chr(10);
-				$message .= "<title>iframe</title>" . chr(10);
+				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+				$message .= "<html>\n";
+				$message .= "<head>\n";
+				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+				$message .= "<title>iframe</title>\n";
 
-				$message .= "<style type=\"text/css\">" . chr(10);
-				$message .= "a:link {color:black; text-decoration: none; }" . chr(10);
-				$message .= "a:visited {color:black; text-decoration: none; }" . chr(10);
-				$message .= "a:hover {color:red; text-decoration: none; }" . chr(10);
-				$message .= "table { border-collapse: collapse; }" . chr(10);
-				$message .= "td { padding: 3px; }" . chr(10);
-				$message .= "</style>" . chr(10);
+				$message .= "<style type=\"text/css\">\n";
+				$message .= "a:link {color:black; text-decoration: none; }\n";
+				$message .= "a:visited {color:black; text-decoration: none; }\n";
+				$message .= "a:hover {color:red; text-decoration: none; }\n";
+				$message .= "table { border-collapse: collapse; }\n";
+				$message .= "td { padding: 3px; }\n";
+				$message .= "</style>\n";
 
-				$message .= "</head>" . chr(10);
+				$message .= "</head>\n";
 
-				$message .= "<body>" . chr(10);
+				$message .= "<body>\n";
 
-				$message .= $booker_name . " " . Translate("has sent the following booking request", 1) . " :" . chr(10);
-				$message .= "<p>" . chr(10);
-				$message .= Translate("Object", 1) . " : " . $object_name . "<br>" . chr(10);
-				$message .= Translate("Start", 1) . " : " . date($date_format . " H:i", strtotime($booking_start)) . "<br>" . chr(10);
-				$message .= Translate("End", 1) . date($date_format . " H:i", strtotime($booking_end)) . "<p>" . chr(10);
-				$message .= Translate("This booking has already been recorded to the calendar but needs one of the following action", 1) . " :<p>" . chr(10);
+				$message .= $booker_name . " " . Translate("has sent the following booking request", 1) . " :\n";
+				$message .= "<p>\n";
+				$message .= Translate("Object", 1) . " : " . $object_name . "<br>\n";
+				$message .= Translate("Start", 1) . " : " . date($date_format . " H:i", strtotime($booking_start)) . "<br>\n";
+				$message .= Translate("End", 1) . date($date_format . " H:i", strtotime($booking_end)) . "<p>\n";
+				$message .= Translate("This booking has already been recorded to the calendar but needs one of the following action", 1) . " :<p>\n";
 
-				$message .= "<table><tr><td>" . chr(10);
-				$message .= "<a	href=\"" . $app_url . "actions.php?action_=confirm_booking&book_id=" . $book_id . "&validated=yes\" target=\"action_iframe\">[ " . Translate("Accept", 1) . " ]</A>" . chr(10);
-				$message .= "</td><td style=\"width:20px\"></td><td>" . chr(10);
-				$message .= "<a	href=\"" . $app_url . "actions.php?action_=confirm_booking&book_id=" . $book_id . "&validated=no\" target=\"action_iframe\">[ " . Translate("Cancel", 1) . " ]</A>" . chr(10);
-				$message .= "</td></tr></table>" . chr(10);
+				$message .= "<table><tr><td>\n";
+				$message .= "<a	href=\"" . $app_url . "actions.php?action_=confirm_booking&book_id=" . $book_id . "&validated=yes\" target=\"action_iframe\">[ " . Translate("Accept", 1) . " ]</A>\n";
+				$message .= "</td><td style=\"width:20px\"></td><td>\n";
+				$message .= "<a	href=\"" . $app_url . "actions.php?action_=confirm_booking&book_id=" . $book_id . "&validated=no\" target=\"action_iframe\">[ " . Translate("Cancel", 1) . " ]</A>\n";
+				$message .= "</td></tr></table>\n";
 
-				$message .= "<iframe frameborder=\"0\" name=\"action_iframe\" id=\"action_iframe\" style=\"border:none; width:500px; height:100px\">" . chr(10);
-				$message .= "</body>" . chr(10);
+				$message .= "<iframe frameborder=\"0\" name=\"action_iframe\" id=\"action_iframe\" style=\"border:none; width:500px; height:100px\">\n";
+				$message .= "</body>\n";
 				$message .= "</html>";
 
 				mail(getObjectInfos($object_id, "managers_emails"), Translate("Booking validation request", 1), $message, $headers);
