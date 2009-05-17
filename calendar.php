@@ -75,7 +75,8 @@
 <link rel="stylesheet" type="text/css" href="styles.php">
 
 <script type="text/javascript"><!--
-	function ClickOnDay(stamp) { document.getElementById("iframe_day").src = "day.php?stamp=" + stamp + "&object_id=<?php echo $_REQUEST["object_id"]; ?>&screen_width=" + screen.width; }
+	<?php includeCommonScripts(); ?>
+	function ClickOnDay(stamp) { $("iframe_day").src = "day.php?stamp=" + stamp + "&object_id=<?php echo $_REQUEST["object_id"]; ?>&screen_width=" + screen.width; }
 --></script>
 
 </head>
@@ -175,7 +176,7 @@
 				$ferie = 1;
 			}
 
-			echo "document.getElementById(\"j". $stamp . "\").style.background = \"#" . $validated_color . "\";" . chr(10);
+			echo "$(\"j". $stamp . "\").style.background = \"#" . $validated_color . "\";\n";
 
 			$day++;
 

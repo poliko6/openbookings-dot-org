@@ -44,6 +44,8 @@
 
 	<script type="text/javascript"><!--
 
+		<?php includeCommonScripts(); ?>
+
 		function ShowInfos(evt, booker_name, booking_dates, message) {
 
 			// paste message into div
@@ -53,20 +55,20 @@
 			info += "<br>";
 			info += "<span style='color:#808080'>" + message + "<\/span>";
 
-			document.getElementById("booking_infos").innerHTML = info;
+			$("booking_infos").innerHTML = info;
 			// Set div position near the mouse pointer
-			if(evt.clientX < document.getElementById("div_main").style.width / 2) {
-				document.getElementById("booking_infos").style.left = (evt.clientX + document.body.scrollLeft) + "px";
+			if(evt.clientX < $("div_main").style.width / 2) {
+				$("booking_infos").style.left = (evt.clientX + document.body.scrollLeft) + "px";
 			} else {
-				document.getElementById("booking_infos").style.left = (evt.clientX - 260 + document.body.scrollLeft) + "px";
+				$("booking_infos").style.left = (evt.clientX - 260 + document.body.scrollLeft) + "px";
 			}
-			document.getElementById("booking_infos").style.top = (evt.clientY + document.body.scrollTop - 20) + "px";
+			$("booking_infos").style.top = (evt.clientY + document.body.scrollTop - 20) + "px";
 
 			// Show div
-			document.getElementById("booking_infos").style.visibility = "visible";
+			$("booking_infos").style.visibility = "visible";
 		}
 
-		function HideInfos() { document.getElementById("booking_infos").style.visibility = "hidden"; }
+		function HideInfos() { $("booking_infos").style.visibility = "hidden"; }
 
 	--></script>
 

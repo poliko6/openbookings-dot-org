@@ -158,16 +158,19 @@
 <link rel="stylesheet" type="text/css" href="styles.php">
 
 <script type="text/javascript"><!--
+
+	<?php includeCommonScripts(); ?>
+
 	function UpdateUser() {
-		if( document.getElementById("password_confirm").value != "" && ( document.getElementById("password").value != document.getElementById("password_confirm").value )) {
+		if( $("password_confirm").value != "" && ( $("password").value != $("password_confirm").value )) {
 			alert("<?php echo Translate("Password does not meet confirmation", 1); ?>");
 		} else {
-			document.getElementById("form_user").submit();
+			$("form_user").submit();
 		}
 	}
 
 	function CheckUser() {
-		if(document.getElementById("first_name").value == "" || document.getElementById("last_name").value == "") {
+		if($("first_name").value == "" || $("last_name").value == "") {
 			alert("<?php echo Translate("The values for the fields [First name] and [Last name] are required !", 1); ?>");
 		} else {
 			UpdateUser();
@@ -282,7 +285,7 @@
 </body>
 
 <script type="text/javascript"><!--
-	document.getElementById("user_timezone").value = "<?php echo $user_timezone; ?>";
+	$("user_timezone").value = "<?php echo $user_timezone; ?>";
 --></script>
 
 </html>

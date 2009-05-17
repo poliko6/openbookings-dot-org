@@ -88,22 +88,24 @@
 
 <script type="text/javascript"><!--
 
+	<?php includeCommonScripts(); ?>
+
 	// this function shows a popup near the mouse pointer when overheading the hours drawing
 
 	function ShowInfos(evt, booking_nr) {
 
-		if(document.getElementById("s" + booking_nr).value != "0") { // showing booking info is useless if there is no booking
+		if($("s" + booking_nr).value != "0") { // showing booking info is useless if there is no booking
 
 			var posx = 0;
 
 			// paste booker name in info popup
-			var info = "<span style='font-weight:bold'><?php echo Translate("Booked by", 1); ?> : "  + bookings[document.getElementById("s" + booking_nr).value]['booker_name'] +  "</span>";
+			var info = "<span style='font-weight:bold'><?php echo Translate("Booked by", 1); ?> : "  + bookings[$("s" + booking_nr).value]['booker_name'] +  "</span>";
 			info += "<br>";
-			info += bookings[document.getElementById("s" + booking_nr).value]['booking_dates'];
+			info += bookings[$("s" + booking_nr).value]['booking_dates'];
 			info += "<br>";
-			info += "<span style='color:#808080'>" + bookings[document.getElementById("s" + booking_nr).value]['misc_info'] + "</span>";
+			info += "<span style='color:#808080'>" + bookings[$("s" + booking_nr).value]['misc_info'] + "</span>";
 
-			document.getElementById("booking_infos").innerHTML = info;
+			$("booking_infos").innerHTML = info;
 
 			if(evt.clientX < <?php echo intval($screen_width/2); ?>) {
 				posx = evt.clientX + 20;
@@ -111,16 +113,16 @@
 				posx = evt.clientX - (225 + 20);
 			}
 
-			document.getElementById("booking_infos").style.left = posx;
+			$("booking_infos").style.left = posx;
 
-			document.getElementById("booking_infos").style.visibility = "visible";
+			$("booking_infos").style.visibility = "visible";
 		}
 	}
 
-	function HideInfos() { document.getElementById("booking_infos").style.visibility = "hidden"; }
+	function HideInfos() { $("booking_infos").style.visibility = "hidden"; }
 
 	function openBooking(stamp) {
-			var book_id = document.getElementById("s" + stamp).value;
+			var book_id = $("s" + stamp).value;
 			top.frames[1].location = "<?php echo $booking_method; ?>_book.php?book_id=" + book_id + "&object_id=<?php echo $_REQUEST["object_id"]; ?>&stamp=" + stamp;
 	}
 
@@ -149,7 +151,7 @@
 
 	// dispays the timesteps
 	$n = -1; for($t=$activity_start; $t<$activity_end; $t+=$activity_step) { $n++;
-		echo "<div id=\"step_" . $t . "\" class=\"free_step\" style=\"left:" . (($step_size * $n) + $offset) . "px\" onMouseOver=\"ShowInfos(event, '" . $t . "')\" onMouseOut=\"HideInfos()\" onClick=\"openBooking('" . $t . "')\"><input type=\"hidden\" id=\"s" . $t . "\" value=\"0\"></div>" .chr(10);
+		echo "<div id=\"step_" . $t . "\" class=\"free_step\" style=\"left:" . (($step_size * $n) + $offset) . "px\" onMouseOver=\"ShowInfos(event, '" . $t . "')\" onMouseOut=\"HideInfos()\" onClick=\"openBooking('" . $t . "')\"><input type=\"hidden\" id=\"s" . $t . "\" value=\"0\"></div>\n";
 	}
 
 	// displays the hours digits as a caption
@@ -193,12 +195,12 @@
 		for($t=$activity_start; $t<$activity_end; $t+=$activity_step) {
 
 			if($t >= strtotime($bookings_["book_start"]) && $t < strtotime($bookings_["book_end"])) {
-				echo "document.getElementById(\"s" . $t . "\").value = \"" . $bookings_["book_id"] . "\";\n";
-				echo "document.getElementById(\"step_" . $t . "\").style.background = \"#" . $book_color . "\";\n";
+				echo "$(\"s" . $t . "\").value = \"" . $bookings_["book_id"] . "\";\n";
+				echo "$(\"step_" . $t . "\").style.background = \"#" . $book_color . "\";\n";
 
 				if($t == strtotime($bookings_["book_start"])) {
-					echo "document.getElementById(\"step_" . $t . "\").style.borderLeft = \"1px solid black\";\n";
-					echo "document.getElementById(\"step_" . $t . "\").style.width = '" . (intval($activity_step / $coef) - 4) . "px';\n";
+					echo "$(\"step_" . $t . "\").style.borderLeft = \"1px solid black\";\n";
+					echo "$(\"step_" . $t . "\").style.width = '" . (intval($activity_step / $coef) - 4) . "px';\n";
 				}
 
 
@@ -221,7 +223,7 @@
 ?>
 
 <script type="text/javascript"><!--
-	document.getElementById("title_").innerHTML = "<?php echo date($date_format, $_REQUEST["stamp"]); ?> - " + parent.document.getElementById("title_").value + " <span class=\"small_text\">(<?php echo $managers_names; ?>)</span>";
+	$("title_").innerHTML = "<?php echo date($date_format, $_REQUEST["stamp"]); ?> - " + parent.document.getElementById("title_").value + " <span class=\"small_text\">(<?php echo $managers_names; ?>)</span>";
 --></script>
 
 </body>

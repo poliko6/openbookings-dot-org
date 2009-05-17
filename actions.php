@@ -157,30 +157,30 @@
 				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 				$headers .= "From: " . $app_title . " <" . $admin_email . ">\r\n";
 
-				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">" . chr(10);
-				$message .= "<html>" . chr(10);
-				$message .= "<head>" . chr(10);
-				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">" . chr(10);
-				$message .= "<title>email confirmation</title>" . chr(10);
+				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+				$message .= "<html>\n";
+				$message .= "<head>\n";
+				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+				$message .= "<title>email confirmation</title>\n";
 
-				$message .= "<style type=\"text/css\">" . chr(10);
-				$message .= "body { background:#" . param_extract("background_color") . "; }" . chr(10);
-				$message .= "a:link {color:black; text-decoration: none; }" . chr(10);
-				$message .= "a:visited {color:black; text-decoration: none; }" . chr(10);
-				$message .= "a:hover {color:red; text-decoration: none; }" . chr(10);
-				$message .= "table { border-collapse: collapse; }" . chr(10);
-				$message .= "td { padding: 3px; }" . chr(10);
-				$message .= "</style>" . chr(10);
+				$message .= "<style type=\"text/css\">\n";
+				$message .= "body { background:#" . param_extract("background_color") . "; }\n";
+				$message .= "a:link {color:black; text-decoration: none; }\n";
+				$message .= "a:visited {color:black; text-decoration: none; }\n";
+				$message .= "a:hover {color:red; text-decoration: none; }\n";
+				$message .= "table { border-collapse: collapse; }\n";
+				$message .= "td { padding: 3px; }\n";
+				$message .= "</style>\n";
 
-				$message .= "</head>" . chr(10);
+				$message .= "</head>\n";
 
-				$message .= "<body>" . chr(10);
+				$message .= "<body>\n";
 
-				$message .= Translate("Here is the code to finish you registration procedure" , 1) . " : " . $rand_id . chr(10);
-				$message .= "<br><br>" . chr(10);
+				$message .= Translate("Here is the code to finish you registration procedure" , 1) . " : " . $rand_id . "\n";
+				$message .= "<br><br>\n";
 				$message .= Translate("Please, go back to the authentication page and log in using your username, password AND registration code") . ".";
 
-				$message .= "</body>" . chr(10);
+				$message .= "</body>\n";
 				$message .= "</html>";
 
 				mail($_REQUEST["email"], Translate("Registration code", 1), $message, $headers);
@@ -208,6 +208,13 @@
 
 		// the function AddBooking() is implemented in the file "functions.php"
 		AddBooking($_REQUEST["manager_email"], $_REQUEST["booker_id"], $_REQUEST["object_id"], $_REQUEST["booking_start"], $_REQUEST["booking_end"], $_REQUEST["misc_info"], $_REQUEST["validated"]);
+		break;
+
+		case "delete_booking":
+
+		$sql = "delete from rs_data_bookings WHERE book_id = " . $_REQUEST["book_id"] . " AND object_id = " . $_REQUEST["object_id"] . ";";
+		db_query($database_name, $sql, "no", "no");
+
 		break;
 
 		case "confirm_booking": // ***********************************************************************************
@@ -261,31 +268,31 @@
 				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 				$headers .= "From: " . $manager_name . " <" . $manager_email . ">\r\n";
 
-				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">" . chr(10);
-				$message .= "<html>" . chr(10);
-				$message .= "<head>" . chr(10);
-				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">" . chr(10);
-				$message .= "<title>iframe</title>" . chr(10);
+				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+				$message .= "<html>\n";
+				$message .= "<head>\n";
+				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+				$message .= "<title>iframe</title>\n";
 
-				$message .= "<style type=\"text/css\">" . chr(10);
-				$message .= "a:link {color:black; text-decoration: none; }" . chr(10);
-				$message .= "a:visited {color:black; text-decoration: none; }" . chr(10);
-				$message .= "a:hover {color:red; text-decoration: none; }" . chr(10);
-				$message .= "table { border-collapse: collapse; }" . chr(10);
-				$message .= "td { padding: 3px; }" . chr(10);
-				$message .= "</style>" . chr(10);
+				$message .= "<style type=\"text/css\">\n";
+				$message .= "a:link {color:black; text-decoration: none; }\n";
+				$message .= "a:visited {color:black; text-decoration: none; }\n";
+				$message .= "a:hover {color:red; text-decoration: none; }\n";
+				$message .= "table { border-collapse: collapse; }\n";
+				$message .= "td { padding: 3px; }\n";
+				$message .= "</style>\n";
 
-				$message .= "</head>" . chr(10);
+				$message .= "</head>\n";
 
-				$message .= "<body>" . chr(10);
+				$message .= "<body>\n";
 
-				$message .= $manager_name . " " . $text1 . " :" . chr(10);
-				$message .= "<p>" . chr(10);
-				$message .= Translate("Object", 1) . " : " . $object_name . "<br>" . chr(10);
-				$message .= Translate("Start", 1) . " : " . date($date_format . " H:i", strtotime($booking_start)) . "<br>" . chr(10);
-				$message .= Translate("End", 1) . " : " . date($date_format . " H:i", strtotime($booking_end)) . "<p>" . chr(10);
+				$message .= $manager_name . " " . $text1 . " :\n";
+				$message .= "<p>\n";
+				$message .= Translate("Object", 1) . " : " . $object_name . "<br>\n";
+				$message .= Translate("Start", 1) . " : " . date($date_format . " H:i", strtotime($booking_start)) . "<br>\n";
+				$message .= Translate("End", 1) . " : " . date($date_format . " H:i", strtotime($booking_end)) . "<p>\n";
 
-				$message .= "</body>" . chr(10);
+				$message .= "</body>\n";
 				$message .= "</html>";
 
 				mail($booker_email, $text2, $message, $headers);
@@ -317,114 +324,6 @@
 			$script = "parent.document.getElementById(\"slot_display\").innerHTML = \"" . $first_availability . "\";\n";
 
 		break;
-
-		/* case "show_available_slots": // ****************************************************************************
-
-		//$_GET["object_id"], $_GET["start_date"], $_GET["start_hour"], $_GET["book_duration"]
-
-		global $date_format;
-
-		$booking_start = DateAndHour(DateReformat($_GET["start_date"]), date("H:i", $_GET["start_hour"]));
-
-		$timestamp_duration = strtotime("1970-01-01 " . $_GET["book_duration"]); // duration in seconds
-
-		$availables_slots_list  = "<table class=\\\"list_table\\\" summary=\\\"\\\" style=\\\"width:100%\\\"><tr>";
-		$availables_slots_list .= "<th>" . Translate("Start", 1) . "</th>";
-		$availables_slots_list .= "<th>" . Translate("End", 1) . "</th>";
-		$availables_slots_list .= "<th>" . Translate("Choice", 1) . "</th>";
-		$availables_slots_list .= "</tr>";
-
-		// extract first available slot for specified start date, start hour and duration
-		$sql  = "SELECT book_id, book_start, book_end FROM rs_data_bookings ";
-		$sql .= "WHERE object_id = " . $_GET["object_id"] . " ";
-		$sql .= "AND book_end >= '" . $booking_start . "' ";
-		$sql .= "ORDER BY book_end;";
-		$temp = db_query($database_name, $sql, "no", "no");
-
-		$n_slot = 1;
-
-		if(num_rows($temp)) {
-
-			// Create temporary table to store Space Between Bookings (Free Slots)
-			$Sql  = "CREATE TEMPORARY TABLE `rs_data_nobookings` ( ";
-			$Sql .= "`n` SMALLINT(5) UNSIGNED NOT NULL, ";
-			$Sql .= "`book_end_id` INT(10) UNSIGNED NOT NULL DEFAULT '0', ";
-			$Sql .= "`book_end` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00', ";
-			$Sql .= "`book_start_id` INT(10) UNSIGNED NOT NULL DEFAULT '0', ";
-			$Sql .= "`book_start` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00', ";
-			$Sql .= "PRIMARY KEY (`n`), ";
-			$Sql .= "KEY `book_end` (`book_end`), ";
-			$Sql .= "KEY `book_start` (`book_start`) ";
-			$Sql .= ") TYPE=MYISAM AUTO_INCREMENT=1 ;";
-			db_query($database_name, $sql, "No", "No");
-
-			$nobookings_array = array();
-
-			$n = 0; $nobookings_array[$n]= array();
-
-			// creates an array with available slots
-			while($temp_ = fetch_array($temp)) { $n++;
-
-				$nobookings_array[$n] = array();
-
-				$nobookings_array[$n]["end_id"] = $temp["book_id"];
-				$nobookings_array[$n-1]["start_id"] = $temp["book_id"];
-				$nobookings_array[$n-1]["start"] = $temp["book_start"];
-				$nobookings_array[$n]["end"] = $temp["book_end"];
-			}
-
-			// populates temporary table with data from previous array
-			foreach($nobookings_array as $nobookings_line) {
-				$sql  = "INSERT INTO rs_data_nobookings ( book_end_id, book_end, book_start_id, book_start ) VALUES ( ";
-				$sql .= $nobookings_line["end_id"] . ", ";
-				$sql .= "'" . $nobookings_line["end"] . "', ";
-				$sql .= $nobookings_line["start_id"] . ", ";
-				$sql .= "'" . $nobookings_line["start"] . "' );";
-				db_query($database_name, $sql, "no", "no");
-			}
-
-			// extracts availables slot according to new booking's desired duration
-			$sql  = "SELECT book_end AS slot_start, book_start AS slot_end ";
-			$sql .= "FROM rs_data_nobookings ";
-			$sql .= "WHERE (UNIX_TIMESTAMP(book_end) - UNIX_TIMESTAMP(book_start)) >= " . $timestamp_duration . " ";
-			$sql .= "ORDER BY book_end;";
-			$availables_slots = db_query($database_name, $sql, "no", "no");
-
-			while($availables_slots_ = fetch_array($availables_slots)) {
-				$availables_slots_list .= "<tr>";
-				$availables_slots_list .= "<td>" . $availables_slots_["slot_start"] . "</td>";
-				$availables_slots_list .= "<td>" . $availables_slots_["slot_end"] . "</td>";
-				$availables_slots_list .= "<td>";
-				$availables_slots_list .= "<input type=\\\"radio\\\" name=\\\"slot_choice\\\" value=\"" . $n_slot . "\">";
-				$availables_slots_list .= "<input type=\\\"hidden\\\" id=\\\"start_date_" . $n_slot . "\\\" value=\\\"" . date($date_format, $availables_slots_["slot_start"]) . "</td>";
-				$availables_slots_list .= "</tr>";
-
-				$n_slot++;
-			}
-
-			$availables_slots_list .= "</table>";
-
-		} else {
-
-			// full time available
-			$availables_slots_list .= "<tr>";
-			$availables_slots_list .= "<td>" . date($date_format . " H:i", strtotime($booking_start)) . "</td>";
-			$availables_slots_list .= "<td>" . Translate("No limit", 1) . "</td>";
-			$availables_slots_list .= "<td><input type=\\\"radio\\\" name=\\\"slot_choice\\\" value=\\\"1\\\" checked>";
-			$availables_slots_list .= "<input type=\\\"hidden\\\" id=\\\"start_date_" . $n_slot . "\\\" value=\\\"" . date($date_format, $availables_slots_["slot_start"]) . "</td>";
-			$availables_slots_list .= "</tr></table>";
-		}
-
-		$script = "parent.document.getElementById(\"available_slots\").innerHTML = \"" . $availables_slots_list . "\";\n";
-
-		case "delete_localization":
-
-			$sql = "DELETE FROM rs_param_lang WHERE lang_id = " . $_POST["lang_id"] . ";";
-			db_query($database_name, $sql, "no", "no");
-
-			$script = "parent.document.location = \"localize.php\";\n";
-
-		break; */
 
 		case "export_localization": // ****************************************************************************
 

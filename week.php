@@ -107,9 +107,9 @@
 
 		//caption : hours
 		$top = ($hour_size + $line_offset * $hour_size/$step_size) * $n + $vertical_offset + 5;
-		$html .= "<div style=\"font-size:12px; width:30px; left:10px; height:" . $step_size . "px; top:" . $top . "px;\">" . date("H:i",$hour) . "</div>" . chr(10);
+		$html .= "<div style=\"font-size:12px; width:30px; left:10px; height:" . $step_size . "px; top:" . $top . "px;\">" . date("H:i",$hour) . "</div>\n";
 
-		$html .= "<div style=\"font-size:2px; width:5px; left:40px; height:1px; top:" . ($top + 7) . "px; border-top: 1px solid black\"></div>" . chr(10);
+		$html .= "<div style=\"font-size:2px; width:5px; left:40px; height:1px; top:" . ($top + 7) . "px; border-top: 1px solid black\"></div>\n";
 	}
 
 	for($day=1;$day<=7;$day++) {
@@ -117,7 +117,7 @@
 		$left = ($day - 1) * ($column_width + $column_offset) + 50;
 
 		//caption : days names
-		$html .= "<div style=\"font-weight:bold; left:" . $left . "; top:" . ($vertical_offset - 5) . "px;\">" . Translate(date("l", strtotime($monday) + 86400 * ($day - 1)), 1) . "</div>" . chr(10);
+		$html .= "<div style=\"font-weight:bold; left:" . $left . "; top:" . ($vertical_offset - 5) . "px;\">" . Translate(date("l", strtotime($monday) + 86400 * ($day - 1)), 1) . "</div>\n";
 
 		$n = -1;
 
@@ -127,13 +127,13 @@
 
 			// hour boxes
 			$top = ($step_size + $line_offset) * $n + $vertical_offset + 14;
-			$html .= "<div id=\"step_" . $step_id . "\" style=\"font-size:8px; height:" . $step_size . "px; width:" . $column_width . "px; top:" . $top . "px; left:" . $left . "px; background:#" . $free_color . "\"></div>" . chr(10);
+			$html .= "<div id=\"step_" . $step_id . "\" style=\"font-size:8px; height:" . $step_size . "px; width:" . $column_width . "px; top:" . $top . "px; left:" . $left . "px; background:#" . $free_color . "\"></div>\n";
 		}
 	}
 
 	echo $html;
 
-	echo "<script type=\"text/javascript\"><!--" . chr(10) . chr(10);
+	echo "<script type=\"text/javascript\"><!--\n\n";
 
 	$n = 0; $div = ""; $color = "";
 
@@ -196,12 +196,12 @@
 				$height = ($step_size + $line_offset) * ($end - $start + 1) - 1;
 
 				// draws the coloured range over the scale to show the booking
-				if($start != 0) { $div .= "<div valign=\"center\" id=\"booking_" . $n . "\" style=\"font-size:12px; vertical-align:center;background:#" . $color . "; top:" . $top . "px; left:" . $left . "px; width:" . $column_width . "px; height:" . $height . "\">" . $booking_info . "</div>" . chr(10); }
+				if($start != 0) { $div .= "<div valign=\"center\" id=\"booking_" . $n . "\" style=\"font-size:12px; vertical-align:center;background:#" . $color . "; top:" . $top . "px; left:" . $left . "px; width:" . $column_width . "px; height:" . $height . "\">" . $booking_info . "</div>\n"; }
 			} // for
 		} // while
 	} // if
 
-	echo "--></script>" . chr(10);
+	echo "--></script>\n";
 
 	echo $div;
 	echo "<div id=\"book_details\" class=\"info\"></div>";

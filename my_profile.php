@@ -25,6 +25,7 @@
 	CheckCookie(); // Resets app to the index page if timeout is reached. This function is implemented in functions.php
 
 	$error_message = ""; $script = "";
+	$customize_date_format = param_extract("users_can_customize_date");
 
 	if(isset($_REQUEST["action_"])) {
 
@@ -53,7 +54,7 @@
 			$sql .= "last_name = '" . $last_name . "', ";
 			$sql .= "email = '" . $_POST["email"] . "', ";
 			$sql .= "language = '" . $_POST["language"] . "', ";
-			$sql .= "date_format = '" . $_POST["date_format"] . "', ";
+			if($customize_date_format == "yes") { $sql .= "date_format = '" . $_POST["date_format"] . "', "; }
 			$sql .= "user_timezone = " . $_POST["user_timezone"] . " ";
 			$sql .= "WHERE user_id = " . $_COOKIE["bookings_user_id"] . ";";
 			db_query($database_name, $sql, "no", "no");
@@ -68,7 +69,7 @@
 			} else {
 				setcookie("bookings_language", $_REQUEST["language"]);
 				setcookie("bookings_time_offset", (intval($_REQUEST["user_timezone"]) - param_extract("server_timezone")));
-				setcookie("bookings_date_format", $_REQUEST["date_format"]);
+				if($customize_date_format == "yes") { setcookie("bookings_date_format", $_POST["date_format"]); }
 			}
 
 			$script .= "top.frames[0].location = \"menu.php\";\n";
@@ -102,7 +103,8 @@
 <title><?php echo $app_title . " :: " . $title; ?></title>
 
 <script type="text/javascript"><!--
-<?php echo $script; ?>
+	<?php includeCommonScripts(); ?>
+	<?php echo $script; ?>
 --></script>
 
 </head>
@@ -210,16 +212,19 @@
 <link rel="stylesheet" type="text/css" href="styles.php">
 
 <script type="text/javascript"><!--
+
+	<?php includeCommonScripts(); ?>
+
 	function UpdateUser() {
-		if( document.getElementById("password_confirm").value != "" && ( document.getElementById("password").value != document.getElementById("password_confirm").value )) {
+		if( $("password_confirm").value != "" && ( $("password").value != $("password_confirm").value )) {
 			alert("<?php echo Translate("Password does not meet confirmation", 0); ?>");
 		} else {
-			document.getElementById("form_profile").submit();
+			$("form_profile").submit();
 		}
 	}
 
 	function CheckUser() {
-		if(document.getElementById("first_name").value == "" || document.getElementById("last_name").value == "") {
+		if($("first_name").value == "" || $("last_name").value == "") {
 			alert("<?php echo Translate("The values for the fields [First name] and [Last name] are required !", 0); ?>");
 		} else {
 			UpdateUser();
@@ -273,7 +278,7 @@
 						<?php echo Translate("Language", 1); ?><br><select id="language" name="language"><?php echo $languages_list; ?></select>
 					</td>
 
-					<?php if(param_extract("users_can_customize_date") == "yes") { ?><td>
+					<?php if($customize_date_format == "yes") { ?><td>
 					<?php echo Translate("Date format", 1); ?><br><input id="date_format" name="date_format" style="width:70px; text-align:center" value="<?php echo $date_format; ?>" title="<?php echo $help["date_format"] ?>">&nbsp;( <?php echo Translate("Example", 1); ?> : <?php echo $date_format . " = " . date($date_format); ?> )
 					</td><?php } ?>
 
@@ -316,7 +321,7 @@
 </body>
 
 <script type="text/javascript"><!--
-	document.getElementById("user_timezone").value = "<?php echo $user_timezone; ?>";
+	$("user_timezone").value = "<?php echo $user_timezone; ?>";
 --></script>
 
 </html>

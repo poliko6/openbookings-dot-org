@@ -22,39 +22,52 @@
 	require_once "connect_db.php";
 	require_once "functions.php";
 
+	$update_status = "disabled";
+
 	CheckCookie(); // Resets app to the index page if timeout is reached. This function is implemented in functions.php
 
 	$sql = "SELECT activity_start, activity_end, activity_step FROM rs_data_objects WHERE object_id = " . $_REQUEST["object_id"] . ";";
-	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
+	$object = db_query($database_name, $sql, "no", "no"); $object_ = fetch_array($object);
 
-	//$temp_["activity_start"];
-	//$temp_["activity_end"];
-	$activity_step = $temp_["activity_step"];
+	$activity_step = $object_["activity_step"];
 
-	$booking_action = "New booking";
-	$start_date = date($date_format, $_GET["stamp"]);
-	$start_hour = date("H:i", $_GET["stamp"]);
+	if($_REQUEST["book_id"] == "0") {
 
-	$array_duration = getDuration($activity_step * 60);
+		$booking_action = "New booking";
+
+		$start_date = date($date_format, $_GET["stamp"]);
+		$start_hour = date("H:i", $_GET["stamp"]);
+		$misc_info = "";
+
+		$array_duration = getDuration($activity_step * 60);
+
+		$action_ = "insert_new_booking";
+		$update_status = "";
+
+	} else {
+
+		$booking_action = "Edit booking";
+
+		$sql  = "SELECT user_id, book_start, book_end, validated, misc_info ";
+		$sql .= "FROM rs_data_bookings ";
+		$sql .= "WHERE book_id = " . $_REQUEST["book_id"] . " ";
+		$sql .= "AND object_id = " . $_REQUEST["object_id"] . ";";
+		$booking = db_query($database_name, $sql, "no", "no"); $booking_ = fetch_array($booking);
+
+		$booker_id = $booking_["user_id"];
+		$start_date = date($date_format, strtotime($booking_["book_start"]));
+		$start_hour = date("H:i", strtotime($booking_["book_start"]));
+		$misc_info = $booking_["misc_info"];
+
+		$array_duration = getDuration(strtotime($booking_["book_end"]) - strtotime($booking_["book_start"]));
+
+		$action_ = "update_booking";
+		if($booker_id == $_COOKIE["bookings_user_id"] || getObjectInfos($_REQUEST["object_id"], "current_user_is_manager") || $_COOKIE["bookings_profile_id"] == "4") { $update_status = ""; }
+	}
 
 	$duration_days = $array_duration["days"];
 	$duration_hours = $array_duration["hours"];
 	$duration_minutes = $array_duration["minutes"];
-
-	function getDuration($seconds) {
-
-		$days = floor($seconds / 86400);
-
-		$seconds = $seconds - ($days * 86400);
-		$hours = floor($seconds / 3600);
-
-
-		$seconds = $seconds - ($hours * 3600);
-		$minutes = floor($seconds / 60);
-
-		return array("days"=>$days, "hours"=>$hours, "minutes"=>$minutes);
-	}
-
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -77,10 +90,16 @@
 
 	<script type="text/javascript"><!--
 
-		function $(id) { return document.getElementById(id); }
+		<?php includeCommonScripts(); ?>
 
 		function showFirstAvailability() {
 			$("iframe_action").src = "actions.php?action_=show_first_availability&object_id=<?php echo $_REQUEST["object_id"]; ?>&start_date=" + $("start_date").value + "&start_hour=" + $("start_hour").value + "&duration=" + $("duration_days").value + "|" + $("duration_hours").value + "|" + $("duration_minutes").value;
+		}
+
+		function DelBooking() {
+			if(window.confirm("<?php echo Translate("Do you really want to delete this booking ?", 0); ?>")) {
+				$("iframe_action").src = "actions.php?action_=delete_booking&book_id=<?php echo $_GET["book_id"]; ?>&object_id=<?php echo $_REQUEST["object_id"]; ?>";
+			}
 		}
 
 	--></script>
@@ -89,7 +108,9 @@
 
 <body style="text-align:left; margin:10px">
 
-	<div class="global" style="width:300px;top:50px">
+	<form id="main_form" name="main_form" method="post" action="stacking_book.php">
+
+	<div class="global" style="width:440px;top:50px">
 
 	<span class="big_text"><?php echo Translate($booking_action, 1); ?></span>
 	<br>
@@ -101,21 +122,22 @@
 	<table class="table3">
 
 		<tr>
-			<td colspan="3" style="font-weight:bold">Start</td>
+			<td colspan="3" style="font-weight:bold"><?php echo Translate("Start", 1); ?></td>
+			<td rowspan="2" style="width:50px"></td>
+			<td colspan="3" style="font-weight:bold"><?php echo Translate("Duration", 1); ?></td>
 		</tr><tr>
-			<td colspan="2">Date<br><input class="date" type="text" id="start_date" name="start_date" value="<?php echo $start_date; ?>"></td>
-			<td>Hour<br><input class="duration" type="text" id="start_hour" name="start_hour" value="<?php echo $start_hour; ?>"></td>
+			<td colspan="2"><?php echo Translate("Date", 1); ?><br><input class="date" type="text" id="start_date" name="start_date" value="<?php echo $start_date; ?>"></td>
+			<td><?php echo Translate("Hour", 1); ?><br><input class="duration" type="text" id="start_hour" name="start_hour" value="<?php echo $start_hour; ?>"></td>
+			<td><?php echo Translate("Days", 1); ?><br><input class="duration" type="text" id="duration_days" name="duration_days" value="<?php echo $duration_days; ?>"></td>
+			<td><?php echo Translate("Hours", 1); ?><br><input class="duration" type="text" id="duration_hours" name="duration_hours" value="<?php echo $duration_hours; ?>"></td>
+			<td><?php echo Translate("Minutes", 1); ?><br><input class="duration" type="text" id="duration_minutes" name="duration_minutes" value="<?php echo $duration_minutes; ?>"></td>
+		</tr><tr>
 
+			<td colspan="7" style="font-weight:bold; padding-top:20px"><?php echo Translate("Remarks", 1); ?><textarea id="misc_info" name="misc_info" style="width:410px; height:60px"><?php echo $misc_info; ?></textarea></td>
 		</tr><tr>
-			<td colspan="3" style="font-weight:bold; padding-top:20px">Duration</td>
-		<tr></tr>
-			<td>Days<br><input class="duration" type="text" id="duration_days" name="duration_days" value="<?php echo $duration_days; ?>"></td>
-			<td>Hours<br><input class="duration" type="text" id="duration_hours" name="duration_hours" value="<?php echo $duration_hours; ?>"></td>
-			<td>Minutes<br><input class="duration" type="text" id="duration_minutes" name="duration_minutes" value="<?php echo $duration_minutes; ?>"></td>
+			<td colspan="7" style="font-weight:bold; padding-top:20px"><center><button type="button" onClick="showFirstAvailability()"><?php echo Translate("Show first availability", 1); ?></button></center></td>
 		</tr><tr>
-			<td colspan="3" style="font-weight:bold; padding-top:20px">First availability</td>
-		</tr><tr>
-			<td colspan="3" id="slot_display" style="text-align:center"></td>
+			<td colspan="7" id="slot_display" style="text-align:center"></td>
 		</tr>
 	</table>
 
@@ -123,9 +145,15 @@
 
 	<br>
 
-	<button type="button" onClick="showFirstAvailability()">Show first availability</button>
+	<button type="submit" style="width:100px" <?php echo $update_status; ?>><?php echo Translate("Save", 1); ?></button>
+	<button type="button" style="width:100px" onCLick="DelBooking()" <?php echo $update_status; ?>><?php echo Translate("Delete", 1); ?></button>
 
 	</center></div>
+
+	<input type="hidden" name="book_id" value="<?php echo $_REQUEST["book_id"]; ?>">
+	<input type="hidden" name="object_id" value="<?php echo $_REQUEST["object_id"]; ?>">
+
+	</form>
 
 	<iframe id="iframe_action"></iframe>
 

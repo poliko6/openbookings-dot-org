@@ -143,7 +143,7 @@
 		if($error_msg == "") { // no error, the booking was saved
 
 			echo "<script type=\"text/javascript\"><!--\n";
-			echo "document.location = \"calendar.php?stamp=" . $stamp . "&object_id=" . $_REQUEST["object_id"] . "\";" . chr(10);
+			echo "document.location = \"calendar.php?stamp=" . $stamp . "&object_id=" . $_REQUEST["object_id"] . "\";\n";
 			echo "--></script>\n";
 			echo "</head>\n";
 			echo "<body>\n";
@@ -151,7 +151,7 @@
 
 		} else { // an error has occured (typically the new booking covers another one)
 
-			echo "</head>" . chr(10);
+			echo "</head>\n";
 			echo "<body style=\"text-align:center\"><center>\n";
 			echo "<table style=\"text-align:center\">\n";
 			echo "<tr><td style=\"height:60px\"></td></tr>\n";
@@ -295,11 +295,13 @@
 
 <script type="text/javascript"><!--
 
-	function DelBooking() {
-		if(window.confirm("<?php echo Translate("Do you really want to delete this booking ?", 0); ?>")) {
-			document.location = "time_based_book.php?action_=delete_booking&book_id=<?php echo $book_id; ?>&stamp=<?php echo $stamp; ?>&object_id=<?php echo $object_id; ?>";
+		<?php includeCommonScripts(); ?>
+
+		function DelBooking() {
+			if(window.confirm("<?php echo Translate("Do you really want to delete this booking ?", 0); ?>")) {
+				$("iframe_action").src = "actions.php?action_=delete_booking&book_id=<?php echo $_GET["book_id"]; ?>&object_id=<?php echo $_REQUEST["object_id"]; ?>";
+			}
 		}
-	}
 
 --></script>
 
@@ -307,7 +309,7 @@
 
 <body>
 
-<form id="form_ajout_resa" name="form_ajout_resa" method="post" action="time_based_book.php">
+<form id="main_form" name="main_form" method="post" action="time_based_book.php">
 
 <div class="global" style="width:440px; height:250px; top:50px">
 
@@ -386,9 +388,9 @@
 <iframe id="iframe_action"></iframe>
 
 <script type="text/javascript"><!--
-document.getElementById("start_hour").value = <?php echo $book_start_hour; ?>;
+$("start_hour").value = <?php echo $book_start_hour; ?>;
 <?php
-	if(isset($booker_id)) { echo "document.getElementById(\"booker_id\").value = " . $booker_id . ";\n"; }
+	if(isset($booker_id)) { echo "$(\"booker_id\").value = " . $booker_id . ";\n"; }
 ?>
 --></script>
 
