@@ -21,19 +21,6 @@
 	require_once "config.php";
 	require_once "connect_db.php";
 	require_once "functions.php";
-
-	function seconds_to_time($seconds) {
-
-		// extract the hours
-		$hours = intval($seconds / 3600);
-
-		// extract the minutes
-		$minutes = intval(($seconds - ($hours * 3600)) / 60);
-
-		if(strlen($minutes) == 1) { $minutes = "0" . $minutes; }
-
-		return $hours . ":" . $minutes;
-	}
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -80,7 +67,7 @@
 
 			if($error_msg == "") {
 				if(isset($_REQUEST["validated"])) { $validated = 1; } else { $validated = 0; }
-				AddBooking("insert", 0, $_REQUEST["booker_id"], $_REQUEST["object_id"], $booking_start, $booking_end, $_REQUEST["misc_info"], $validated);
+				insertBooking("insert", 0, $_REQUEST["booker_id"], $_REQUEST["object_id"], $booking_start, $booking_end, $_REQUEST["misc_info"], $validated);
 			}
 
 			break;
@@ -128,7 +115,7 @@
 					} // if
 				} // if
 
-				AddBooking("update", $_REQUEST["book_id"], $_REQUEST["booker_id"], $_REQUEST["object_id"], $booking_start, $booking_end, $_REQUEST["misc_info"], $validated);
+				insertBooking("update", $_REQUEST["book_id"], $_REQUEST["booker_id"], $_REQUEST["object_id"], $booking_start, $booking_end, $_REQUEST["misc_info"], $validated);
 
 			} // if
 
@@ -389,6 +376,8 @@
 
 <script type="text/javascript"><!--
 $("start_hour").value = <?php echo $book_start_hour; ?>;
+$("end_hour").value = <?php echo $book_end_hour; ?>;
+
 <?php
 	if(isset($booker_id)) { echo "$(\"booker_id\").value = " . $booker_id . ";\n"; }
 ?>

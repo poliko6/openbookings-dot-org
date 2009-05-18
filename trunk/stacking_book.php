@@ -26,6 +26,20 @@
 
 	CheckCookie(); // Resets app to the index page if timeout is reached. This function is implemented in functions.php
 
+	if(isset($_POST["action_"])) {
+
+		switch($_POST["action_"]) {
+
+			case "insert_booking":
+
+			$booking_start = DateReformat($_POST["start_date"]) . " " . $_POST["start_hour"] . "00";
+			$booking_duration = toSeconds($_POST["duration_days"], $_POST["duration_hours"], $_POST["duration_minutes"]);
+			$booking_end = date("Y-m-d H:i:s", strtotime("+" . $booking_duration . " seconds", $booking_start));
+
+			insertBooking("insert", $_POST["book_id"], $_POST["booker_id"], $_POST["object_id"], $booking_start, $booking_end, $_POST["misc_info"], $validated)
+
+	}
+
 	$sql = "SELECT activity_start, activity_end, activity_step FROM rs_data_objects WHERE object_id = " . $_REQUEST["object_id"] . ";";
 	$object = db_query($database_name, $sql, "no", "no"); $object_ = fetch_array($object);
 
@@ -41,7 +55,7 @@
 
 		$array_duration = getDuration($activity_step * 60);
 
-		$action_ = "insert_new_booking";
+		$action_ = "insert_booking";
 		$update_status = "";
 
 	} else {
@@ -108,7 +122,7 @@
 
 <body style="text-align:left; margin:10px">
 
-	<form id="main_form" name="main_form" method="post" action="stacking_book.php">
+	<form id="main_form" name="main_form" method="post" action="actions.php" target="iframe_action">
 
 	<div class="global" style="width:440px;top:50px">
 
@@ -151,7 +165,9 @@
 	</center></div>
 
 	<input type="hidden" name="book_id" value="<?php echo $_REQUEST["book_id"]; ?>">
+	<input type="hidden" name="booker_id" value="<?php echo $_REQUEST["booker_id"]; ?>">
 	<input type="hidden" name="object_id" value="<?php echo $_REQUEST["object_id"]; ?>">
+	<input type="hidden" name="action_" value="<?php echo $action_; ?>">
 
 	</form>
 
