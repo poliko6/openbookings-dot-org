@@ -439,7 +439,7 @@
 		}
 	}
 
-	function AddBooking($action, $book_id, $booker_id, $object_id, $booking_start, $booking_end, $misc_info, $validated) {
+	function insertBooking($action, $book_id, $booker_id, $object_id, $booking_start, $booking_end, $misc_info, $validated) {
 
 		global $app_url, $database_name, $time_offset;
 

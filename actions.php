@@ -204,11 +204,15 @@
 
 		break;
 
-		case "add_booking": // ****************************************************************************************
-
-		// the function AddBooking() is implemented in the file "functions.php"
-		AddBooking($_REQUEST["manager_email"], $_REQUEST["booker_id"], $_REQUEST["object_id"], $_REQUEST["booking_start"], $_REQUEST["booking_end"], $_REQUEST["misc_info"], $_REQUEST["validated"]);
-		break;
+		/*
+		$_POST["start_date"];
+		$_POST["start_hour"];
+		$_POST["duration_days"];
+		$_POST["duration_hours"];
+		$_POST["duration_minutes"];
+		$_POST["misc_info"];
+		$_POST["booking_method"];
+		*/
 
 		case "delete_booking":
 
