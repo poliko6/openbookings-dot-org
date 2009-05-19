@@ -124,6 +124,22 @@
 		if($permissions_ = fetch_array($permissions)) { return $permissions_["permission"]; } else { return "none"; }
 	}
 
+	function checkEntry($untrusted_input, $awaited_type) {
+		
+		// sanitization = conversion to regular charset (avoids hidden attacks by charset modification)
+		$input = htmlentities($untrusted_input,  ENT_QUOTES, "ISO-8859-1");
+		
+		// untagization = stripping all php and html tags to avoid attacks by malicious code injection
+		$input = strip_tags($input);
+		
+		// 
+		
+		
+		
+		
+		
+	}
+	
 	function getObjectInfos($object_id, $info) {
 
 		global $database_name;
