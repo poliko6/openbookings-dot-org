@@ -124,24 +124,43 @@
 		if($permissions_ = fetch_array($permissions)) { return $permissions_["permission"]; } else { return "none"; }
 	}
 
-	function toPage($untrusted_input, $awaited_type, $bad_return) {
+	function toPage($untrusted_input, $awaited_type, $on_error_return_value) {
 
-		// sanitization = conversion to regular charset (avoids attacks by charset modification)
+		// conversion to regular charset (avoids attacks by charset modification)
 		$input = htmlentities($untrusted_input,  ENT_QUOTES, "ISO-8859-1");
 
+		switch($awaited_type) {
 
+			case "boolean":
+			$input = filter_var($input, FILTER_VALIDATE_BOOLEAN);
+			break;
 
-		// check if untrusted value is
-		eval("if(!is_" . $awaited_type . "(" . $untrusted_input . ") { return $bad_return; }");
+			case "int":
+			$input = filter_var($input, FILTER_VALIDATE_INT);
+			$input = filter_var($input, FILTER_SANITIZE_NUMBER_INT);
+			break;
 
+			case "float":
+			$input = filter_var($input, FILTER_VALIDATE_FLOAT);
+			$input = filter_var($input, FILTER_SANITIZE_NUMBER_FLOAT);
+			break;
 
-		// float int string
+			case "string":
+			$input = filter_var($input, FILTER_SANITIZE_STRING);
+			break;
 
-		// untagization = stripping all php and html tags to avoid attacks by malicious code injection
-		$input = strip_tags($input);
+			case "url":
+			$input = filter_var($input, FILTER_VALIDATE_URL);
+			$input = filter_var($input, FILTER_SANITIZE_URL);
+			break;
 
-		// escape shell commands
-		$input = escapeshellcmd($input);
+			case "email":
+			$input = filter_var($input, FILTER_VALIDATE_EMAIL);
+			$input = filter_var($input, FILTER_SANITIZE_EMAIL);
+		}
+
+		if(is_null($input) || $input === false) { }
+		return $input;
 	}
 
 	function toDatabase($untrusted_input, $awaited_type) {
