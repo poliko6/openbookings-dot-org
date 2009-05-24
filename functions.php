@@ -67,54 +67,6 @@
 		}
 	}
 
-	function checkForm($form_fields, $post) {
-
-		$return_array = array();
-
-		foreach($form_fields as $field_name=>$field_content) {
-
-			$error_msg = "";
-
-			switch($field_content[0]) {
-
-				case "alphanum":
-
-				if(is_numeric($field_content[1])) { // $field_content[1] contains minimum content length
-
-					if($post[$field_name] == "" && $field_content[1] > 0) {
-						$error_msg = Translate("should not be empty", 1);
-					} elseif(strlen($post[$field_name]) < $field_content[1]) {
-						$error_msg = Translate("too short, %1 characters min", 1);
-						$error_msg = str_replace("%1", $field_content[1], $error_msg);
-					}
-
-				} else { // $field_content[1] contains the name of the field which must match (case of password verification)
-
-					if($post[$field_name] != $post[$field_content[1]]) {
-
-						$error_msg = Translate("doesn't match with", 1) . " [" . $form_fields[$field_content[1]][2] . "]";
-					}
-				}
-
-				break;
-
-				case "email":
-				if($post[$field_name] == "") {
-					$error_msg = Translate("should not be empty", 1);
-				} else {
-					$regex = "^([~._a-z0-9-]+[~._a-z0-9-]*)@(([a-z0-9-]+\.)*([a-z0-9-]+)(\.[a-z]{2,3}))$";
-					if(!eregi($regex, $post[$field_name])) {
-						$error_msg .= Translate("not a valid email", 1);
-					}
-				}
-			}
-
-			$return_array[] = array($field_content[2], $error_msg);
-		}
-
-		return $return_array;
-	}
-
 	function getGenericPermissions($profile_id, $object_id) {
 
 		global $database_name;
@@ -124,10 +76,57 @@
 		if($permissions_ = fetch_array($permissions)) { return $permissions_["permission"]; } else { return "none"; }
 	}
 
-	function toPage($untrusted_input, $awaited_type, $on_error_return_value) {
+	function validateInput($input_label, $untrusted_value, $awaited_type, $min_length, $max_length) {
 
 		// conversion to regular charset (avoids attacks by charset modification)
-		$input = htmlentities($untrusted_input,  ENT_QUOTES, "ISO-8859-1");
+		$input_value = htmlentities($untrusted_value, ENT_QUOTES, "ISO-8859-1", false);
+
+		if($min_length != 0 && strlen($input_value) < $min_length) { $error = Translate("'%l' is too short", 1); }
+		if($max_length != 0 && strlen($input_value) > $max_length) { $error = Translate("'%l' is too long", 1); }
+
+		if($error != "") {
+
+			switch($awaited_type) {
+
+				case "boolean":
+				$input_value = filter_var($input, FILTER_VALIDATE_BOOLEAN);
+				break;
+
+				case "int":
+				$input_value = filter_var($input, FILTER_VALIDATE_INT);
+				break;
+
+				case "float":
+				$input = filter_var($input, FILTER_VALIDATE_FLOAT);
+				break;
+
+				case "string":
+				break;
+
+				case "url":
+				$input_value = filter_var($input, FILTER_VALIDATE_URL);
+				break;
+
+				case "email":
+				$input_value = filter_var($input, FILTER_VALIDATE_EMAIL);
+			}
+
+			// returns an array with 0=>validation success, 1=>validated value
+			if(($awaited_type == "boolean" && is_null($input_value)) || ($awaited_type != "boolean" && $input_value === false)) {
+				$error = "'%l' should be a %t";
+			}
+		}
+
+		$error = str_replace("%l", $input_label, $error);
+		$error = str_replace("%t", $awaited_type, $error);
+
+		return array("input_label"=>$input_label, "input_value"=>$input_value, "error"=>$error);
+	}
+
+	function toPage($untrusted_value, $awaited_type, $on_error_return_value) {
+
+		// conversion to regular charset (avoids attacks by charset modification)
+		$input = htmlentities($untrusted_value, ENT_QUOTES, "ISO-8859-1", false);
 
 		switch($awaited_type) {
 
@@ -137,12 +136,12 @@
 
 			case "int":
 			$input = filter_var($input, FILTER_VALIDATE_INT);
-			$input = filter_var($input, FILTER_SANITIZE_NUMBER_INT);
+			if($input !== false) { $input = filter_var($input, FILTER_SANITIZE_NUMBER_INT); }
 			break;
 
 			case "float":
 			$input = filter_var($input, FILTER_VALIDATE_FLOAT);
-			$input = filter_var($input, FILTER_SANITIZE_NUMBER_FLOAT);
+			if($input !== false) { $input = filter_var($input, FILTER_SANITIZE_NUMBER_FLOAT); }
 			break;
 
 			case "string":
@@ -151,23 +150,24 @@
 
 			case "url":
 			$input = filter_var($input, FILTER_VALIDATE_URL);
-			$input = filter_var($input, FILTER_SANITIZE_URL);
+			if($input !== false) { $input = filter_var($input, FILTER_SANITIZE_URL); }
 			break;
 
 			case "email":
 			$input = filter_var($input, FILTER_VALIDATE_EMAIL);
-			$input = filter_var($input, FILTER_SANITIZE_EMAIL);
+			if($input !== false) { $input = filter_var($input, FILTER_SANITIZE_EMAIL); }
 		}
 
-		if(is_null($input) || $input === false) { }
-		return $input;
+		// returns an array with 0=>validation success, 1=>validated value
+		if(($awaited_type == "boolean" && is_null($input)) || ($awaited_type != "boolean" && $input === false)) {
+			return $on_error_return_value;
+		} else {
+			return $input;
+		}
 	}
 
-	function toDatabase($untrusted_input, $awaited_type) {
-
-		// sanitization = conversion to regular charset (avoids hidden attacks by charset modification)
-		$input = htmlentities($untrusted_input,  ENT_QUOTES, "ISO-8859-1");
-
+	function toDb($untrusted_value) {
+		return mysql_real_escape_string($untrusted_value);
 	}
 
 	function getObjectInfos($object_id, $info) {
@@ -309,8 +309,6 @@
 
 	function Translate($english, $special_chars_to_html) {
 
-		$english = addslashes($english);
-
 		global $database_name;
 
 		if(isset($_COOKIE["bookings_user_id"])) { // user is logged -> uses user language setting
@@ -323,7 +321,7 @@
 		}
 
 		$sql = "SELECT " . $language . " FROM rs_param_lang ";
-		$sql .= "WHERE english = '" . $english . "';";
+		$sql .= "WHERE english = '" . toDb($english) . "';";
 		$translation = db_query($database_name, $sql, "no", "no");
 
 		if($translation_ = fetch_array($translation)) {
@@ -332,14 +330,15 @@
 				if($special_chars_to_html) { return htmlentities(stripslashes($translation_[$language]));
 				} else { return stripslashes($translation_[$language]); } // do not convert specials characters to html (usually for javascript alert box)
 
-			} else { return stripslashes($english) . "*"; }
+			} else { return $english . "*"; }
+
 		} else {
 
 			// inserts english if database record is missing. It's a tip to get a list of missing vocabulary while developping the application
-			$sql = "INSERT INTO rs_param_lang ( english ) VALUES ( '" . $english . "' );";
+			$sql = "INSERT INTO rs_param_lang ( english ) VALUES ( '" . toDb($english) . "' );";
 			db_query($database_name, $sql, "yes", "no");
 
-			return stripslashes($english) . "*"; // the star shows translations missing in the database while browsing the app
+			return $english . "*"; // the star shows translations missing in the database while browsing the app
 		}
 	}
 

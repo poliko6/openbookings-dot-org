@@ -24,13 +24,15 @@
 
 	$message = ""; $script = "";
 
-	switch($_REQUEST["action_"]) {
+	$post_action = toPage($_POST["action"], "string", "");
+
+	switch($post_action) {
 
 		case "connect": // **********************************************************************************************
 
 		$sql  = "SELECT user_id, profile_id, locked, language, date_format, user_timezone FROM rs_data_users ";
-		$sql  .= "WHERE login = '" . sqlInjectShield($_REQUEST["username"]) . "' ";
-		$sql .= "AND password = '" . sqlInjectShield($_REQUEST["password"]) . "' ";
+		$sql  .= "WHERE login = '" . toDb($_REQUEST["username"]) . "' ";
+		$sql .= "AND password = '" . toDb($_REQUEST["password"]) . "' ";
 		$sql .= "AND profile_id >= " . $application_access_level . ";";
 		$user = db_query($database_name, $sql, "no", "no");
 
@@ -82,67 +84,68 @@
 
 		case "register": // *********************************************************************************
 
-		$form_fields = array(); $validation_error = false;
+		$validation_error = "";
 
-		$form_fields["first_name"] = array("alphanum", 1, Translate("First name", 1));
-		$form_fields["last_name"] = array("alphanum", 1, Translate("Last name", 1));
-		$form_fields["username"] = array("alphanum", 3, Translate("Username", 1));
-		$form_fields["password"] = array("alphanum", 6, Translate("Password", 1));
-		$form_fields["verify_password"] = array("alphanum", "password", Translate("Verify password", 1));
-		$form_fields["email"] = array("email", 1, Translate("Email", 1));
+		$first_name_ = validateInput("First name", $_POST["first_name"], "string", 2, 50);
+		if($first_name_["error"] != "") { $validation_error .= $first_name_["error"] . "<br>";
+		$first_name = $first_name_["input_value"];
 
-		$errors_array = checkForm($form_fields, $_POST); // gets errors in an array
+		$last_name_ = validateInput("Last name", $_POST["last_name"], "string", 2, 50);
+		if($last_name_["error"] != "") { $validation_error .= $last_name_["error"] . "<br>";
+		$last_name = $last_name_["input_value"];
 
-		$html = "";
+		$username_ = validateInput("Username", $_POST["username"], "string", 5, 20);
+		if($username_["error"] != "") { $validation_error .= $username_["error"] . "<br>";
+		$username = $username_["input_value"];
 
-		foreach($errors_array as $error) {
+		$password_ = validateInput("Password", $_POST["password"], "string", 5, 20);
+		if($password_["error"] != "") { $validation_error .= $password_["error"] . "<br>";
+		$password = $password_["input_value"];
 
-			if($error[1] != "") {
-				$validation_error = true;
-				$html .= "- " . $error[0] . " " . $error[1] . "<br>";
-			}
-		}
+		$verify_password_ = validateInput("Password verification", $_POST["verify_password"], "string", 5, 20);
+		if($verify_password_["error"] != "") { $validation_error .= $verify_password_["error"] . "<br>";
+		$verify_password = $verify_password_["input_value"];
 
-		$script .= "parent.document.getElementById(\"error_message\").innerHTML = \"" . $html . "\";\n";
+		if($password != $verify_password) { $validation_error .= Translate("Password and password verification don't match", 1) . "<br>"; }
 
-		if(!$validation_error) {
+		$email_ = validateInput("Email", $_POST["email"], "email", 8, 80);
+		if($email_["error"] != "") { $validation_error .= $email_["error"] . "<br>";
+		$email = $email_["input_value"];
+
+		if($validation_error != "") {
 
 			// check for already used username
-			$sql = "SELECT user_id FROM rs_data_users WHERE login = '" . addslashes($_REQUEST["new_username"]) . "';";
+			$sql = "SELECT user_id FROM rs_data_users WHERE login = '" . toDb($_POST["username"]) . "';";
 			$temp = db_query($database_name, $sql, "no", "no");
 
 			if($temp_ = fetch_array($temp)) {
-
-				$validation_error = true;
-
-				$script .= "parent.document.getElementById(\"new_username_info\").innerHTML = \"";
-				$script .= "<table class='error_info'><tr>";
-				$script .= "<th><img src='pictures/red_triangle.png'></th>";
-				$script .= "<td>" . Translate("already used", 1) . "</td>";
-				$script .= "</tr></table>\";\n";
-				$script .= "parent.document.getElementById(\"new_username_info\").style.visibility = 'visible';\n";
+				$validation_error .= str_replace("%u", toPage($_POST["username"], "string", ""), Translate("Username %u is already used, please choose another one.", 1) . "<br>";
 			}
 		}
 
-		if(!$validation_error) { // no fields validation errors
+		if($validation_error != "") {
+			$script .= "parent.document.getElementById(\"error_message\").innerHTML = \"" . toPage($validation_error, "string", "Registration form error") . "\";\n";
+		} else {
+
+			// no fields validation errors
 
 			$rand_id = mt_rand(1, 65535);
 
 			$sql  = "INSERT INTO rs_data_users ( rand_id, last_name, first_name, login, profile_id, email, password, locked, language, date_format, user_timezone ) VALUES ( ";
 			$sql .= $rand_id . ", ";
-			$sql .= "'" . addslashes($_REQUEST["last_name"]) . "', ";
-			$sql .= "'" . addslashes($_REQUEST["first_name"]) . "', ";
-			$sql .= "'" . addslashes($_REQUEST["new_username"]) . "', ";
-			$sql .= "3, "; // = user
-			$sql .= "'" . addslashes($_REQUEST["new_email"]) . "', ";
-			$sql .= "'" . addslashes($_REQUEST["new_password"]) . "', ";
+			$sql .= "'" . toDb($_POST["last_name"]) . "', ";
+			$sql .= "'" . toDb($_POST["first_name"]) . "', ";
+			$sql .= "'" . toDb($_POST["username"]) . "', ";
+			$sql .= "3, "; // standard user profile
+			$sql .= "'" . toDb($_POST["email"]) . "', ";
+			$sql .= "'" . toDb($_POST["password"]) . "', ";
 
 			$self_registration_mode = param_extract("self_registration_mode");
 			if($self_registration_mode == "no_validation") { $sql .= "0, "; } else { $sql .= "1, "; }
 
-			$sql .= "'" . param_extract("language") . "', ";
-			$sql .= "'" . param_extract("default_date_format") . "', ";
-			$sql .= "'" . param_extract("default_user_timezone") . "' );";
+			$sql .= "'" . toDb(param_extract("language")) . "', ";
+			$sql .= "'" . toDb(param_extract("default_date_format")) . "', ";
+			$sql .= "'" . toDb(param_extract("default_user_timezone")) . "' );";
 			db_query($database_name, $sql, "yes", "no");
 
 			// sends an email with the validation code
