@@ -320,15 +320,15 @@
 			$language = $temp_["param_value"];
 		}
 
-		$sql = "SELECT " . $language . " FROM rs_param_lang ";
+		$sql = "SELECT " . toDb($language) . " FROM rs_param_lang ";
 		$sql .= "WHERE english = '" . toDb($english) . "';";
 		$translation = db_query($database_name, $sql, "no", "no");
 
 		if($translation_ = fetch_array($translation)) {
 			if($translation_[$language] != "" && !is_null($translation_[$language])) {
 
-				if($special_chars_to_html) { return htmlentities(stripslashes($translation_[$language]));
-				} else { return stripslashes($translation_[$language]); } // do not convert specials characters to html (usually for javascript alert box)
+				if($special_chars_to_html) { return $translation_[$language]);
+				} else { return $translation_[$language]; } // do not convert specials characters to html (usually for javascript alert box)
 
 			} else { return $english . "*"; }
 
