@@ -24,16 +24,19 @@
 
 	$message = ""; $script = "";
 
-	$post_action = toPage($_POST["action"], "string", "");
-
+	$post_action = validateInput("", $_POST["action"], "string", 0, 0) 
+	
 	switch($post_action) {
 
 		case "connect": // **********************************************************************************************
+		
+		$post_username = validateInput("post_username", $_POST["username"], "string", 5, 20);
+		$post_password = validateInput("post_password", $_POST["password"], "string", 5, 20);
 
 		$sql  = "SELECT user_id, profile_id, locked, language, date_format, user_timezone FROM rs_data_users ";
-		$sql  .= "WHERE login = '" . toDb($_REQUEST["username"]) . "' ";
-		$sql .= "AND password = '" . toDb($_REQUEST["password"]) . "' ";
-		$sql .= "AND profile_id >= " . $application_access_level . ";";
+		$sql  .= "WHERE login = '" . toDb($post_username) . "' ";
+		$sql .= "AND password = '" . toDb($post_password) . "' ";
+		$sql .= "AND profile_id >= " . toDb($application_access_level) . ";";
 		$user = db_query($database_name, $sql, "no", "no");
 
 		if(!$user_ = fetch_array($user)) {
@@ -158,7 +161,7 @@
 
 				$headers  = "MIME-Version: 1.0\r\n";
 				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-				$headers .= "From: " . $app_title . " <" . $admin_email . ">\r\n";
+				$headers .= "From: " . toPage($app_title, "string", "") . " <" . toPage($admin_email, "string", "") . ">\r\n";
 
 				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 				$message .= "<html>\n";
@@ -167,7 +170,7 @@
 				$message .= "<title>email confirmation</title>\n";
 
 				$message .= "<style type=\"text/css\">\n";
-				$message .= "body { background:#" . param_extract("background_color") . "; }\n";
+				$message .= "body { background:#" . toPage(param_extract("background_color"), "hex", "") . "; }\n";
 				$message .= "a:link {color:black; text-decoration: none; }\n";
 				$message .= "a:visited {color:black; text-decoration: none; }\n";
 				$message .= "a:hover {color:red; text-decoration: none; }\n";
@@ -179,27 +182,27 @@
 
 				$message .= "<body>\n";
 
-				$message .= Translate("Here is the code to finish you registration procedure" , 1) . " : " . $rand_id . "\n";
+				$message .= toPage(Translate("Here is the code to finish you registration procedure" , 1), "string", "") . " : " . toPage($rand_id, "int", "") . "\n";
 				$message .= "<br><br>\n";
-				$message .= Translate("Please, go back to the authentication page and log in using your username, password AND registration code") . ".";
+				$message .= toPage(Translate("Please, go back to the authentication page and log in using your username, password AND registration code"), "string", "") . ".";
 
 				$message .= "</body>\n";
 				$message .= "</html>";
 
-				mail($_REQUEST["email"], Translate("Registration code", 1), $message, $headers);
+				mail(toPage($_POST["email"], "email", ""), toPage(Translate("Registration code", 1), "int", ""), $message, $headers);
 
 				$script .= "parent.document.getElementById(\"notice\").innerHTML = \"";
-				$script .= "<span class=\"big_text\">" . Translate("Registration successful !", 1) . "</span>";
+				$script .= "<span class=\"big_text\">" . toPage(Translate("Registration successful !", 1), "string", "") . "</span>";
 				$script .= "<br><br><br>";
-				$script .= Translate("Your account has been created but is locked", 1) . ". ";
-				$script .= Translate("Here is what to do to unlock it :", 1);
+				$script .= toPage(Translate("Your account has been created but is locked", 1), "string", "") . ". ";
+				$script .= toPage(Translate("Here is what to do to unlock it :", 1), "string", "");
 				$script .= "<br><br><ul>";
-				$script .= "<li>" . Translate("Check your mailbox to get the registration code that was sent to you", 1) . ".";
+				$script .= "<li>" . toPage(Translate("Check your mailbox to get the registration code that was sent to you", 1), "string", "") . ".";
 				$script .= "<br><br>";
-				$script .= "<li>" . Translate("Come back to this page and fill in the login form", 1) . " <u>" . Translate("including this code", 1) . "</u>.";
+				$script .= "<li>" . toPage(Translate("Come back to this page and fill in the login form", 1), "string", "") . " <u>" . toPage(Translate("including this code", 1), "string", "") . "</u>.";
 				$script .= "</ul>";
 				$script .= "<br>";
-				$script .= "<center><button type=\\\"button\\\" onClick=\\\"document.getElementById('notice').style.visibility='hidden'\\\">" . Translate("Close", 1) . "</button></center>";
+				$script .= "<center><button type=\\\"button\\\" onClick=\\\"document.getElementById('notice').style.visibility='hidden'\\\">" . toPage(Translate("Close", 1), "string", "") . "</button></center>";
 				$script .= "\";\n";
 				$script .= "parent.document.getElementById(\"notice\").style.visibility = 'visible';\n";
 			}
@@ -207,41 +210,39 @@
 
 		break;
 
-		/*
-		$_POST["start_date"];
-		$_POST["start_hour"];
-		$_POST["duration_days"];
-		$_POST["duration_hours"];
-		$_POST["duration_minutes"];
-		$_POST["misc_info"];
-		$_POST["booking_method"];
-		*/
-
 		case "delete_booking":
+		
+		$get_book_id = validateInput("get_book_id", $_GET["book_id"], "int", 0, 0);
+		$get_object_id = validateInput("get_object_id", $_GET["object_id"], "int", 0, 0);
 
-		$sql = "delete from rs_data_bookings WHERE book_id = " . $_REQUEST["book_id"] . " AND object_id = " . $_REQUEST["object_id"] . ";";
+		$sql = "delete from rs_data_bookings WHERE book_id = " . toDb($get_book_id["input_value"]) . " AND object_id = " . toDb($get_object_id["input_value"]) . ";";
 		db_query($database_name, $sql, "no", "no");
 
 		break;
 
 		case "confirm_booking": // ***********************************************************************************
 
-		switch($_REQUEST["validated"]) {
+		$get_validated = validateInput("", $_GET["validated"], "string", 2, 3);
+		
+		$get_book_id = validateInput("get_book_id", $_GET["book_id"], "int", 0, 0);
+		$get_object_id = validateInput("get_object_id", $_GET["object_id"], "int", 0, 0);
+		
+		switch($get_validated["input_value"]) {
 
 			case "yes":
-				$text1 = Translate("has valided your booking request", 1);
-				$text2 = Translate("Validated booking request", 1);
-				$action_sql = "UPDATE rs_data_bookings SET validated = 1 WHERE book_id = " . $_REQUEST["book_id"] . ";";
+				$text1 = toPage(Translate("has valided your booking request", 1), "string", "");
+				$text2 = toPage(Translate("Validated booking request", 1), "string", "");
+				$action_sql = "UPDATE rs_data_bookings SET validated = 1 WHERE book_id = " . toDb($get_book_id["input_value"]) . ";";
 			break;
 
 			case "no":
-				$text1 = Translate("has refused your booking request", 1);
-				$text2 = Translate("Refused booking request", 1);
-				$action_sql = "DELETE FROM rs_data_bookings WHERE book_id = " . $_REQUEST["book_id"] . ";";
+				$text1 = toPage(Translate("has refused your booking request", 1), "string", "");
+				$text2 = toPage(Translate("Refused booking request", 1), "string", "");
+				$action_sql = "DELETE FROM rs_data_bookings WHERE book_id = " . toDb($get_object_id["input_value"]) . ";";
 		}
 
 		// extracts booking infos
-		$sql = "SELECT user_id, object_id, book_start, book_end FROM rs_data_bookings WHERE book_id = " . $_REQUEST["book_id"] . ";";
+		$sql = "SELECT user_id, object_id, book_start, book_end FROM rs_data_bookings WHERE book_id = " . toDb($get_book_id["input_value"]) . ";";
 		$temp = db_query($database_name, $sql, "no", "no");
 
 		if($temp) { // booking still exists
@@ -251,17 +252,17 @@
 			$booker_id = $temp_["user_id"]; $object_id = $temp_["object_id"]; $booking_start = $temp_["book_start"]; $booking_end = $temp_["book_end"];
 
 			// extracts object infos
-			$sql = "SELECT object_name, manager_id, email_bookings FROM rs_data_objects WHERE object_id = " . $object_id . ";";
+			$sql = "SELECT object_name, manager_id, email_bookings FROM rs_data_objects WHERE object_id = " . toDb($object_id) . ";";
 			$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 			$object_name = $temp_["object_name"]; $manager_id = $temp_["manager_id"]; $email_bookings = $temp_["email_bookings"];
 
 			// extracts manager name
-			$sql = "SELECT first_name, last_name, email FROM rs_data_users WHERE user_id = " . $manager_id . ";";
+			$sql = "SELECT first_name, last_name, email FROM rs_data_users WHERE user_id = " . toDb($manager_id) . ";";
 			$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 			$manager_name = $temp_["first_name"] . " " . $temp_["last_name"]; $manager_email = $temp_["email"];
 
 			// extracts booker email
-			$sql = "SELECT first_name, last_name, email FROM rs_data_users WHERE user_id = " . $booker_id . ";";
+			$sql = "SELECT first_name, last_name, email FROM rs_data_users WHERE user_id = " . toDb($booker_id) . ";";
 			$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 			$booker_name = $temp_["first_name"] . " " . $temp_["last_name"]; $booker_email = $temp_["email"];
 
@@ -273,7 +274,7 @@
 
 				$headers  = "MIME-Version: 1.0\r\n";
 				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-				$headers .= "From: " . $manager_name . " <" . $manager_email . ">\r\n";
+				$headers .= "From: " . toPage($manager_name, "string", "") . " <" . toPage($manager_email, "email", "") . ">\r\n";
 
 				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 				$message .= "<html>\n";
@@ -293,40 +294,50 @@
 
 				$message .= "<body>\n";
 
-				$message .= $manager_name . " " . $text1 . " :\n";
+				$message .= toPage($manager_name, "string", "") . " " . toPage($text1, "string", "") . " :\n";
 				$message .= "<p>\n";
-				$message .= Translate("Object", 1) . " : " . $object_name . "<br>\n";
-				$message .= Translate("Start", 1) . " : " . date($date_format . " H:i", strtotime($booking_start)) . "<br>\n";
-				$message .= Translate("End", 1) . " : " . date($date_format . " H:i", strtotime($booking_end)) . "<p>\n";
+				$message .= toPage(Translate("Object", 1), "string", "") . " : " . toPage($object_name, "string", "") . "<br>\n";
+				$message .= toPage(Translate("Start", 1), "string", "") . " : " . date($date_format . " H:i", strtotime($booking_start)) . "<br>\n";
+				$message .= toPage(Translate("End", 1), "string", "") . " : " . date($date_format . " H:i", strtotime($booking_end)) . "<p>\n";
 
 				$message .= "</body>\n";
 				$message .= "</html>";
 
 				mail($booker_email, $text2, $message, $headers);
 
-				$message = Translate("Confirmation was sent to", 1) . " " . $booker_name;
+				$message = toPage(Translate("Confirmation was sent to", 1), "string", "") . " " . $booker_name;
 			}
 
 		} else { // booking was already cancelled
 
-			$message = Translate("This booking was cancelled by the user even before your try to confirm it", 1) . ".";
+			$message = toPage(Translate("This booking was cancelled by the user even before your try to confirm it", 1), "string", "") . ".";
 		}
 
 		break;
 
 		case "update_localization": // ****************************************************************************
 
+		$post_localize_to = validateInput("post_localize_to", $_POST["localize_to"], "string", 4, 15);
+		$post_lang_id = validateInput("post_lang_id", $_POST["lang_id"], "int", 0, 0);
+		$post_localize_to_lang_id = validateInput("post_localize_to_lang_id", $_POST["$post_localize_to_" . $post_lang_id], "string", 0, 0);
+		
 		$sql = "UPDATE rs_param_lang SET ";
-		$sql .= $_REQUEST["localize_to"] . " = '" . addslashes($_REQUEST["localize_to_" . $_REQUEST["lang_id"]]) . "' ";
-		$sql .= "WHERE lang_id = " . $_REQUEST["lang_id"] . ";";
+		$sql .= toDb($post_localize_to) . " = '" . toDb($post_localize_to_lang_id) . "' ";
+		$sql .= "WHERE lang_id = " . toDb($post_lang_id) . ";";
 		db_query($database_name, $sql, "no", "no");
 		break;
 
 		case "show_first_availability": // ****************************************************************************
 
-			$start_date = DateReformat($_GET["start_date"]) . " " . $_GET["start_hour"] . ":00";
+			$get_object_id = validateInput("get_object_id", $_GET["object_id"], "int", 0, 0);
+			$get_start_date = validateInput("get_start_date", $_GET["start_date"], "date", 0, 0);
+			$get_start_hour = validateInput("get_start_hour", $_GET["start_hour"], "string", 0, 5); // 00:00
+			$get_duration = validateInput("get_duration", $_GET["duration"], "int", 0, 0);
+			
+			
+			$start_date = DateReformat($get_start_date) . " " . $get_start_hour . ":00";
 
-			$first_availability = getAvailability($_GET["object_id"], $start_date, $_GET["duration"]);
+			$first_availability = getAvailability($get_object_id, $start_date, $get_duration);
 
 			$script = "parent.document.getElementById(\"slot_display\").innerHTML = \"" . $first_availability . "\";\n";
 
@@ -451,7 +462,7 @@
 			db_query($database_name, $sql, "no", "no");
 
 			$script  = "parent.document.location = \"localize.php\";\n";
-			$script .= "alert(\"" . Translate("Import Successful", 1) . "\");\n";
+			$script .= "alert(\"" . toPage(Translate("Import Successful", 1), "string", "") . "\");\n";
 		}
 
 	} // end switch
@@ -466,7 +477,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-<title><?php echo $app_title . " :: " . Translate("Actions", 1); ?></title>
+<title><?php echo toPage($app_title, "string", "") . " :: " . toPage(Translate("Actions", 1), "string", ""); ?></title>
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 
