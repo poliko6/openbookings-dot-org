@@ -418,12 +418,12 @@
 			$buffer = str_replace("\"", "", $buffer); // removes "
 			$array_columns = explode(";", $buffer);
 
-			foreach($array_columns as $column_name) { $sql .= $column_name . " varchar(255) default NULL, "; }
+			foreach($array_columns as $column_name) { $sql .= toDb($column_name) . " varchar(255) default NULL, "; }
 			$sql = substr($sql, 0, -1); // removes last comma (,)
 
 			$sql .= "PRIMARY KEY (lang_id), ";
 
-			foreach($array_columns as $column_name) { $sql .= "KEY " . $column_name . " (" . $column_name . "),"; }
+			foreach($array_columns as $column_name) { $sql .= "KEY " . toDb($column_name) . " (" . toDb($column_name) . "),"; }
 			$sql = substr($sql, 0, -1); // removes last comma (,)
 
 			$sql .= " ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;";
@@ -436,10 +436,10 @@
 				$array_values = explode(";", $buffer);
 
 				$sql  = "INSERT INTO rs_temp_lang ( ";
-				foreach($array_columns as $column_name) { $sql .= $column_name . ","; }
+				foreach($array_columns as $column_name) { $sql .= toDb($column_name) . ","; }
 				$sql = substr($sql, 0, -1); // removes last comma (,)
 				$sql .= " ) VALUES ( ";
-				foreach($array_values as $value) { $sql .= $value . ","; }
+				foreach($array_values as $value) { $sql .= toDb($value) . ","; }
 				$sql = substr($sql, 0, -1); // removes last comma (,)
 				$sql .= ");";
 
@@ -489,7 +489,7 @@
 
 <body>
 
-<?php echo $message; ?>
+<?php //echo $message; ?>
 
 </body>
 
