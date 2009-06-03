@@ -21,7 +21,6 @@
 	$application_access_level = param_extract("application_access_level");
 
 	if(isset($_COOKIE["bookings_date_format"])) { $date_format = $_COOKIE["bookings_date_format"]; } else { $date_format = param_extract("default_date_format"); }
-	if(isset($_COOKIE["bookings_time_offset"])) { $time_offset = $_COOKIE["bookings_time_offset"]; } else { $time_offset = param_extract("default_user_timezone") - param_extract("server_timezone"); }
 
 	// refeshes the cookie (resets timeout)
 	if(isset($_COOKIE["bookings_user_id"])) {
@@ -30,8 +29,11 @@
 		setcookie("bookings_user_id", $_COOKIE["bookings_user_id"], (time() + $session_timeout));
 		if(isset($_COOKIE["bookings_profile_id"])) { setcookie("bookings_profile_id", $_COOKIE["bookings_profile_id"], (time() + $session_timeout)); }
 		if(isset($_COOKIE["bookings_language"])) { setcookie("bookings_language", $_COOKIE["bookings_language"], (time() + $session_timeout)); }
-		if(isset($_COOKIE["bookings_time_offset"])) { setcookie("bookings_time_offset", $_COOKIE["bookings_time_offset"], (time() + $session_timeout)); }
 		if(isset($_COOKIE["bookings_date_format"])) { setcookie("bookings_date_format", $date_format, (time() + $session_timeout)); }
+	
+		$time_offset = getFromDb("rs_data_users", "user_id", $_COOKIE["bookings_user_id"], "user_timezone") - param_extract("server_timezone");
+	} else {
+		$time_offset = param_extract("default_user_timezone") - param_extract("server_timezone");
 	}
 
 	// extracts colors from the table which holds parameters
@@ -102,7 +104,30 @@
 
 				case "string":
 				break;
-
+				
+				case "date":
+				
+				// find separator
+				
+				for($n=0;$n<=strlen($date_format)-1;$n++) {
+					
+					$letter = substr($date_format, $n, 1);
+					
+					if(!is_numeric($letter))
+				
+				
+				
+				
+				
+				
+				//$untrusted_value
+				//$sate_compare = mktime (0,0,0,$mois_test,$jour_test,$annee_test);
+				//$new_date = date("d/m/Y",$Date_compare); 
+				
+				
+				
+				break;
+				
 				case "url":
 				$input_value = filter_var($input, FILTER_VALIDATE_URL);
 				break;
@@ -170,6 +195,14 @@
 		return mysql_real_escape_string($untrusted_value);
 	}
 
+	function getFromDb($table, $id_column, $id_value, $searched_value) {
+
+		$sql = "SELECT " . $searched_value . " FROM " . $table . " WHERE " . $id_column . " = '" . $id_value . "';";
+
+		$temp = db_query($database_name, $sql, 0);
+		if($temp_ = fetch_array($temp)) { return $temp_[$searched_value]; } else { return false; }
+	}
+	
 	function getObjectInfos($object_id, $info) {
 
 		global $database_name;

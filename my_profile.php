@@ -61,14 +61,12 @@
 
 			$session_timeout = param_extract("session_timeout");
 
-			// update language, timezone and language cookies to reflect the changes immediately
+			// update language and date_format cookies to reflect the changes immediately
 			if($session_timeout != 0) {
 				setcookie("bookings_language", $_REQUEST["language"], (time() + $session_timeout));
-				setcookie("bookings_time_offset", (intval($_REQUEST["user_timezone"]) - param_extract("server_timezone")), (time() + $session_timeout));
 				setcookie("bookings_date_format", $_REQUEST["date_format"], (time() + $session_timeout));
 			} else {
 				setcookie("bookings_language", $_REQUEST["language"]);
-				setcookie("bookings_time_offset", (intval($_REQUEST["user_timezone"]) - param_extract("server_timezone")));
 				if($customize_date_format == "yes") { setcookie("bookings_date_format", $_POST["date_format"]); }
 			}
 

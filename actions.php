@@ -51,19 +51,16 @@
 			} else {
 				// connect successful -> sets the cookie
 				$session_timeout = param_extract("session_timeout");
-				$time_offset = $user_["user_timezone"] - param_extract("server_timezone");
-
+				
 				if($session_timeout != 0) {
 					setcookie("bookings_user_id", $user_["user_id"], (time() + $session_timeout));
 					setcookie("bookings_profile_id", $user_["profile_id"], (time() + $session_timeout));
 					setcookie("bookings_language", $user_["language"], (time() + $session_timeout));
-					setcookie("bookings_time_offset", $time_offset, (time() + $session_timeout));
 					setcookie("bookings_date_format", $user_["date_format"], (time() + $session_timeout));
 				} else {
 					setcookie("bookings_user_id", $user_["user_id"]);
 					setcookie("bookings_profile_id", $user_["profile_id"]);
 					setcookie("bookings_language", $user_["language"]);
-					setcookie("bookings_time_offset", $time_offset);
 					setcookie("bookings_date_format", $user_["date_format"]);
 				}
 			}
@@ -78,7 +75,6 @@
 		setcookie ("bookings_user_id", "", time() - 3600);
 		setcookie ("bookings_profile_id", "", time() - 3600);
 		setcookie ("bookings_language", "", time() - 3600);
-		setcookie ("bookings_time_offset", "", time() - 3600);
 		setcookie ("bookings_date_format", "", time() - 3600);
 
 		$script = "top.location = \"index.php\";\n";
