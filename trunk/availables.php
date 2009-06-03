@@ -24,41 +24,40 @@
 
 	CheckCookie(); // Resets app to the index page if timeout is reached. This function is implemented in functions.php
 
-	$start = DateAndHour(DateReformat($_REQUEST["search_start_date"]), $_REQUEST["search_start_hour"] + $time_offset);
-	$end = DateAndHour(DateReformat($_REQUEST["search_end_date"]), $_REQUEST["search_end_hour"] + $time_offset);
-
-	echo DateAndHour(DateReformat($_REQUEST["search_start_date"]), $_REQUEST["search_start_hour"]);
+	$start = DateAndHour(DateReformat($_POST["search_start_date"]), $_POST["search_start_hour"]);
+	$end = DateAndHour(DateReformat($_POST["search_end_date"]), $_POST["search_end_hour"]);
 
 	$start_ = date("Y-m-d H:i", strtotime($start));
 	$end_ = date("Y-m-d H:i", strtotime($end));
 
 	// extracts family name using family_id as parameter
-	$sql = "SELECT family_name FROM rs_param_families WHERE family_id = " . $_REQUEST["family_id"] . ";";
+	$sql = "SELECT family_name FROM rs_param_families WHERE family_id = " . toDb($_POST["family_id"]) . ";";
 	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp); $family_name = $temp_["family_name"];
 
 	// lists objects which are booked within the specified time range
 	$sql  = "SELECT DISTINCT rs_data_objects.object_id ";
 	$sql .= "FROM rs_data_bookings INNER JOIN rs_data_objects ON rs_data_bookings.object_id = rs_data_objects.object_id ";
-	$sql .= "WHERE rs_data_objects.family_id = " . $_REQUEST["family_id"] . " ";
+	$sql .= "WHERE rs_data_objects.family_id = " . toDb($_POST["family_id"]) . " ";
 
-	$sql .= "AND ((rs_data_bookings.book_end > '" . $start . "' ";
-	$sql .= "AND rs_data_bookings.book_end <= '" . $end . "') ";
-	$sql .= "OR (rs_data_bookings.book_start < '" . $end . "' ";
-	$sql .= "AND rs_data_bookings.book_start >= '" . $start . "') ";
-	$sql .= "OR (rs_data_bookings.book_start <= '" . $start . "' ";
-	$sql .= "AND rs_data_bookings.book_end >= '" . $end . "')) ";
+	$sql .= "AND ((rs_data_bookings.book_end > '" . toDb($start) . "' ";
+	$sql .= "AND rs_data_bookings.book_end <= '" . toDb($end) . "') ";
+	$sql .= "OR (rs_data_bookings.book_start < '" . toDb($end) . "' ";
+	$sql .= "AND rs_data_bookings.book_start >= '" . toDb($start) . "') ";
+	$sql .= "OR (rs_data_bookings.book_start <= '" . toDb($start) . "' ";
+	$sql .= "AND rs_data_bookings.book_end >= '" . toDb($end) . "')) ";
 
 	$unavailable_objets = db_query($database_name, $sql, "no", "no");
 
 	$unavailable_list = "";
 
+	// constructs a list of unavailables objects
 	while($unavailable_objets_ = fetch_array($unavailable_objets)) { $unavailable_list .= $unavailable_objets_["object_id"] . ","; }
-	if($unavailable_list != "") { $unavailable_list = substr($unavailable_list, 0, strlen($unavailable_list)-1); } //shorts last comma
+	if($unavailable_list != "") { $unavailable_list = substr($unavailable_list, 0, strlen($unavailable_list)-1); } // removes last comma
 
 	// extracts disallowed objects according to current user profile and permissions
 	$disallowed_objects_list = "";
 	$sql = "SELECT DISTINCT object_id FROM rs_data_permissions ";
-	$sql .= "WHERE permission = 'none' AND (user_id = " . $_COOKIE["bookings_user_id"] . " OR profile_id >= " . $_COOKIE["bookings_profile_id"] . ");";
+	$sql .= "WHERE permission = 'none' AND (user_id = " . toDb($_COOKIE["bookings_user_id"]) . " OR profile_id >= " . toDb($_COOKIE["bookings_profile_id"]) . ");";
 	$temp = db_query($database_name, $sql, "no", "no");
 	while($temp_ = fetch_array($temp)) { $disallowed_objects_list .= $temp_["object_id"] . ","; }
 
@@ -67,12 +66,12 @@
 	// lists objects which are NOT booked in the specified time range
 	$sql  = "SELECT DISTINCT object_id, object_name, booking_method ";
 	$sql .= "FROM rs_data_objects ";
-	$sql .= "WHERE rs_data_objects.family_id = " . $_REQUEST["family_id"] . " ";
+	$sql .= "WHERE rs_data_objects.family_id = " . toDb($_POST["family_id"]) . " ";
 	if($unavailable_list != "") { $sql .= "AND rs_data_objects.object_id NOT IN ( " . $unavailable_list . " )"; }
 	if($disallowed_objects_list != "") { $sql .= "AND rs_data_objects.object_id NOT IN ( " . $disallowed_objects_list . " )"; }
 	$sql .= ";";
 
-	$available_objects = db_query($database_name, $sql, "no", "yes");
+	$available_objects = db_query($database_name, $sql, "no", "no");
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -83,7 +82,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-<title><?php echo $app_title . " :: " . Translate("Availables objects", 1); ?></title>
+<title><?php echo toPage($app_title, "string", "") . " :: " . Translate("Availables objects", 1); ?></title>
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 
@@ -97,13 +96,13 @@
 
 <body>
 
-<span class="big_text" id="title_"><?php echo $family_name; ?> <?php echo Translate("availables", 1); ?> <?php echo Translate("from", 1); ?> <?php echo date($date_format . " h:i", strtotime($start)); ?> <?php echo Translate("to", 1); ?> <?php echo date($date_format . " h:i", strtotime($end)); ?></span>
+<span class="big_text" id="title_"><?php echo toPage($family_name, "string", ""); ?> <?php echo Translate("availables", 1); ?> <?php echo Translate("from", 1); ?> <?php echo toPage(date($date_format . " h:i", strtotime($start)), "date", ""); ?> <?php echo toPage(Translate("to", 1), "string", ""); ?> <?php echo toPage(date($date_format . " h:i", strtotime($end)), "date", ""); ?></span>
 
 <table class="table2">
 
 <tr>
 	<th><?php echo Translate("Object name", 1); ?></th>
-	<th><?php echo Translate("Person in charge", 1); ?></th>
+	<th><?php echo Translate("Person in charge", 1) ?></th>
 	<th style="width:90px">&nbsp;</th>
 </tr>
 
@@ -112,7 +111,7 @@
 	//extracts objects manager
 	$sql  = "SELECT user_id, last_name, first_name, email FROM rs_data_users ";
 	$sql .= "LEFT JOIN rs_data_permissions ON rs_data_users.user_id = rs_data_permissions.user_id ";
-	$sql .= "WHERE object_id = " . $available_objets_["object_id"] . " ";
+	$sql .= "WHERE object_id = " . toDb($available_objets_["object_id"]) . " ";
 	$sql .= "AND rs_data_permissions.permission = 'manage';";
 
 	$managers = db_query($database_name, $sql, "no", "no");
@@ -122,9 +121,9 @@
 
 ?><tr>
 
-<td><?php echo $available_objets_["object_name"]; ?></td>
-<td><?php if($manager_email != "") { ?><a href="mailto:<?php echo $manager_email; ?>"><?php } ?><?php echo $manager_name; ?><?php if($manager_email != "") { ?></a><?php } ?></td>
-<td style="text-align:center"><button onClick="openBooking(<?php echo $available_objets_["object_id"]; ?>,<?php echo $available_objets_["booking_method"]; ?>)"><?php echo Translate("Book it !", 1); ?></button></td>
+<td><?php echo toPage($available_objets_["object_name"], "string", ""); ?></td>
+<td><?php if($manager_email != "") { ?><a href="mailto:<?php echo toPage($manager_email, "email", ""); ?>"><?php } ?><?php echo toPage($manager_name, "string", ""); ?><?php if($manager_email != "") { ?></a><?php } ?></td>
+<td style="text-align:center"><button onClick="openBooking(<?php echo toPage($available_objets_["object_id"], "int", ""); ?>,<?php echo toPage($available_objets_["booking_method"], "string", ""); ?>)"><?php echo toPage(Translate("Book it !", 1), "string", ""); ?></button></td>
 </tr><?php } ?>
 
 </table>
