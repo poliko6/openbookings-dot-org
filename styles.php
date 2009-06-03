@@ -213,6 +213,12 @@ div.ligne1 {
 	visibility:hidden;
 }
 
+#iframe_action {
+	width:500px;
+	height:200px;
+	visibility:visible;
+}
+
 #notice {
 	visibility:hidden;
 	position: relative;
