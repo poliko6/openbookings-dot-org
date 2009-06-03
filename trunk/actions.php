@@ -24,12 +24,12 @@
 
 	$message = ""; $script = "";
 
-	$post_action = validateInput("", $_POST["action"], "string", 0, 0) 
-	
+	$post_action = validateInput("", $_POST["action"], "string", 0, 0)
+
 	switch($post_action) {
 
 		case "connect": // **********************************************************************************************
-		
+
 		$post_username = validateInput("post_username", $_POST["username"], "string", 5, 20);
 		$post_password = validateInput("post_password", $_POST["password"], "string", 5, 20);
 
@@ -49,21 +49,21 @@
 			if($user_["locked"]) {
 				$error_message = Translate("Your account is locked out, contact your administrator", 1) . ".";
 			} else {
-
 				// connect successful -> sets the cookie
 				$session_timeout = param_extract("session_timeout");
+				$time_offset = $user_["user_timezone"] - param_extract("server_timezone");
 
 				if($session_timeout != 0) {
 					setcookie("bookings_user_id", $user_["user_id"], (time() + $session_timeout));
 					setcookie("bookings_profile_id", $user_["profile_id"], (time() + $session_timeout));
 					setcookie("bookings_language", $user_["language"], (time() + $session_timeout));
-					setcookie("bookings_time_offset", ($user_["user_timezone"] - param_extract("server_timezone")), (time() + $session_timeout));
+					setcookie("bookings_time_offset", $time_offset, (time() + $session_timeout));
 					setcookie("bookings_date_format", $user_["date_format"], (time() + $session_timeout));
 				} else {
 					setcookie("bookings_user_id", $user_["user_id"]);
 					setcookie("bookings_profile_id", $user_["profile_id"]);
 					setcookie("bookings_language", $user_["language"]);
-					setcookie("bookings_time_offset", ($user_["user_timezone"] - param_extract("server_timezone")));
+					setcookie("bookings_time_offset", $time_offset);
 					setcookie("bookings_date_format", $user_["date_format"]);
 				}
 			}
@@ -90,29 +90,29 @@
 		$validation_error = "";
 
 		$first_name_ = validateInput("First name", $_POST["first_name"], "string", 2, 50);
-		if($first_name_["error"] != "") { $validation_error .= $first_name_["error"] . "<br>";
+		if($first_name_["error"] != "") { $validation_error .= $first_name_["error"] . "<br>"; }
 		$first_name = $first_name_["input_value"];
 
 		$last_name_ = validateInput("Last name", $_POST["last_name"], "string", 2, 50);
-		if($last_name_["error"] != "") { $validation_error .= $last_name_["error"] . "<br>";
+		if($last_name_["error"] != "") { $validation_error .= $last_name_["error"] . "<br>"; }
 		$last_name = $last_name_["input_value"];
 
 		$username_ = validateInput("Username", $_POST["username"], "string", 5, 20);
-		if($username_["error"] != "") { $validation_error .= $username_["error"] . "<br>";
+		if($username_["error"] != "") { $validation_error .= $username_["error"] . "<br>"; }
 		$username = $username_["input_value"];
 
 		$password_ = validateInput("Password", $_POST["password"], "string", 5, 20);
-		if($password_["error"] != "") { $validation_error .= $password_["error"] . "<br>";
+		if($password_["error"] != "") { $validation_error .= $password_["error"] . "<br>"; }
 		$password = $password_["input_value"];
 
 		$verify_password_ = validateInput("Password verification", $_POST["verify_password"], "string", 5, 20);
-		if($verify_password_["error"] != "") { $validation_error .= $verify_password_["error"] . "<br>";
+		if($verify_password_["error"] != "") { $validation_error .= $verify_password_["error"] . "<br>"; }
 		$verify_password = $verify_password_["input_value"];
 
 		if($password != $verify_password) { $validation_error .= Translate("Password and password verification don't match", 1) . "<br>"; }
 
 		$email_ = validateInput("Email", $_POST["email"], "email", 8, 80);
-		if($email_["error"] != "") { $validation_error .= $email_["error"] . "<br>";
+		if($email_["error"] != "") { $validation_error .= $email_["error"] . "<br>"; }
 		$email = $email_["input_value"];
 
 		if($validation_error != "") {
@@ -122,7 +122,7 @@
 			$temp = db_query($database_name, $sql, "no", "no");
 
 			if($temp_ = fetch_array($temp)) {
-				$validation_error .= str_replace("%u", toPage($_POST["username"], "string", ""), Translate("Username %u is already used, please choose another one.", 1) . "<br>";
+				$validation_error .= str_replace("%u", toPage($_POST["username"], "string", ""), Translate("Username %u is already used, please choose another one.", 1)) . "<br>";
 			}
 		}
 
@@ -211,7 +211,7 @@
 		break;
 
 		case "delete_booking":
-		
+
 		$get_book_id = validateInput("get_book_id", $_GET["book_id"], "int", 0, 0);
 		$get_object_id = validateInput("get_object_id", $_GET["object_id"], "int", 0, 0);
 
@@ -223,10 +223,10 @@
 		case "confirm_booking": // ***********************************************************************************
 
 		$get_validated = validateInput("", $_GET["validated"], "string", 2, 3);
-		
+
 		$get_book_id = validateInput("get_book_id", $_GET["book_id"], "int", 0, 0);
 		$get_object_id = validateInput("get_object_id", $_GET["object_id"], "int", 0, 0);
-		
+
 		switch($get_validated["input_value"]) {
 
 			case "yes":
@@ -320,7 +320,7 @@
 		$post_localize_to = validateInput("post_localize_to", $_POST["localize_to"], "string", 4, 15);
 		$post_lang_id = validateInput("post_lang_id", $_POST["lang_id"], "int", 0, 0);
 		$post_localize_to_lang_id = validateInput("post_localize_to_lang_id", $_POST["$post_localize_to_" . $post_lang_id], "string", 0, 0);
-		
+
 		$sql = "UPDATE rs_param_lang SET ";
 		$sql .= toDb($post_localize_to) . " = '" . toDb($post_localize_to_lang_id) . "' ";
 		$sql .= "WHERE lang_id = " . toDb($post_lang_id) . ";";
@@ -333,8 +333,8 @@
 			$get_start_date = validateInput("get_start_date", $_GET["start_date"], "date", 0, 0);
 			$get_start_hour = validateInput("get_start_hour", $_GET["start_hour"], "string", 0, 5); // 00:00
 			$get_duration = validateInput("get_duration", $_GET["duration"], "int", 0, 0);
-			
-			
+
+
 			$start_date = DateReformat($get_start_date) . " " . $get_start_hour . ":00";
 
 			$first_availability = getAvailability($get_object_id, $start_date, $get_duration);
