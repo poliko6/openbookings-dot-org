@@ -23,7 +23,7 @@ your web server and that you can eventually cope with it)
 3 - ### CONNECTION SETUP ###
 
 	Open the "config.php" file with a text editor and set the correct values for
-	the variables $app_path, $db_server_address, $database_name, $db_user, $db_password, $db_connection_type and $time_offset
+	the variables $app_path, $db_server_address, $database_name, $db_user, $db_password and $db_connection_type
 
 4 - ### APPLICATION SETUP ###
 
@@ -61,7 +61,7 @@ votre serveur web et que, à défaut d'être un gourou, vous sachiez éventuellement
 3 - ### REGLAGE DE LA CONNEXION ###
 
 	Ouvrez le fichier "config.php" avec un éditeur de texte et attribuez les valeurs correctes
-	aux variables $app_path, $database_name, $db_user, $db_password, $db_connection_type et $time_offset
+	aux variables $app_path, $database_name, $db_user, $db_password, $db_connection_type
 
 4 - ### REGLAGES DE L'APPLICATION ###
 
