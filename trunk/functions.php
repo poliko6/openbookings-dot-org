@@ -21,7 +21,7 @@
 	$application_access_level = param_extract("application_access_level");
 
 	if(isset($_COOKIE["bookings_date_format"])) { $date_format = $_COOKIE["bookings_date_format"]; } else { $date_format = param_extract("default_date_format"); }
-	if(isset($_COOKIE["bookings_time_offset"])) { $time_offset = $_COOKIE["bookings_time_offset"]; } else { $time_offset = 0; }
+	if(isset($_COOKIE["bookings_time_offset"])) { $time_offset = $_COOKIE["bookings_time_offset"]; } else { $time_offset = param_extract("default_user_timezone") - param_extract("server_timezone"); }
 
 	// refeshes the cookie (resets timeout)
 	if(isset($_COOKIE["bookings_user_id"])) {
@@ -320,15 +320,15 @@
 			$language = $temp_["param_value"];
 		}
 
-		$sql = "SELECT " . toDb($language) . " FROM rs_param_lang ";
+		$sql = "SELECT " . $language . " FROM rs_param_lang ";
 		$sql .= "WHERE english = '" . toDb($english) . "';";
 		$translation = db_query($database_name, $sql, "no", "no");
 
 		if($translation_ = fetch_array($translation)) {
 			if($translation_[$language] != "" && !is_null($translation_[$language])) {
 
-				if($special_chars_to_html) { return $translation_[$language]);
-				} else { return $translation_[$language]; } // do not convert specials characters to html (usually for javascript alert box)
+				if($special_chars_to_html) { return htmlentities(stripslashes($translation_[$language]));
+				} else { return stripslashes($translation_[$language]); } // do not convert specials characters to html (usually for javascript alert box)
 
 			} else { return $english . "*"; }
 
