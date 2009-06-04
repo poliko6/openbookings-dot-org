@@ -303,7 +303,7 @@
 
 </center>
 
-<iframe id="iframe_action" name="iframe_action" style="width:0px; height:0px; visibility:hidden"></iframe>
+<iframe id="iframe_action" name="iframe_action"></iframe>
 
 <script type="text/javascript"><!--
 $("screen_width").value = screen.width;

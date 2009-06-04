@@ -30,10 +30,10 @@
 <?php
 
 	// uses the current year if not specified by the posted vars
-	if(isset($_REQUEST["stamp"])) {
-		$year = date("Y", $_REQUEST["stamp"]);
+	if(isset($_POST["stamp"])) {
+		$year = date("Y", $_POST["stamp"]);
 	} else {
-		if(isset($_REQUEST["annee"])) { $year = $_REQUEST["annee"]; } else { $year = date("Y"); }
+		if(isset($_POST["annee"])) { $year = $_POST["annee"]; } else { $year = date("Y"); }
 	}
 
 	// extracts colors from the table which holds parameters
@@ -43,22 +43,22 @@
 
 	$sql  = "SELECT rs_param_families.family_name, rs_data_objects.object_name ";
 	$sql .= "FROM rs_data_objects INNER JOIN rs_param_families ON rs_data_objects.family_id = rs_param_families.family_id ";
-	$sql .= "WHERE rs_data_objects.object_id = " . $_REQUEST["object_id"] . ";";
+	$sql .= "WHERE rs_data_objects.object_id = " . ToDb($_REQUEST["object_id"]) . ";";
 	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 
 	$family_name = $temp_["family_name"]; $object_name = $temp_["object_name"];
 
 	// extracts current year bookings
 	$sql = "SELECT book_id, book_start, book_end FROM rs_data_bookings ";
-	$sql .= "WHERE object_id = " . $_REQUEST["object_id"] . " ";
-	$sql .= "AND (YEAR(book_start) = " . $year . " ";
-	$sql .= "OR YEAR(book_end) = " . $year . ");";
+	$sql .= "WHERE object_id = " . toDb($_REQUEST["object_id"]) . " ";
+	$sql .= "AND (YEAR(book_start) = " . toDb($year) . " ";
+	$sql .= "OR YEAR(book_end) = " . toDb($year) . ");";
 	$reservations = db_query($database_name, $sql, "no", "no");
 
 	// extracts infos about selected object
 	$sql  = "SELECT rs_param_families.family_name, rs_data_objects.object_name ";
 	$sql .= "FROM rs_data_objects INNER JOIN rs_param_families ON rs_data_objects.family_id = rs_param_families.family_id ";
-	$sql .= "WHERE rs_data_objects.object_id = " . $_REQUEST["object_id"] . ";";
+	$sql .= "WHERE rs_data_objects.object_id = " . toDb($_REQUEST["object_id"]) . ";";
 	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 
 	$family_name = $temp_["family_name"]; $object_name = $temp_["object_name"];
@@ -70,23 +70,22 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-<title><?php echo $app_title . " :: " . Translate("Calendar", 1); ?></title>
+<title><?php echo toPage($app_title, "string", "") . " :: " . Translate("Calendar", 1); ?></title>
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 
 <script type="text/javascript"><!--
 	<?php includeCommonScripts(); ?>
-	function ClickOnDay(stamp) { $("iframe_day").src = "day.php?stamp=" + stamp + "&object_id=<?php echo $_REQUEST["object_id"]; ?>&screen_width=" + screen.width; }
+	function ClickOnDay(stamp) { $("iframe_day").src = "day.php?stamp=" + stamp + "&object_id=<?php echo toPage($_REQUEST["object_id"], "int", ""); ?>; }
 --></script>
 
 </head>
 
 <body>
 
-
 <div class="global" style="width:810px">
 
-<iframe id="iframe_day" name="iframe_day" frameborder="0" scrolling="no" style="background:#<?php echo param_extract("background_color"); ?>; height:90px; width:810px;"></iframe>
+<iframe id="iframe_day" name="iframe_day" frameborder="0" scrolling="no" style="background:#<?php echo toPage(param_extract("background_color"), "string", ""); ?>; height:90px; width:810px;"></iframe>
 
 <center>
 
