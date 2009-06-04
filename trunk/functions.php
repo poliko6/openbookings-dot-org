@@ -1,6 +1,6 @@
 <?php
 
-	/* OpenBookings.org - Copyright (C) 2005 Jérôme ROGER (jerome@openbookings.org)
+	/* OpenBookings.org - Copyright (C) 2005-2009 Jérôme ROGER (jerome@openbookings.org)
 
 	functions.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 
@@ -99,35 +99,16 @@
 				break;
 
 				case "float":
-				$input = filter_var($input, FILTER_VALIDATE_FLOAT);
+				$input_value = filter_var($input, FILTER_VALIDATE_FLOAT);
 				break;
 
 				case "string":
 				break;
 				
 				case "date":
-				
-				// find separator
-				
-				for($n=0;$n<=strlen($date_format)-1;$n++) {
-					
-					$letter = substr($date_format, $n, 1);
-					
-					if(!is_numeric($letter))
-				
-				
-				
-				
-				
-				
-				//$untrusted_value
-				//$sate_compare = mktime (0,0,0,$mois_test,$jour_test,$annee_test);
-				//$new_date = date("d/m/Y",$Date_compare); 
-				
-				
-				
+				$input_value = dateFormat($input, $date_format, "");
 				break;
-				
+
 				case "url":
 				$input_value = filter_var($input, FILTER_VALIDATE_URL);
 				break;
@@ -136,9 +117,8 @@
 				$input_value = filter_var($input, FILTER_VALIDATE_EMAIL);
 			}
 
-			// returns an array with 0=>validation success, 1=>validated value
 			if(($awaited_type == "boolean" && is_null($input_value)) || ($awaited_type != "boolean" && $input_value === false)) {
-				$error = "'%l' should be a %t";
+				$error = "'%l' should be %t";
 			}
 		}
 
@@ -171,6 +151,11 @@
 
 			case "string":
 			$input = filter_var($input, FILTER_SANITIZE_STRING);
+			break;
+			
+			case "date":
+			$input = filter_var($input, FILTER_SANITIZE_STRING);
+			$input = dateFormat($input, $date_format, "");
 			break;
 
 			case "url":
@@ -449,6 +434,84 @@
 		return date("Y-m-d H:i", strtotime($date) + $hour + $time_offset);
 	}
 
+    function dates_interconv( $date_format1, $date_format2, $date_str ) {
+        $base_struc     = split('[/.-]', $date_format1);
+        $date_str_parts = split('[/.-]', $date_str );
+       
+        $date_elements = array();
+       
+        $p_keys = array_keys( $base_struc );
+        foreach ( $p_keys as $p_key )
+        {
+            if ( !empty( $date_str_parts[$p_key] ))
+            {
+                $date_elements[$base_struc[$p_key]] = $date_str_parts[$p_key];
+            }
+            else
+                return false;
+        }
+       
+        $dummy_ts = mktime( 0,0,0, $date_elements['m'],$date_elements['d'],$date_elements['Y']);
+       
+        return date( $date_format2, $dummy_ts );
+    }
+   
+	function dateFormat($d_date, $s_input_format, $s_output_format) {
+		
+		// checks if $d_date sticks to $s_input_format
+		// checks if $d_date is valid
+		// returns $d_date converted to $s_output_format or true if $s_output_format is an empty string
+		
+		$return = false;
+		
+		// parse date format
+		$a_year_formats = array("Y","y");
+		$a_month_formats = array("m","M","n");
+		$a_day_formats = array("d","j");
+		$a_separator_formats = array("/",".","-");
+		
+		$a_format = array();
+		
+		for($n=0;$n<=strlen($s_input_format)-1;$n++) {
+			
+			$letter = substr($s_input_format, $n, 1);
+			
+			if(in_array($letter, $a_day_formats)) {
+				$a_format["day"] = $letter;
+			} elseif(in_array($letter, $a_month_formats)) {
+				$a_format["month"] = $letter;
+			} elseif(in_array($letter, $a_year_formats)) {
+				$a_format["year"] = $letter;
+			} elseif(in_array($letter, $a_separator_formats)) {
+				$a_format["separator"] = $letter;
+			}
+		}
+		
+		if(count($a_format) == 4) { // year, month, day and separator found
+		
+			$year = ""; $month = ""; $day = "";
+			
+			// explodes date according to parsed format
+			$a_date = explode($a_format["separator"], $d_date);
+			
+			foreach($a_date as $i_index=>$s_value) {
+				$$a_format[$i_index]["date_part"] = $s_value // $day = 30 | $month = 12 | $year = 2009
+			}
+
+			if(checkdate($month, $day, $year)) {
+				
+				if($s_output_format == "") {
+					$return = true;
+				} else {
+					$return = date($s_output_format, strtotime($year . "-" . $month . "-" . $day));
+				}
+		}
+		
+		return $return;
+	}
+	
+	// obsolete - replace by checkDateFormat() in all scripts ASAP
+	
 	function DateReformat($date) { // changes date to mysql-compliant format using $date_format setting
 
 		global $date_format; $date_item_id = 0;

@@ -27,18 +27,27 @@
 	CheckCookie(); // Resets app to the index page if timeout is reached. This function is implemented in functions.php
 
 	if(isset($_POST["action_"])) {
+		
+		$booking_start = DateReformat($_POST["start_date"]) . " " . $_POST["start_hour"] . "00";
+		$booking_duration = toSeconds($_POST["duration_days"], $_POST["duration_hours"], $_POST["duration_minutes"]);
+		$booking_end = date("Y-m-d H:i:s", strtotime("+" . $booking_duration . " seconds", $booking_start));
 
 		switch($_POST["action_"]) {
 
 			case "insert_booking":
 
-			$booking_start = DateReformat($_POST["start_date"]) . " " . $_POST["start_hour"] . "00";
-			$booking_duration = toSeconds($_POST["duration_days"], $_POST["duration_hours"], $_POST["duration_minutes"]);
-			$booking_end = date("Y-m-d H:i:s", strtotime("+" . $booking_duration . " seconds", $booking_start));
+			insertBooking("insert", $_POST["book_id"], $_POST["booker_id"], $_POST["object_id"], $booking_start, $booking_end, $_POST["misc_info"], $validated);
+			
+			break;
+			
+			case "update_booking":
+			
+			insertBooking("update", $_POST["book_id"], $_POST["booker_id"], $_POST["object_id"], $booking_start, $booking_end, $_POST["misc_info"], $validated);
+			
+			break;
+		}
 
-			insertBooking("insert", $_POST["book_id"], $_POST["booker_id"], $_POST["object_id"], $booking_start, $booking_end, $_POST["misc_info"], $validated)
-
-	}
+	} else {
 
 	$sql = "SELECT activity_start, activity_end, activity_step FROM rs_data_objects WHERE object_id = " . $_REQUEST["object_id"] . ";";
 	$object = db_query($database_name, $sql, "no", "no"); $object_ = fetch_array($object);
@@ -171,8 +180,10 @@
 
 	</form>
 
-	<iframe id="iframe_action"></iframe>
+	<iframe id="iframe_action" name="iframe_action"></iframe>
 
 </body>
 
 </html>
+
+<?php } // !action_ ?>
