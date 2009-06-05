@@ -128,29 +128,36 @@
 		return array("input_label"=>$input_label, "input_value"=>$input_value, "error"=>$error);
 	}
 
-	function toPage($untrusted_value, $awaited_type, $on_error_return_value) {
+	
+	
+	
+	function toPage($untrusted_value, $awaited_type, $default_value) {
 
 		// conversion to regular charset (avoids attacks by charset modification)
-		$input = htmlentities($untrusted_value, ENT_QUOTES, "ISO-8859-1", false);
+		$untrusted_value = htmlentities($untrusted_value, ENT_QUOTES, "ISO-8859-1", false);
 
+		$output = $default_value;
+		
 		switch($awaited_type) {
 
 			case "boolean":
-			$input = filter_var($input, FILTER_VALIDATE_BOOLEAN);
+			if(is_bool($untrusted_value)) { $output = $untrusted_value; }
 			break;
 
 			case "int":
-			$input = filter_var($input, FILTER_VALIDATE_INT);
-			if($input !== false) { $input = filter_var($input, FILTER_SANITIZE_NUMBER_INT); }
+			if(is_int($untrusted_value)) { $output = $untrusted_value; }
 			break;
-
+				
 			case "float":
-			$input = filter_var($input, FILTER_VALIDATE_FLOAT);
-			if($input !== false) { $input = filter_var($input, FILTER_SANITIZE_NUMBER_FLOAT); }
+			if(is_float($untrusted_value)) { $output = $untrusted_value; }
 			break;
-
+			
+			case "hex":
+			if(ctype_xdigit($untrusted_value)) { $output = $untrusted_value; }
+			break;
+	
 			case "string":
-			$input = filter_var($input, FILTER_SANITIZE_STRING);
+			if(ctype_alnum($untrusted_value)) { $output = $untrusted_value; }
 			break;
 			
 			case "date":
