@@ -110,11 +110,11 @@
 				break;
 
 				case "url":
-				$input_value = filter_var($input, FILTER_VALIDATE_URL);
+				$input_value = checkUrl($input);
 				break;
 
 				case "email":
-				$input_value = filter_var($input, FILTER_VALIDATE_EMAIL);
+				
 			}
 
 			if(($awaited_type == "boolean" && is_null($input_value)) || ($awaited_type != "boolean" && $input_value === false)) {
@@ -127,9 +127,6 @@
 
 		return array("input_label"=>$input_label, "input_value"=>$input_value, "error"=>$error);
 	}
-
-
-
 
 	function toPage($untrusted_value, $awaited_type, $default_value) {
 
@@ -165,13 +162,11 @@
 			break;
 
 			case "url":
-			$input = filter_var($input, FILTER_VALIDATE_URL);
-			if($input !== false) { $input = filter_var($input, FILTER_SANITIZE_URL); }
+			$input = checkUrl($input);
 			break;
 
 			case "email":
-			$input = filter_var($input, FILTER_VALIDATE_EMAIL);
-			if($input !== false) { $input = filter_var($input, FILTER_SANITIZE_EMAIL); }
+
 		}
 
 		// returns an array with 0=>validation success, 1=>validated value
@@ -440,7 +435,7 @@
 		return date("Y-m-d H:i", strtotime($date) + $hour + $time_offset);
 	}
 
-    function dates_interconv( $date_format1, $date_format2, $date_str ) {
+    /*function dates_interconv( $date_format1, $date_format2, $date_str ) {
         $base_struc     = split('[/.-]', $date_format1);
         $date_str_parts = split('[/.-]', $date_str );
 
@@ -460,7 +455,7 @@
         $dummy_ts = mktime( 0,0,0, $date_elements['m'],$date_elements['d'],$date_elements['Y']);
 
         return date( $date_format2, $dummy_ts );
-    }
+    }*/
 
 	function dateFormat($d_date, $s_input_format, $s_output_format) {
 
@@ -515,8 +510,17 @@
 
 		return $return;
 	}
-
-	// obsolete - replace by checkDateFormat() in all scripts ASAP
+	
+	function checkUrl($url) {
+		$pattern = "#^http://([A-Za-z0-9_-]+\.)+([A-Za-z]{2,4})$#";
+		if(preg_match($pattern, $url)) { return $url; } else { return false; }
+	}
+	
+	function checkEmail($email) {
+		$pattern = "#^[A-Za-z0-9._-]+@[a-z0-9._-]{2,}\.[A-Za-z]{2,4}$#";
+		
+	
+	// obsolete - replace by dateFormat() in all scripts ASAP
 
 	function DateReformat($date) { // changes date to mysql-compliant format using $date_format setting
 
