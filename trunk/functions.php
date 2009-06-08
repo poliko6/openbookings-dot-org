@@ -30,7 +30,7 @@
 		if(isset($_COOKIE["bookings_profile_id"])) { setcookie("bookings_profile_id", $_COOKIE["bookings_profile_id"], (time() + $session_timeout)); }
 		if(isset($_COOKIE["bookings_language"])) { setcookie("bookings_language", $_COOKIE["bookings_language"], (time() + $session_timeout)); }
 		if(isset($_COOKIE["bookings_date_format"])) { setcookie("bookings_date_format", $date_format, (time() + $session_timeout)); }
-	
+
 		$time_offset = getFromDb("rs_data_users", "user_id", $_COOKIE["bookings_user_id"], "user_timezone") - param_extract("server_timezone");
 	} else {
 		$time_offset = param_extract("default_user_timezone") - param_extract("server_timezone");
@@ -104,7 +104,7 @@
 
 				case "string":
 				break;
-				
+
 				case "date":
 				$input_value = dateFormat($input, $date_format, "");
 				break;
@@ -128,16 +128,16 @@
 		return array("input_label"=>$input_label, "input_value"=>$input_value, "error"=>$error);
 	}
 
-	
-	
-	
+
+
+
 	function toPage($untrusted_value, $awaited_type, $default_value) {
 
 		// conversion to regular charset (avoids attacks by charset modification)
 		$untrusted_value = htmlentities($untrusted_value, ENT_QUOTES, "ISO-8859-1", false);
 
 		$output = $default_value;
-		
+
 		switch($awaited_type) {
 
 			case "boolean":
@@ -147,21 +147,20 @@
 			case "int":
 			if(is_int($untrusted_value)) { $output = $untrusted_value; }
 			break;
-				
+
 			case "float":
 			if(is_float($untrusted_value)) { $output = $untrusted_value; }
 			break;
-			
+
 			case "hex":
 			if(ctype_xdigit($untrusted_value)) { $output = $untrusted_value; }
 			break;
-	
+
 			case "string":
 			if(ctype_alnum($untrusted_value)) { $output = $untrusted_value; }
 			break;
-			
+
 			case "date":
-			$input = filter_var($input, FILTER_SANITIZE_STRING);
 			$input = dateFormat($input, $date_format, "");
 			break;
 
@@ -194,7 +193,7 @@
 		$temp = db_query($database_name, $sql, 0);
 		if($temp_ = fetch_array($temp)) { return $temp_[$searched_value]; } else { return false; }
 	}
-	
+
 	function getObjectInfos($object_id, $info) {
 
 		global $database_name;
@@ -444,9 +443,9 @@
     function dates_interconv( $date_format1, $date_format2, $date_str ) {
         $base_struc     = split('[/.-]', $date_format1);
         $date_str_parts = split('[/.-]', $date_str );
-       
+
         $date_elements = array();
-       
+
         $p_keys = array_keys( $base_struc );
         foreach ( $p_keys as $p_key )
         {
@@ -457,32 +456,32 @@
             else
                 return false;
         }
-       
+
         $dummy_ts = mktime( 0,0,0, $date_elements['m'],$date_elements['d'],$date_elements['Y']);
-       
+
         return date( $date_format2, $dummy_ts );
     }
-   
+
 	function dateFormat($d_date, $s_input_format, $s_output_format) {
-		
+
 		// checks if $d_date sticks to $s_input_format
 		// checks if $d_date is valid
 		// returns $d_date converted to $s_output_format or true if $s_output_format is an empty string
-		
+
 		$return = false;
-		
+
 		// parse date format
 		$a_year_formats = array("Y","y");
 		$a_month_formats = array("m","M","n");
 		$a_day_formats = array("d","j");
 		$a_separator_formats = array("/",".","-");
-		
+
 		$a_format = array();
-		
+
 		for($n=0;$n<=strlen($s_input_format)-1;$n++) {
-			
+
 			$letter = substr($s_input_format, $n, 1);
-			
+
 			if(in_array($letter, $a_day_formats)) {
 				$a_format["day"] = $letter;
 			} elseif(in_array($letter, $a_month_formats)) {
@@ -493,32 +492,32 @@
 				$a_format["separator"] = $letter;
 			}
 		}
-		
+
 		if(count($a_format) == 4) { // year, month, day and separator found
-		
+
 			$year = ""; $month = ""; $day = "";
-			
+
 			// explodes date according to parsed format
 			$a_date = explode($a_format["separator"], $d_date);
-			
+
 			foreach($a_date as $i_index=>$s_value) {
 				$$a_format[$i_index]["date_part"] = $s_value // $day = 30 | $month = 12 | $year = 2009
 			}
 
 			if(checkdate($month, $day, $year)) {
-				
+
 				if($s_output_format == "") {
 					$return = true;
 				} else {
 					$return = date($s_output_format, strtotime($year . "-" . $month . "-" . $day));
 				}
 		}
-		
+
 		return $return;
 	}
-	
+
 	// obsolete - replace by checkDateFormat() in all scripts ASAP
-	
+
 	function DateReformat($date) { // changes date to mysql-compliant format using $date_format setting
 
 		global $date_format; $date_item_id = 0;
