@@ -28,7 +28,7 @@
 
 	if(isset($_POST["action_"])) {
 		
-		$booking_start = DateReformat($_POST["start_date"]) . " " . $_POST["start_hour"] . "00";
+		$booking_start = dateFormat($_POST["start_date"], "", "Y-m-d") . " " . $_POST["start_hour"] . "00";
 		$booking_duration = toSeconds($_POST["duration_days"], $_POST["duration_hours"], $_POST["duration_minutes"]);
 		$booking_end = date("Y-m-d H:i:s", strtotime("+" . $booking_duration . " seconds", $booking_start));
 

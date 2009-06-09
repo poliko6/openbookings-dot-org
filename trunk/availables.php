@@ -29,8 +29,8 @@
 	$end_date = validateInput("search_end_date", $_POST["search_end_date"], "date", 0, 0);
 	$end_hour = validateInput("search_end_hour", $_POST["search_end_hour"], "hour", 0, 0);
 	
-	$start = DateAndHour(DateReformat($start_date), $start_hour);
-	$end = DateAndHour(DateReformat($end_date), $end_hour);
+	$start = DateAndHour(dateFormat($start_date, "", "Y-m-d"), $start_hour);
+	$end = DateAndHour(dateFormat($end_date, "", "Y-m-d"), $end_hour);
 
 	$start_ = date("Y-m-d H:i", strtotime($start));
 	$end_ = date("Y-m-d H:i", strtotime($end));

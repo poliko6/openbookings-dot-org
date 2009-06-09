@@ -330,8 +330,7 @@
 			$get_start_hour = validateInput("get_start_hour", $_GET["start_hour"], "string", 0, 5); // 00:00
 			$get_duration = validateInput("get_duration", $_GET["duration"], "int", 0, 0);
 
-
-			$start_date = DateReformat($get_start_date) . " " . $get_start_hour . ":00";
+			$start_date = dateFormat($get_start_date, "", "Y-m-d") . " " . $get_start_hour . ":00";
 
 			$first_availability = getAvailability($get_object_id, $start_date, $get_duration);
 
