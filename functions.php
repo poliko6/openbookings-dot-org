@@ -78,6 +78,8 @@
 		if($permissions_ = fetch_array($permissions)) { return $permissions_["permission"]; } else { return "none"; }
 	}
 
+	/*
+	
 	function validateInput($input_label, $untrusted_value, $awaited_type, $min_length, $max_length) {
 
 		// conversion to regular charset (avoids attacks by charset modification)
@@ -110,11 +112,11 @@
 				break;
 
 				case "url":
-				$input_value = checkUrl($input);
+				$input_value = validateUrl($input);
 				break;
 
 				case "email":
-				
+				$input_value = validateEmail($input);
 			}
 
 			if(($awaited_type == "boolean" && is_null($input_value)) || ($awaited_type != "boolean" && $input_value === false)) {
@@ -162,11 +164,11 @@
 			break;
 
 			case "url":
-			$input = checkUrl($input);
+			$input = validateUrl($input);
 			break;
 
 			case "email":
-
+			$input = validateEmail($input);
 		}
 
 		// returns an array with 0=>validation success, 1=>validated value
@@ -180,7 +182,73 @@
 	function toDb($untrusted_value) {
 		return mysql_real_escape_string($untrusted_value);
 	}
+	
+	*/
+	
+	// START UNIVERSAL VARS CHECKS
+	
+	function checkVar($target, $untrusted_value, $awaited_type, $min, $max, $default_value, $label) {
+		
+		$untrusted_value = filterValue($target, $untrusted_value); // converts to correct charset, removes unwanted values, encodes special chars
 
+		$value_accepted = validateType($untrusted_value, $awaited_type); // checks var content against awaited type
+
+		if($value_accepted) { // checks var content against values or length bounds
+			
+			if($awaited_type = "int" || $awaited_type = "float" || $awaited_type = "hex") {
+				$value_accepted = validateValue($untrusted_value, $min, $max);
+			}
+			
+			if($awaited_type = "string" || $awaited_type = "date" || $awaited_type = "url" || $awaited_type = "email") {
+				$value_accepted = validateLength($untrusted_value, $min, $max);
+			}
+		}
+		
+		if($value_accepted) {
+			return array("accepted"=>true; "value"=>$untrusted_value; "error"=>"");
+		} else {
+			return array("accepted"=>false; "value"=>$untrusted_value; "error"=>$label);
+		}
+	}
+	
+	function filterValue($target, $value) {
+		
+		switch($target) {
+			
+			case "mysql":
+			return mysql_real_escape_string($value);
+			break;
+			
+			case "html":
+			return return htmlentities($value, ENT_QUOTES, "ISO-8859-1", false);
+		}
+	}
+
+	function validateType($value, $type) {
+		
+		switch($type) {
+			case "boolean":	return is_bool($untrusted_value); break;
+			case "int": return is_int($untrusted_value); break;
+			case "float": return is_float($untrusted_value); break;
+			case "hex": return ctype_xdigit($untrusted_value); break;
+			case "string": return ctype_alnum($untrusted_value); break;
+			case "date": global $date_format; return dateFormat($input, $date_format, ""); break;
+			case "url": return validateUrl($input); break;
+			case "email": return validateEmail($input); break;
+			default: return false;
+		}
+	}
+	
+	function validateValue($value, $min, $max) {
+		return (($min == "" || $value >= $min) && ($max == "" || $value <= $max))
+	}
+	
+	function validateLength($value, $min, $max) {
+		return (($min == "" || strlen($value) >= $min) && ($max == "" || strlen($value) <= $max));
+	}
+	
+	// END UNIVERSAL VARS CHECKS
+	
 	function getFromDb($table, $id_column, $id_value, $searched_value) {
 
 		$sql = "SELECT " . $searched_value . " FROM " . $table . " WHERE " . $id_column . " = '" . $id_value . "';";
@@ -435,35 +503,15 @@
 		return date("Y-m-d H:i", strtotime($date) + $hour + $time_offset);
 	}
 
-    /*function dates_interconv( $date_format1, $date_format2, $date_str ) {
-        $base_struc     = split('[/.-]', $date_format1);
-        $date_str_parts = split('[/.-]', $date_str );
-
-        $date_elements = array();
-
-        $p_keys = array_keys( $base_struc );
-        foreach ( $p_keys as $p_key )
-        {
-            if ( !empty( $date_str_parts[$p_key] ))
-            {
-                $date_elements[$base_struc[$p_key]] = $date_str_parts[$p_key];
-            }
-            else
-                return false;
-        }
-
-        $dummy_ts = mktime( 0,0,0, $date_elements['m'],$date_elements['d'],$date_elements['Y']);
-
-        return date( $date_format2, $dummy_ts );
-    }*/
-
 	function dateFormat($d_date, $s_input_format, $s_output_format) {
 
 		// checks if $d_date sticks to $s_input_format
-		// checks if $d_date is valid
+		// checks if $d_date is a valid date
 		// returns $d_date converted to $s_output_format or true if $s_output_format is an empty string
 
 		$return = false;
+		
+		if($s_input_format == "") { global $date_format; $s_input_format = $date_format; }
 
 		// parse date format
 		$a_year_formats = array("Y","y");
@@ -511,16 +559,16 @@
 		return $return;
 	}
 	
-	function checkUrl($url) {
-		$pattern = "#^http://([A-Za-z0-9_-]+\.)+([A-Za-z]{2,4})$#";
+	function validateUrl($url) {
+		$pattern = "#^(http://)?((www|3w|w3)\.)?[A-Za-z0-9_-]+(\.[A-Za-z]{2,4})+([^/\.]/[A-Za-z0-9_-]{0,})*(\.[A-Za-z0-9]{1,})?$#";
 		if(preg_match($pattern, $url)) { return $url; } else { return false; }
 	}
 	
-	function checkEmail($email) {
+	function validatekEmail($email) {
 		$pattern = "#^[A-Za-z0-9._-]+@[a-z0-9._-]{2,}\.[A-Za-z]{2,4}$#";
+	}
 		
-	
-	// obsolete - replace by dateFormat() in all scripts ASAP
+	/* obsolete - replaced by dateFormat() in all scripts ASAP
 
 	function DateReformat($date) { // changes date to mysql-compliant format using $date_format setting
 
@@ -546,7 +594,7 @@
 
 		return $date_array[$date_item["Y"]] . "-" .  $date_array[$date_item["m"]] . "-" .  $date_array[$date_item["d"]];
 
-	} // function
+	} */
 
 	function param_extract($param_name) {
 

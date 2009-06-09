@@ -56,8 +56,8 @@
 
 	if(isset($_REQUEST["action_"])) {
 
-		$booking_start = DateAndHour(DateReformat($_REQUEST["start_date"]), $_REQUEST["start_hour"]);
-		$booking_end = DateAndHour(DateReformat($_REQUEST["end_date"]), $_REQUEST["end_hour"]);
+		$booking_start = DateAndHour(dateFormat($_REQUEST["start_date"], "", "Y-m-d"), $_REQUEST["start_hour"]);
+		$booking_end = DateAndHour(dateFormat($_REQUEST["end_date"], "", "Y-m-d"), $_REQUEST["end_hour"]);
 
 		switch($_REQUEST["action_"]) {
 
@@ -74,8 +74,8 @@
 
 			case "update_booking":
 
-			$booking_start = DateAndHour(DateReformat($_REQUEST["start_date"]), $_REQUEST["start_hour"]);
-			$booking_end = DateAndHour(DateReformat($_REQUEST["end_date"]), $_REQUEST["end_hour"]);
+			$booking_start = DateAndHour(dateFormat($_REQUEST["start_date"], "", "Y-m-d"), $_REQUEST["start_hour"]);
+			$booking_end = DateAndHour(dateFormat($_REQUEST["end_date"], "", "Y-m-d"), $_REQUEST["end_hour"]);
 			$error_msg = checkBooking($_REQUEST["book_id"], $_REQUEST["object_id"], $booking_start, $booking_end);
 
 			if($error_msg == "") {
@@ -99,7 +99,7 @@
 							$sql = "SELECT book_start, book_end, validated FROM rs_data_bookings WHERE book_id = " . $_REQUEST["book_id"] . ";";
 							$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 
-							if($temp_["book_start"] != DateAndHour(DateReformat($_REQUEST["start_date"]), $_REQUEST["start_hour"]) || $temp_["book_end"] != DateAndHour(DateReformat($_REQUEST["end_date"]), $_REQUEST["end_hour"])) {
+							if($temp_["book_start"] != DateAndHour(dateFormat($_REQUEST["start_date"], "", "Y-m-d"), $_REQUEST["start_hour"]) || $temp_["book_end"] != DateAndHour(DateReformat($_REQUEST["end_date"]), $_REQUEST["end_hour"])) {
 								// at least one date was changed, booking must be re-validated if the object is managed by someone
 								$validated = 0;
 							} else {
