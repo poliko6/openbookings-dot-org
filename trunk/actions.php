@@ -24,14 +24,14 @@
 
 	$message = ""; $script = "";
 
-	$post_action = validateInput("", $_POST["action"], "string", 0, 0)
+	$post_action = $_POST["action"];
 
 	switch($post_action) {
 
 		case "connect": // **********************************************************************************************
 
-		$post_username = validateInput("post_username", $_POST["username"], "string", 5, 20);
-		$post_password = validateInput("post_password", $_POST["password"], "string", 5, 20);
+		$post_username = $_POST["username"];
+		$post_password = $_POST["password"];
 
 		$sql  = "SELECT user_id, profile_id, locked, language, date_format, user_timezone FROM rs_data_users ";
 		$sql  .= "WHERE login = '" . toDb($post_username) . "' ";
@@ -85,31 +85,31 @@
 
 		$validation_error = "";
 
-		$first_name_ = validateInput("First name", $_POST["first_name"], "string", 2, 50);
-		if($first_name_["error"] != "") { $validation_error .= $first_name_["error"] . "<br>"; }
-		$first_name = $first_name_["input_value"];
+		$first_name_ = checkVar("", $_POST["first_name"], "string", 2, 50, "", "First name");
+		if(!$first_name_["validated"]) { $validation_error .= $first_name_["error"] . "<br>"; }
+		$first_name = $first_name_["value"];
 
-		$last_name_ = validateInput("Last name", $_POST["last_name"], "string", 2, 50);
-		if($last_name_["error"] != "") { $validation_error .= $last_name_["error"] . "<br>"; }
-		$last_name = $last_name_["input_value"];
+		$last_name_ = checkVar("", $_POST["last_name"], "string", 2, 50, "", "Last name");
+		if(!$last_name_["validated"]) { $validation_error .= $last_name_["error"] . "<br>"; }
+		$last_name = $last_name_["value"];
 
-		$username_ = validateInput("Username", $_POST["username"], "string", 5, 20);
-		if($username_["error"] != "") { $validation_error .= $username_["error"] . "<br>"; }
-		$username = $username_["input_value"];
+		$username_ = checkVar("", $_POST["username"], "string", 5, 20, "", "Username");
+		if(!$username_["validated"]) { $validation_error .= $username_["error"] . "<br>"; }
+		$username = $username_["value"];
 
-		$password_ = validateInput("Password", $_POST["password"], "string", 5, 20);
-		if($password_["error"] != "") { $validation_error .= $password_["error"] . "<br>"; }
-		$password = $password_["input_value"];
-
-		$verify_password_ = validateInput("Password verification", $_POST["verify_password"], "string", 5, 20);
-		if($verify_password_["error"] != "") { $validation_error .= $verify_password_["error"] . "<br>"; }
-		$verify_password = $verify_password_["input_value"];
+		$password_ = checkVar("", $_POST["password"], "string", 5, 20, "", "Password");
+		if(!$password_["validated"]) { $validation_error .= $password_["error"] . "<br>"; }
+		$password = $password_["value"];
+		
+		$verify_password_ = checkVar("", $_POST["verify_password"], "string", 5, 20, "", "Password verification");
+		if(!$verify_password_["validated"]) { $validation_error .= $verify_password_["error"] . "<br>"; }
+		$verify_password = $verify_password_["value"];
 
 		if($password != $verify_password) { $validation_error .= Translate("Password and password verification don't match", 1) . "<br>"; }
 
-		$email_ = validateInput("Email", $_POST["email"], "email", 8, 80);
-		if($email_["error"] != "") { $validation_error .= $email_["error"] . "<br>"; }
-		$email = $email_["input_value"];
+		$email_ = checkVar("", $_POST["email"], "email", 8, 80, "", "Email");
+		if(!$email_["validated"]) { $validation_error .= $email_["error"] . "<br>"; }
+		$email = $email_["value"];
 
 		if($validation_error != "") {
 
