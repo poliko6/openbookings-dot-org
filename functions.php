@@ -188,38 +188,42 @@
 	// START UNIVERSAL VARS CHECKS
 	
 	// function validateInput($input_label, $untrusted_value, $awaited_type, $min_length, $max_length) obsolete
-	// replaced by checkVar("", $untrusted_value, $awaited_type, $min, $max, $default_value, $label)
+	// replaced by checkVar("", $untrusted_value, [$awaited_type], [$min], [$max], [$default_value], $label)
 	
 	// function toPage($untrusted_value, $awaited_type, $default_value) obsolete
-	// repalced by checkVar("html", $untrusted_value, $awaited_type, "", "", $default_value, "")
+	// repalced by checkVar("html", $untrusted_value, "", "", "", "", "")
 	
 	// function toDb($untrusted_value) obsolete
-	// replaced by checkVar("mysql", $untrusted_value, $awaited_type, $min, $max, $default_value, $label)
+	// replaced by checkVar("mysql", $untrusted_value, "", "", "", "", "")
 	
 	
 	function checkVar($target, $untrusted_value, $awaited_type, $min, $max, $default_value, $label) {
+		
+		$value_accepted = true;
 		
 		// 1. filter value according to target (web page or database)
 		// converts to correct charset, removes unwanted values, encodes special chars
 		// does nothing if not $target = ""
 		$untrusted_value = filterValue($target, $untrusted_value);
 
+		//checks var content against awaited type
 		if($awaited_type != "") {
-		
-			//checks var content against awaited type
 			$value_accepted = validateType($untrusted_value, $awaited_type);
+		} else {
+			// sets var type if not specified, for next check against bounds
+			if(is_numeric($untrusted_value)) { $awaited_type = "float"; } else { $awaited_type = "string"; }
+		}
 
-			if($value_accepted) {
-				
-				 // checks var content against values bounds
-				if($awaited_type = "int" || $awaited_type = "float" || $awaited_type = "hex") {
-					$value_accepted = validateValue($untrusted_value, $min, $max);
-				}
-				
-				 // checks var content against length bounds
-				if($awaited_type = "string" || $awaited_type = "date" || $awaited_type = "url" || $awaited_type = "email") {
-					$value_accepted = validateLength($untrusted_value, $min, $max);
-				}
+		if($value_accepted) {
+			
+			 // checks var content against values bounds
+			if($awaited_type = "int" || $awaited_type = "float" || $awaited_type = "hex") {
+				$value_accepted = validateValue($untrusted_value, $min, $max);
+			}
+			
+			 // checks var content against length bounds
+			if($awaited_type = "string" || $awaited_type = "date" || $awaited_type = "url" || $awaited_type = "email") {
+				$value_accepted = validateLength($untrusted_value, $min, $max);
 			}
 		}
 		

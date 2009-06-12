@@ -114,16 +114,17 @@
 		if($validation_error != "") {
 
 			// check for already used username
-			$sql = "SELECT user_id FROM rs_data_users WHERE login = '" . toDb($_POST["username"]) . "';";
+			$sql = "SELECT user_id FROM rs_data_users WHERE login = '" . checkVar("mysql", $_POST["username"], "", "", "", "", "") . "';";
 			$temp = db_query($database_name, $sql, "no", "no");
 
 			if($temp_ = fetch_array($temp)) {
-				$validation_error .= str_replace("%u", toPage($_POST["username"], "string", ""), Translate("Username %u is already used, please choose another one.", 1)) . "<br>";
+				
+				$validation_error = sprintf(Translate("Username %1\$s is already used, please choose another one.", 1), checkVar("html", $_POST["username"], "", "", "", "", "")) . "<br>";
 			}
 		}
 
 		if($validation_error != "") {
-			$script .= "parent.document.getElementById(\"error_message\").innerHTML = \"" . toPage($validation_error, "string", "Registration form error") . "\";\n";
+			$script .= "parent.document.getElementById(\"error_message\").innerHTML = \"" . $validation_error . "\";\n";
 		} else {
 
 			// no fields validation errors
@@ -132,19 +133,19 @@
 
 			$sql  = "INSERT INTO rs_data_users ( rand_id, last_name, first_name, login, profile_id, email, password, locked, language, date_format, user_timezone ) VALUES ( ";
 			$sql .= $rand_id . ", ";
-			$sql .= "'" . toDb($_POST["last_name"]) . "', ";
-			$sql .= "'" . toDb($_POST["first_name"]) . "', ";
-			$sql .= "'" . toDb($_POST["username"]) . "', ";
+			$sql .= "'" . checkVar("mysql", $_POST["last_name"], "", "", "", "", "") . "', ";
+			$sql .= "'" . checkVar("mysql", $_POST["first_name"], "", "", "", "", "") . "', ";
+			$sql .= "'" . checkVar("mysql", $_POST["username"], "", "", "", "", "") . "', ";
 			$sql .= "3, "; // standard user profile
-			$sql .= "'" . toDb($_POST["email"]) . "', ";
-			$sql .= "'" . toDb($_POST["password"]) . "', ";
+			$sql .= "'" . checkVar("mysql", $_POST["email"], "", "", "", "", "") . "', ";
+			$sql .= "'" . checkVar("mysql", $_POST["password"], "", "", "", "", "") . "', ";
 
 			$self_registration_mode = param_extract("self_registration_mode");
 			if($self_registration_mode == "no_validation") { $sql .= "0, "; } else { $sql .= "1, "; }
 
-			$sql .= "'" . toDb(param_extract("language")) . "', ";
-			$sql .= "'" . toDb(param_extract("default_date_format")) . "', ";
-			$sql .= "'" . toDb(param_extract("default_user_timezone")) . "' );";
+			$sql .= "'" . param_extract("language") . "', ";
+			$sql .= "'" . param_extract("default_date_format") . "', ";
+			$sql .= "'" . param_extract("default_user_timezone") . "' );";
 			db_query($database_name, $sql, "yes", "no");
 
 			// sends an email with the validation code
@@ -157,7 +158,7 @@
 
 				$headers  = "MIME-Version: 1.0\r\n";
 				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-				$headers .= "From: " . toPage($app_title, "string", "") . " <" . toPage($admin_email, "string", "") . ">\r\n";
+				$headers .= "From: " . checkVar("html", $app_title, "", "", "", "", "") . " <" . checkVar("html", $admin_email, "", "", "", "", "") . ">\r\n";
 
 				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 				$message .= "<html>\n";
@@ -166,7 +167,7 @@
 				$message .= "<title>email confirmation</title>\n";
 
 				$message .= "<style type=\"text/css\">\n";
-				$message .= "body { background:#" . toPage(param_extract("background_color"), "hex", "") . "; }\n";
+				$message .= "body { background:#" . param_extract("background_color") . "; }\n";
 				$message .= "a:link {color:black; text-decoration: none; }\n";
 				$message .= "a:visited {color:black; text-decoration: none; }\n";
 				$message .= "a:hover {color:red; text-decoration: none; }\n";
@@ -178,14 +179,14 @@
 
 				$message .= "<body>\n";
 
-				$message .= toPage(Translate("Here is the code to finish you registration procedure" , 1), "string", "") . " : " . toPage($rand_id, "int", "") . "\n";
+				$message .= Translate("Here is the code to finish you registration procedure" , 1) . " : " . $rand_id . "\n";
 				$message .= "<br><br>\n";
-				$message .= toPage(Translate("Please, go back to the authentication page and log in using your username, password AND registration code"), "string", "") . ".";
+				$message .= Translate("Please, go back to the authentication page and log in using your username, password AND registration code") . ".";
 
 				$message .= "</body>\n";
 				$message .= "</html>";
 
-				mail(toPage($_POST["email"], "email", ""), toPage(Translate("Registration code", 1), "int", ""), $message, $headers);
+				mail(checkVar("html", $_POST["email"], "email", "", "", "", ""), Translate("Registration code", 1), $message, $headers);
 
 				$script .= "parent.document.getElementById(\"notice\").innerHTML = \"";
 				$script .= "<span class=\"big_text\">" . toPage(Translate("Registration successful !", 1), "string", "") . "</span>";
