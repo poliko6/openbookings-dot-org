@@ -160,7 +160,7 @@
 		</tr><tr>
 			<td colspan="7" style="font-weight:bold; padding-top:20px"><center><button type="button" onClick="showFirstAvailability()"><?php echo Translate("Show first availability", 1); ?></button></center></td>
 		</tr><tr>
-			<td colspan="7" id="slot_display" style="text-align:center"></td>
+			<td colspan="7" id="info_display" style="text-align:center"></td>
 		</tr>
 	</table>
 
