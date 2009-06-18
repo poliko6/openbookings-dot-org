@@ -33,10 +33,10 @@
 		$post_username = checkVar("mysql", $_POST["username"], "string", "5", "20", "", "username");
 		$post_password = checkVar("mysql", $_POST["username"], "string", "5", "20", "", "password");
 		
-		$error_message .= (!post_username["accepted"])?post_username["error"] . "<br>":"";
-		$error_message .= (!post_password["accepted"])?post_password["error"] . "<br>":"";
+		$error_message .= (!post_username["ok"])?post_username["error"] . "<br>":"";
+		$error_message .= (!post_password["ok"])?post_password["error"] . "<br>":"";
 		
-		if(post_username["accepted"] && post_password["accepted"]) {
+		if(post_username["ok"] && post_password["ok"]) {
 		
 			$sql  = "SELECT user_id, profile_id, locked, language, date_format, user_timezone FROM rs_data_users ";
 			$sql .= "WHERE login = '" . $post_username["value"] . "' ";
@@ -96,29 +96,29 @@
 		$validation_error = "";
 
 		$first_name_ = checkVar("", $_POST["first_name"], "string", 2, 50, "", "First name");
-		if(!$first_name_["validated"]) { $validation_error .= $first_name_["error"] . "<br>"; }
+		if(!$first_name_["ok"]) { $validation_error .= $first_name_["error"] . "<br>"; }
 		$first_name = $first_name_["value"];
 
 		$last_name_ = checkVar("", $_POST["last_name"], "string", 2, 50, "", "Last name");
-		if(!$last_name_["validated"]) { $validation_error .= $last_name_["error"] . "<br>"; }
+		if(!$last_name_["ok"]) { $validation_error .= $last_name_["error"] . "<br>"; }
 		$last_name = $last_name_["value"];
 
 		$username_ = checkVar("", $_POST["username"], "string", 5, 20, "", "Username");
-		if(!$username_["validated"]) { $validation_error .= $username_["error"] . "<br>"; }
+		if(!$username_["ok"]) { $validation_error .= $username_["error"] . "<br>"; }
 		$username = $username_["value"];
 
 		$password_ = checkVar("", $_POST["password"], "string", 5, 20, "", "Password");
-		if(!$password_["validated"]) { $validation_error .= $password_["error"] . "<br>"; }
+		if(!$password_["ok"]) { $validation_error .= $password_["error"] . "<br>"; }
 		$password = $password_["value"];
 		
 		$verify_password_ = checkVar("", $_POST["verify_password"], "string", 5, 20, "", "Password verification");
-		if(!$verify_password_["validated"]) { $validation_error .= $verify_password_["error"] . "<br>"; }
+		if(!$verify_password_["ok"]) { $validation_error .= $verify_password_["error"] . "<br>"; }
 		$verify_password = $verify_password_["value"];
 
 		if($password != $verify_password) { $validation_error .= Translate("Password and password verification don't match", 1) . "<br>"; }
 
 		$email_ = checkVar("", $_POST["email"], "email", 8, 80, "", "Email");
-		if(!$email_["validated"]) { $validation_error .= $email_["error"] . "<br>"; }
+		if(!$email_["ok"]) { $validation_error .= $email_["error"] . "<br>"; }
 		$email = $email_["value"];
 
 		if($validation_error != "") {
@@ -222,7 +222,7 @@
 		$get_book_id = checkVar("mysql", $_GET["book_id"], "int", "", "", "", "");
 		$get_object_id = checkVar("mysql", $_GET["object_id"], "int", "", "", "", "");
 		
-		if($get_book_id["accepted"] && $get_object_id["accepted"]) {
+		if($get_book_id["ok"] && $get_object_id["ok"]) {
 
 			$sql = "delete from rs_data_bookings WHERE book_id = " . $get_book_id["value"] . " AND object_id = " . $get_object_id["value"] . ";";
 			db_query($database_name, $sql, "no", "no");
@@ -236,7 +236,7 @@
 		$get_book_id = checkVar("mysql", $_GET["book_id"], "int", "", "", "", "");
 		$get_object_id = checkVar("mysql", $_GET["object_id"], "int", "", "", "", "");
 
-		if($get_validated["accepted"] && $get_book_id["accepted"] && $get_object_id["accepted"]) {
+		if($get_validated["ok"] && $get_book_id["ok"] && $get_object_id["ok"]) {
 
 			switch($get_validated["value"]) {
 
@@ -283,7 +283,7 @@
 				db_query($database_name, $action_sql, "no", "no");
 
 				// sends a confirmation email to the booker
-				if($booker_email["accepted"] && $email_bookings == "yes") {
+				if($booker_email["ok"] && $email_bookings == "yes") {
 
 					$headers  = "MIME-Version: 1.0\r\n";
 					$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
@@ -335,7 +335,7 @@
 		$post_lang_id = checkVar("mysql", $_POST["lang_id"], "int", "", "", "", "");
 		$post_localize_to_lang_id = checkVar("mysql", $_POST["$post_localize_to_" . $post_lang_id], "string", "", "", "", "");
 		
-		if($post_localize_to["accepted"] && $post_lang_id["accepted"] && $post_localize_to_lang_id["accepted"]) {
+		if($post_localize_to["ok"] && $post_lang_id["ok"] && $post_localize_to_lang_id["ok"]) {
 			$sql = "UPDATE rs_param_lang SET ";
 			$sql .= $post_localize_to["value"] . " = '" . $post_localize_to_lang_id["value"] . "' ";
 			$sql .= "WHERE lang_id = " . $post_lang_id["value"] . ";";
@@ -353,7 +353,7 @@
 			$get_start_hour = checkVar("", $_GET["start_hour"], "hour",  "", "", "", "Start hour"); // 00:00
 			$get_duration = checkVar("", $_GET["duration"], "int",  "", "", "", "Duration");
 			
-			if($get_object_id["accepted"] && $get_start_date["accepted"] && $get_start_hour["accepted"] && $get_duration["accepted"]) {
+			if($get_object_id["ok"] && $get_start_date["ok"] && $get_start_hour["ok"] && $get_duration["ok"]) {
 				
 				$start_date = dateFormat($get_start_date, "", "Y-m-d") . " " . $get_start_hour . ":00";
 				$first_availability = getAvailability($get_object_id, $start_date, $get_duration);
@@ -362,10 +362,10 @@
 			} else {
 				
 				// displays error to user
-				$error_message .= (!get_object_id["accepted"])?get_object_id["error"] . "<br>":"";
-				$error_message .= (!get_start_date["accepted"])?get_start_date["error"] . "<br>":"";
-				$error_message .= (!get_start_hour["accepted"])?get_start_hour["error"] . "<br>":"";
-				$error_message .= (!get_duration["accepted"])?get_duration["error"] . "<br>":"";
+				$error_message .= (!get_object_id["ok"])?get_object_id["error"] . "<br>":"";
+				$error_message .= (!get_start_date["ok"])?get_start_date["error"] . "<br>":"";
+				$error_message .= (!get_start_hour["ok"])?get_start_hour["error"] . "<br>":"";
+				$error_message .= (!get_duration["ok"])?get_duration["error"] . "<br>":"";
 				
 				$script = "parent.document.getElementById(\"info_display\").innerHTML = \"" . $error_message . "\";\n";
 			}
@@ -446,12 +446,12 @@
 			$buffer = str_replace("\"", "", $buffer); // removes "
 			$array_columns = explode(";", $buffer);
 
-			foreach($array_columns as $column_name) { $sql .= toDb($column_name) . " varchar(255) default NULL, "; }
+			foreach($array_columns as $column_name) { $sql .= checkVar("mysql", $column_name, "string", "", "", "", "") . " varchar(255) default NULL, "; }
 			$sql = substr($sql, 0, -1); // removes last comma (,)
 
 			$sql .= "PRIMARY KEY (lang_id), ";
 
-			foreach($array_columns as $column_name) { $sql .= "KEY " . toDb($column_name) . " (" . toDb($column_name) . "),"; }
+			foreach($array_columns as $column_name) { $sql .= "KEY " . checkVar("mysql", $column_name, "string", "", "", "", "") . " (" . checkVar("mysql", $column_name, "string", "", "", "", "") . "),"; }
 			$sql = substr($sql, 0, -1); // removes last comma (,)
 
 			$sql .= " ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;";
@@ -464,10 +464,10 @@
 				$array_values = explode(";", $buffer);
 
 				$sql  = "INSERT INTO rs_temp_lang ( ";
-				foreach($array_columns as $column_name) { $sql .= toDb($column_name) . ","; }
+				foreach($array_columns as $column_name) { $sql .= checkVar("mysql", $column_name, "string", "", "", "", "") . ","; }
 				$sql = substr($sql, 0, -1); // removes last comma (,)
 				$sql .= " ) VALUES ( ";
-				foreach($array_values as $value) { $sql .= toDb($value) . ","; }
+				foreach($array_values as $value) { $sql .= checkVar("mysql", $value, "string", "", "", "", "") . ","; }
 				$sql = substr($sql, 0, -1); // removes last comma (,)
 				$sql .= ");";
 
@@ -490,7 +490,7 @@
 			db_query($database_name, $sql, "no", "no");
 
 			$script  = "parent.document.location = \"localize.php\";\n";
-			$script .= "alert(\"" . toPage(Translate("Import Successful", 1), "string", "") . "\");\n";
+			$script .= "alert(\"" . Translate("Import Successful", 1) . "\");\n";
 		}
 
 	} // end switch
@@ -505,7 +505,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-<title><?php echo toPage($app_title, "string", "") . " :: " . toPage(Translate("Actions", 1), "string", ""); ?></title>
+<title><?php echo checkVar("html", $app_title, "string", "", "", "", "") . " :: " . Translate("Actions", 1); ?></title>
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 

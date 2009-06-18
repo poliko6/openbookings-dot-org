@@ -251,6 +251,7 @@
 			case "hex": return ctype_xdigit($untrusted_value); break;
 			case "string": return ctype_alnum($untrusted_value); break;
 			case "date": global $date_format; return dateFormat($input, $date_format, ""); break;
+			case "hour": return validateHour($input); break;
 			case "url": return validateUrl($input); break;
 			case "email": return validateEmail($input); break;
 			default: return false;
@@ -575,6 +576,11 @@
 		}
 
 		return $return;
+	}
+	
+	function validateHour($hour) {
+		$pattern = "#^[0-2]{1,1}[0-9]{1,1}:[0-2]{1,1}[0-9]{1,1}$#";
+		if(preg_match($pattern, $url)) { return $url; } else { return false; }
 	}
 	
 	function validateUrl($url) {
