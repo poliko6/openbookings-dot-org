@@ -24,59 +24,93 @@
 
 	CheckCookie(); // Resets app to the index page if timeout is reached. This function is implemented in functions.php
 
-	$start_date = validateInput("search_start_date", $_POST["search_start_date"], "date", 0, 0);
-	$start_hour = validateInput("search_start_hour", $_POST["search_start_hour"], "hour", 0, 0);
-	$end_date = validateInput("search_end_date", $_POST["search_end_date"], "date", 0, 0);
-	$end_hour = validateInput("search_end_hour", $_POST["search_end_hour"], "hour", 0, 0);
+	$start_date = checkVar("", $_POST["search_start_date"], "date", "", "", "", "Start date");
+	$start_hour = checkVar("", $_POST["search_start_hour"], "hour", "", "", "", "Start hour");
+	$end_date = checkVar("", $_POST["search_end_date"], "date", "", "", "", "");
+	$end_hour = checkVar("", $_POST["search_end_hour"], "hour", "", "", "", "");
 	
-	$start = DateAndHour(dateFormat($start_date, "", "Y-m-d"), $start_hour);
-	$end = DateAndHour(dateFormat($end_date, "", "Y-m-d"), $end_hour);
+	if(!$start_date["ok"] || !$start_hour["ok"] || !$end_date["ok"] || !$end_hour["ok"]) {
+		
+		$error_message = "";
+		$error_message .= (!start_date["ok"])?start_date["error"] . "<br>":"";
+		$error_message .= (!start_hour["ok"])?start_hour["error"] . "<br>":"";
+		$error_message .= (!end_date["ok"])?end_date["error"] . "<br>":"";
+		$error_message .= (!end_hour["ok"])?end_hour["error"] . "<br>":"";
+?>
+		<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
-	$start_ = date("Y-m-d H:i", strtotime($start));
-	$end_ = date("Y-m-d H:i", strtotime($end));
+		<html>
 
-	// extracts family name using family_id as parameter
-	$sql = "SELECT family_name FROM rs_param_families WHERE family_id = " . toDb($_POST["family_id"]) . ";";
-	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp); $family_name = $temp_["family_name"];
+		<head>
 
-	// lists objects which are booked within the specified time range
-	$sql  = "SELECT DISTINCT rs_data_objects.object_id ";
-	$sql .= "FROM rs_data_bookings INNER JOIN rs_data_objects ON rs_data_bookings.object_id = rs_data_objects.object_id ";
-	$sql .= "WHERE rs_data_objects.family_id = " . toDb($_POST["family_id"]) . " ";
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-	$sql .= "AND ((rs_data_bookings.book_end > '" . toDb($start) . "' ";
-	$sql .= "AND rs_data_bookings.book_end <= '" . toDb($end) . "') ";
-	$sql .= "OR (rs_data_bookings.book_start < '" . toDb($end) . "' ";
-	$sql .= "AND rs_data_bookings.book_start >= '" . toDb($start) . "') ";
-	$sql .= "OR (rs_data_bookings.book_start <= '" . toDb($start) . "' ";
-	$sql .= "AND rs_data_bookings.book_end >= '" . toDb($end) . "')) ";
+		<title><?php echo toPage($app_title, "string", "") . " :: " . Translate("Availables objects", 1); ?></title>
 
-	$unavailable_objets = db_query($database_name, $sql, "no", "no");
+		<link rel="stylesheet" type="text/css" href="styles.php">
+		
+		</head>
+		
+		<body>
+		
+		<?php echo $error_message ; ?>
+		
+		</body>
+		
+		</html>
+<?php
+		
+	} else {
+	
+		$start = DateAndHour(dateFormat($start_date, "", "Y-m-d"), $start_hour);
+		$end = DateAndHour(dateFormat($end_date, "", "Y-m-d"), $end_hour);
+		$start_ = date("Y-m-d H:i", strtotime($start));
+		$end_ = date("Y-m-d H:i", strtotime($end));
+		$family_id = checkVar("mysql", $_POST["family_id"], "int", "", "", "", "");
+		
+		
+		// extracts family name using family_id as parameter
+		$sql = "SELECT family_name FROM rs_param_families WHERE family_id = " . $family_id . ";";
+		$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp); $family_name = $temp_["family_name"];
 
-	$unavailable_list = "";
+		// lists objects which are booked within the specified time range
+		$sql  = "SELECT DISTINCT rs_data_objects.object_id ";
+		$sql .= "FROM rs_data_bookings INNER JOIN rs_data_objects ON rs_data_bookings.object_id = rs_data_objects.object_id ";
+		$sql .= "WHERE rs_data_objects.family_id = " . $family_id . " ";
 
-	// constructs a list of unavailables objects
-	while($unavailable_objets_ = fetch_array($unavailable_objets)) { $unavailable_list .= $unavailable_objets_["object_id"] . ","; }
-	if($unavailable_list != "") { $unavailable_list = substr($unavailable_list, 0, strlen($unavailable_list)-1); } // removes last comma
+		$sql .= "AND ((rs_data_bookings.book_end > '" . $start . "' ";
+		$sql .= "AND rs_data_bookings.book_end <= '" . $end . "') ";
+		$sql .= "OR (rs_data_bookings.book_start < '" . $end . "' ";
+		$sql .= "AND rs_data_bookings.book_start >= '" . $start . "') ";
+		$sql .= "OR (rs_data_bookings.book_start <= '" . $start . "' ";
+		$sql .= "AND rs_data_bookings.book_end >= '" . $end . "')) ";
 
-	// extracts disallowed objects according to current user profile and permissions
-	$disallowed_objects_list = "";
-	$sql = "SELECT DISTINCT object_id FROM rs_data_permissions ";
-	$sql .= "WHERE permission = 'none' AND (user_id = " . toDb($_COOKIE["bookings_user_id"]) . " OR profile_id >= " . toDb($_COOKIE["bookings_profile_id"]) . ");";
-	$temp = db_query($database_name, $sql, "no", "no");
-	while($temp_ = fetch_array($temp)) { $disallowed_objects_list .= $temp_["object_id"] . ","; }
+		$unavailable_objets = db_query($database_name, $sql, "no", "no");
 
-	if($disallowed_objects_list != "") { $disallowed_objects_list = substr($disallowed_objects_list ,0 ,-1); }
+		$unavailable_list = "";
 
-	// lists objects which are NOT booked in the specified time range
-	$sql  = "SELECT DISTINCT object_id, object_name, booking_method ";
-	$sql .= "FROM rs_data_objects ";
-	$sql .= "WHERE rs_data_objects.family_id = " . toDb($_POST["family_id"]) . " ";
-	if($unavailable_list != "") { $sql .= "AND rs_data_objects.object_id NOT IN ( " . $unavailable_list . " )"; }
-	if($disallowed_objects_list != "") { $sql .= "AND rs_data_objects.object_id NOT IN ( " . $disallowed_objects_list . " )"; }
-	$sql .= ";";
+		// constructs a list of unavailables objects
+		while($unavailable_objets_ = fetch_array($unavailable_objets)) { $unavailable_list .= $unavailable_objets_["object_id"] . ","; }
+		if($unavailable_list != "") { $unavailable_list = substr($unavailable_list, 0, -1); } // removes last comma
 
-	$available_objects = db_query($database_name, $sql, "no", "no");
+		// extracts disallowed objects according to current user profile and permissions
+		$disallowed_objects_list = "";
+		$sql = "SELECT DISTINCT object_id FROM rs_data_permissions ";
+		$sql .= "WHERE permission = 'none' AND (user_id = " . checkVar("", $_COOKIE["bookings_user_id"], "int", "", "", "", "") . " OR profile_id >= " . checkVar("", $_COOKIE["bookings_profile_id"], "int", "", "", "", "") . ");";
+		$temp = db_query($database_name, $sql, "no", "no");
+		while($temp_ = fetch_array($temp)) { $disallowed_objects_list .= $temp_["object_id"] . ","; }
+
+		if($disallowed_objects_list != "") { $disallowed_objects_list = substr($disallowed_objects_list ,0 ,-1); }
+
+		// lists objects which are NOT booked in the specified time range
+		$sql  = "SELECT DISTINCT object_id, object_name, booking_method ";
+		$sql .= "FROM rs_data_objects ";
+		$sql .= "WHERE rs_data_objects.family_id = " . checkVar("mysql", $_POST["family_id"], "int", "", "", "", "") . " ";
+		if($unavailable_list != "") { $sql .= "AND rs_data_objects.object_id NOT IN ( " . $unavailable_list . " )"; }
+		if($disallowed_objects_list != "") { $sql .= "AND rs_data_objects.object_id NOT IN ( " . $disallowed_objects_list . " )"; }
+		$sql .= ";";
+
+		$available_objects = db_query($database_name, $sql, "no", "no");
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -87,7 +121,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-<title><?php echo toPage($app_title, "string", "") . " :: " . Translate("Availables objects", 1); ?></title>
+<title><?php echo checkVar("html", $app_title, "string", "", "", "", "") . " :: " . Translate("Availables objects", 1); ?></title>
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 
@@ -101,7 +135,7 @@
 
 <body>
 
-<span class="big_text" id="title_"><?php echo toPage($family_name, "string", ""); ?> <?php echo Translate("availables", 1); ?> <?php echo Translate("from", 1); ?> <?php echo toPage(date($date_format . " h:i", strtotime($start)), "date", ""); ?> <?php echo toPage(Translate("to", 1), "string", ""); ?> <?php echo toPage(date($date_format . " h:i", strtotime($end)), "date", ""); ?></span>
+<span class="big_text" id="title_"><?php echo checkVar("html", $family_name, "string", "", "", "", ""); ?> <?php echo Translate("availables", 1); ?> <?php echo Translate("from", 1); ?> <?php echo date($date_format . " h:i", strtotime($start)); ?> <?php echo Translate("to", 1); ?> <?php echo date($date_format . " h:i", strtotime($end)); ?></span>
 
 <table class="table2">
 
@@ -116,7 +150,7 @@
 	//extracts objects manager
 	$sql  = "SELECT user_id, last_name, first_name, email FROM rs_data_users ";
 	$sql .= "LEFT JOIN rs_data_permissions ON rs_data_users.user_id = rs_data_permissions.user_id ";
-	$sql .= "WHERE object_id = " . toDb($available_objets_["object_id"]) . " ";
+	$sql .= "WHERE object_id = " . available_objets_["object_id"] . " ";
 	$sql .= "AND rs_data_permissions.permission = 'manage';";
 
 	$managers = db_query($database_name, $sql, "no", "no");
@@ -126,9 +160,16 @@
 
 ?><tr>
 
-<td><?php echo toPage($available_objets_["object_name"], "string", ""); ?></td>
-<td><?php if($manager_email != "") { ?><a href="mailto:<?php echo toPage($manager_email, "email", ""); ?>"><?php } ?><?php echo toPage($manager_name, "string", ""); ?><?php if($manager_email != "") { ?></a><?php } ?></td>
-<td style="text-align:center"><button onClick="openBooking(<?php echo toPage($available_objets_["object_id"], "int", ""); ?>,<?php echo toPage($available_objets_["booking_method"], "string", ""); ?>)"><?php echo toPage(Translate("Book it !", 1), "string", ""); ?></button></td>
+<td><?php echo checkVar("html", $available_objets_["object_name"], "string", "", "", "", ""); ?></td>
+
+<td><?php
+	$email_ok = ($manager_email != "" && checkVar("html", $manager_email, "email", "", "", "", ""));
+	if($email_ok) { echo "<a href=\"mailto:" . $manager_email . "\">"; }
+	echo checkVar("html", $manager_name, "string", "", "", "", "");
+	if($email_ok) { echo "</a>";
+?></td>
+
+<td style="text-align:center"><button onClick="openBooking(<?php echo available_objets_["object_id"]; ?>,<?php echo $available_objets_["booking_method"]; ?>)"><?php echo Translate("Book it !", 1); ?></button></td>
 </tr><?php } ?>
 
 </table>
@@ -136,3 +177,5 @@
 </body>
 
 </html>
+
+?>
