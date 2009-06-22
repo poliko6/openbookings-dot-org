@@ -29,15 +29,15 @@
 		case "connect": // **********************************************************************************************
 
 		$error_message = "";
-		
-		$post_username = checkVar("mysql", $_POST["username"], "string", "5", "20", "", "username");
-		$post_password = checkVar("mysql", $_POST["username"], "string", "5", "20", "", "password");
-		
+
+		$post_username = checkVar("sql", $_POST["username"], "string", "5", "20", "", "username");
+		$post_password = checkVar("sql", $_POST["username"], "string", "5", "20", "", "password");
+
 		$error_message .= (!post_username["ok"])?post_username["error"] . "<br>":"";
 		$error_message .= (!post_password["ok"])?post_password["error"] . "<br>":"";
-		
+
 		if(post_username["ok"] && post_password["ok"]) {
-		
+
 			$sql  = "SELECT user_id, profile_id, locked, language, date_format, user_timezone FROM rs_data_users ";
 			$sql .= "WHERE login = '" . $post_username["value"] . "' ";
 			$sql .= "AND password = '" . $post_password["value"] . "' ";
@@ -56,7 +56,7 @@
 				} else {
 					// connect successful -> sets the cookie
 					$session_timeout = param_extract("session_timeout");
-					
+
 					if($session_timeout != 0) {
 						setcookie("bookings_user_id", $user_["user_id"], (time() + $session_timeout));
 						setcookie("bookings_profile_id", $user_["profile_id"], (time() + $session_timeout));
@@ -70,8 +70,8 @@
 					}
 				}
 			}
-		} 
-		
+		}
+
 		if($error_message == "") {
 			$script = "parent.document.location = \"index.php\";\n";
 		} else {
@@ -110,7 +110,7 @@
 		$password_ = checkVar("", $_POST["password"], "string", 5, 20, "", "Password");
 		if(!$password_["ok"]) { $validation_error .= $password_["error"] . "<br>"; }
 		$password = $password_["value"];
-		
+
 		$verify_password_ = checkVar("", $_POST["verify_password"], "string", 5, 20, "", "Password verification");
 		if(!$verify_password_["ok"]) { $validation_error .= $verify_password_["error"] . "<br>"; }
 		$verify_password = $verify_password_["value"];
@@ -124,11 +124,11 @@
 		if($validation_error != "") {
 
 			// check for already used username
-			$sql = "SELECT user_id FROM rs_data_users WHERE login = '" . checkVar("mysql", $_POST["username"], "", "", "", "", "") . "';";
+			$sql = "SELECT user_id FROM rs_data_users WHERE login = '" . checkVar("sql", $_POST["username"], "", "", "", "", "") . "';";
 			$temp = db_query($database_name, $sql, "no", "no");
 
 			if($temp_ = fetch_array($temp)) {
-				
+
 				$validation_error = sprintf(Translate("Username %1\$s is already used, please choose another one.", 1), checkVar("html", $_POST["username"], "", "", "", "", "")) . "<br>";
 			}
 		}
@@ -143,12 +143,12 @@
 
 			$sql  = "INSERT INTO rs_data_users ( rand_id, last_name, first_name, login, profile_id, email, password, locked, language, date_format, user_timezone ) VALUES ( ";
 			$sql .= $rand_id . ", ";
-			$sql .= "'" . checkVar("mysql", $_POST["last_name"], "", "", "", "", "") . "', ";
-			$sql .= "'" . checkVar("mysql", $_POST["first_name"], "", "", "", "", "") . "', ";
-			$sql .= "'" . checkVar("mysql", $_POST["username"], "", "", "", "", "") . "', ";
+			$sql .= "'" . checkVar("sql", $_POST["last_name"], "", "", "", "", "") . "', ";
+			$sql .= "'" . checkVar("sql", $_POST["first_name"], "", "", "", "", "") . "', ";
+			$sql .= "'" . checkVar("sql", $_POST["username"], "", "", "", "", "") . "', ";
 			$sql .= "3, "; // standard user profile
-			$sql .= "'" . checkVar("mysql", $_POST["email"], "", "", "", "", "") . "', ";
-			$sql .= "'" . checkVar("mysql", $_POST["password"], "", "", "", "", "") . "', ";
+			$sql .= "'" . checkVar("sql", $_POST["email"], "", "", "", "", "") . "', ";
+			$sql .= "'" . checkVar("sql", $_POST["password"], "", "", "", "", "") . "', ";
 
 			$self_registration_mode = param_extract("self_registration_mode");
 			if($self_registration_mode == "no_validation") { $sql .= "0, "; } else { $sql .= "1, "; }
@@ -219,9 +219,9 @@
 
 		case "delete_booking":
 
-		$get_book_id = checkVar("mysql", $_GET["book_id"], "int", "", "", "", "");
-		$get_object_id = checkVar("mysql", $_GET["object_id"], "int", "", "", "", "");
-		
+		$get_book_id = checkVar("sql", $_GET["book_id"], "int", "", "", "", "");
+		$get_object_id = checkVar("sql", $_GET["object_id"], "int", "", "", "", "");
+
 		if($get_book_id["ok"] && $get_object_id["ok"]) {
 
 			$sql = "delete from rs_data_bookings WHERE book_id = " . $get_book_id["value"] . " AND object_id = " . $get_object_id["value"] . ";";
@@ -233,8 +233,8 @@
 		case "confirm_booking": // ***********************************************************************************
 
 		$get_validated = checkVar("html", $_GET["validated"], "string", 2, 3, "", "");
-		$get_book_id = checkVar("mysql", $_GET["book_id"], "int", "", "", "", "");
-		$get_object_id = checkVar("mysql", $_GET["object_id"], "int", "", "", "", "");
+		$get_book_id = checkVar("sql", $_GET["book_id"], "int", "", "", "", "");
+		$get_object_id = checkVar("sql", $_GET["object_id"], "int", "", "", "", "");
 
 		if($get_validated["ok"] && $get_book_id["ok"] && $get_object_id["ok"]) {
 
@@ -276,7 +276,7 @@
 				$sql = "SELECT first_name, last_name, email FROM rs_data_users WHERE user_id = " . $booker_id . ";";
 				$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 				$booker_name = $temp_["first_name"] . " " . $temp_["last_name"];
-				
+
 				$booker_email = checkVar("", $temp_["email"], "email", "", "", "", "");
 
 				// do the action (confirm or cancel)
@@ -331,42 +331,42 @@
 
 		case "update_localization": // ****************************************************************************
 
-		$post_localize_to = checkVar("mysql", $_POST["localize_to"], "string", 4, 15, "", "");
-		$post_lang_id = checkVar("mysql", $_POST["lang_id"], "int", "", "", "", "");
-		$post_localize_to_lang_id = checkVar("mysql", $_POST["$post_localize_to_" . $post_lang_id], "string", "", "", "", "");
-		
+		$post_localize_to = checkVar("sql", $_POST["localize_to"], "string", 4, 15, "", "");
+		$post_lang_id = checkVar("sql", $_POST["lang_id"], "int", "", "", "", "");
+		$post_localize_to_lang_id = checkVar("sql", $_POST["$post_localize_to_" . $post_lang_id], "string", "", "", "", "");
+
 		if($post_localize_to["ok"] && $post_lang_id["ok"] && $post_localize_to_lang_id["ok"]) {
 			$sql = "UPDATE rs_param_lang SET ";
 			$sql .= $post_localize_to["value"] . " = '" . $post_localize_to_lang_id["value"] . "' ";
 			$sql .= "WHERE lang_id = " . $post_lang_id["value"] . ";";
 			db_query($database_name, $sql, "no", "no");
 		}
-		
+
 		break;
 
 		case "show_first_availability": // ****************************************************************************
 
 			$error_message = "";
-			
+
 			$get_object_id = checkVar("", $_GET["object_id"], "int", "", "", "", "Object ID");
 			$get_start_date = checkVar("", $_GET["start_date"], "date", "", "", "", "Start date");
 			$get_start_hour = checkVar("", $_GET["start_hour"], "hour",  "", "", "", "Start hour"); // 00:00
 			$get_duration = checkVar("", $_GET["duration"], "int",  "", "", "", "Duration");
-			
+
 			if($get_object_id["ok"] && $get_start_date["ok"] && $get_start_hour["ok"] && $get_duration["ok"]) {
-				
+
 				$start_date = dateFormat($get_start_date, "", "Y-m-d") . " " . $get_start_hour . ":00";
 				$first_availability = getAvailability($get_object_id, $start_date, $get_duration);
 				$script = "parent.document.getElementById(\"info_display\").innerHTML = \"" . $first_availability . "\";\n";
-			
+
 			} else {
-				
+
 				// displays error to user
 				$error_message .= (!get_object_id["ok"])?get_object_id["error"] . "<br>":"";
 				$error_message .= (!get_start_date["ok"])?get_start_date["error"] . "<br>":"";
 				$error_message .= (!get_start_hour["ok"])?get_start_hour["error"] . "<br>":"";
 				$error_message .= (!get_duration["ok"])?get_duration["error"] . "<br>":"";
-				
+
 				$script = "parent.document.getElementById(\"info_display\").innerHTML = \"" . $error_message . "\";\n";
 			}
 
@@ -446,12 +446,12 @@
 			$buffer = str_replace("\"", "", $buffer); // removes "
 			$array_columns = explode(";", $buffer);
 
-			foreach($array_columns as $column_name) { $sql .= checkVar("mysql", $column_name, "string", "", "", "", "") . " varchar(255) default NULL, "; }
+			foreach($array_columns as $column_name) { $sql .= checkVar("sql", $column_name, "string", "", "", "", "") . " varchar(255) default NULL, "; }
 			$sql = substr($sql, 0, -1); // removes last comma (,)
 
 			$sql .= "PRIMARY KEY (lang_id), ";
 
-			foreach($array_columns as $column_name) { $sql .= "KEY " . checkVar("mysql", $column_name, "string", "", "", "", "") . " (" . checkVar("mysql", $column_name, "string", "", "", "", "") . "),"; }
+			foreach($array_columns as $column_name) { $sql .= "KEY " . checkVar("sql", $column_name, "string", "", "", "", "") . " (" . checkVar("sql", $column_name, "string", "", "", "", "") . "),"; }
 			$sql = substr($sql, 0, -1); // removes last comma (,)
 
 			$sql .= " ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;";
@@ -464,10 +464,10 @@
 				$array_values = explode(";", $buffer);
 
 				$sql  = "INSERT INTO rs_temp_lang ( ";
-				foreach($array_columns as $column_name) { $sql .= checkVar("mysql", $column_name, "string", "", "", "", "") . ","; }
+				foreach($array_columns as $column_name) { $sql .= checkVar("sql", $column_name, "string", "", "", "", "") . ","; }
 				$sql = substr($sql, 0, -1); // removes last comma (,)
 				$sql .= " ) VALUES ( ";
-				foreach($array_values as $value) { $sql .= checkVar("mysql", $value, "string", "", "", "", "") . ","; }
+				foreach($array_values as $value) { $sql .= checkVar("sql", $value, "string", "", "", "", "") . ","; }
 				$sql = substr($sql, 0, -1); // removes last comma (,)
 				$sql .= ");";
 

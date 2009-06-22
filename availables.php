@@ -28,9 +28,9 @@
 	$start_hour = checkVar("", $_POST["search_start_hour"], "hour", "", "", "", "Start hour");
 	$end_date = checkVar("", $_POST["search_end_date"], "date", "", "", "", "");
 	$end_hour = checkVar("", $_POST["search_end_hour"], "hour", "", "", "", "");
-	
+
 	if(!$start_date["ok"] || !$start_hour["ok"] || !$end_date["ok"] || !$end_hour["ok"]) {
-		
+
 		$error_message = "";
 		$error_message .= (!start_date["ok"])?start_date["error"] . "<br>":"";
 		$error_message .= (!start_hour["ok"])?start_hour["error"] . "<br>":"";
@@ -48,27 +48,27 @@
 		<title><?php echo toPage($app_title, "string", "") . " :: " . Translate("Availables objects", 1); ?></title>
 
 		<link rel="stylesheet" type="text/css" href="styles.php">
-		
+
 		</head>
-		
+
 		<body>
-		
+
 		<?php echo $error_message ; ?>
-		
+
 		</body>
-		
+
 		</html>
 <?php
-		
+
 	} else {
-	
+
 		$start = DateAndHour(dateFormat($start_date, "", "Y-m-d"), $start_hour);
 		$end = DateAndHour(dateFormat($end_date, "", "Y-m-d"), $end_hour);
 		$start_ = date("Y-m-d H:i", strtotime($start));
 		$end_ = date("Y-m-d H:i", strtotime($end));
-		$family_id = checkVar("mysql", $_POST["family_id"], "int", "", "", "", "");
-		
-		
+		$family_id = checkVar("sql", $_POST["family_id"], "int", "", "", "", "");
+
+
 		// extracts family name using family_id as parameter
 		$sql = "SELECT family_name FROM rs_param_families WHERE family_id = " . $family_id . ";";
 		$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp); $family_name = $temp_["family_name"];
@@ -105,7 +105,7 @@
 		// lists objects which are NOT booked in the specified time range
 		$sql  = "SELECT DISTINCT object_id, object_name, booking_method ";
 		$sql .= "FROM rs_data_objects ";
-		$sql .= "WHERE rs_data_objects.family_id = " . checkVar("mysql", $_POST["family_id"], "int", "", "", "", "") . " ";
+		$sql .= "WHERE rs_data_objects.family_id = " . checkVar("sql", $_POST["family_id"], "int", "", "", "", "") . " ";
 		if($unavailable_list != "") { $sql .= "AND rs_data_objects.object_id NOT IN ( " . $unavailable_list . " )"; }
 		if($disallowed_objects_list != "") { $sql .= "AND rs_data_objects.object_id NOT IN ( " . $disallowed_objects_list . " )"; }
 		$sql .= ";";
