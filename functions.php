@@ -78,196 +78,81 @@
 		if($permissions_ = fetch_array($permissions)) { return $permissions_["permission"]; } else { return "none"; }
 	}
 
-	/*
-	
-	function validateInput($input_label, $untrusted_value, $awaited_type, $min_length, $max_length) {
-
-		// conversion to regular charset (avoids attacks by charset modification)
-		$input_value = htmlentities($untrusted_value, ENT_QUOTES, "ISO-8859-1", false);
-
-		if($min_length != 0 && strlen($input_value) < $min_length) { $error = Translate("'%l' is too short", 1); }
-		if($max_length != 0 && strlen($input_value) > $max_length) { $error = Translate("'%l' is too long", 1); }
-
-		if($error != "") {
-
-			switch($awaited_type) {
-
-				case "boolean":
-				$input_value = filter_var($input, FILTER_VALIDATE_BOOLEAN);
-				break;
-
-				case "int":
-				$input_value = filter_var($input, FILTER_VALIDATE_INT);
-				break;
-
-				case "float":
-				$input_value = filter_var($input, FILTER_VALIDATE_FLOAT);
-				break;
-
-				case "string":
-				break;
-
-				case "date":
-				$input_value = dateFormat($input, $date_format, "");
-				break;
-
-				case "url":
-				$input_value = validateUrl($input);
-				break;
-
-				case "email":
-				$input_value = validateEmail($input);
-			}
-
-			if(($awaited_type == "boolean" && is_null($input_value)) || ($awaited_type != "boolean" && $input_value === false)) {
-				$error = "'%l' should be %t";
-			}
-		}
-
-		$error = str_replace("%l", $input_label, $error);
-		$error = str_replace("%t", $awaited_type, $error);
-
-		return array("input_label"=>$input_label, "input_value"=>$input_value, "error"=>$error);
-	}
-
-	function toPage($untrusted_value, $awaited_type, $default_value) {
-
-		// conversion to regular charset (avoids attacks by charset modification)
-		$untrusted_value = htmlentities($untrusted_value, ENT_QUOTES, "ISO-8859-1", false);
-
-		$output = $default_value;
-
-		switch($awaited_type) {
-
-			case "boolean":
-			if(is_bool($untrusted_value)) { $output = $untrusted_value; }
-			break;
-
-			case "int":
-			if(is_int($untrusted_value)) { $output = $untrusted_value; }
-			break;
-
-			case "float":
-			if(is_float($untrusted_value)) { $output = $untrusted_value; }
-			break;
-
-			case "hex":
-			if(ctype_xdigit($untrusted_value)) { $output = $untrusted_value; }
-			break;
-
-			case "string":
-			if(ctype_alnum($untrusted_value)) { $output = $untrusted_value; }
-			break;
-
-			case "date":
-			$input = dateFormat($input, $date_format, "");
-			break;
-
-			case "url":
-			$input = validateUrl($input);
-			break;
-
-			case "email":
-			$input = validateEmail($input);
-		}
-
-		// returns an array with 0=>validation success, 1=>validated value
-		if(($awaited_type == "boolean" && is_null($input)) || ($awaited_type != "boolean" && $input === false)) {
-			return $on_error_return_value;
-		} else {
-			return $input;
-		}
-	}
-
-	function toDb($untrusted_value) {
-		return mysql_real_escape_string($untrusted_value);
-	}
-	
-	*/
-	
-	// START UNIVERSAL VARS CHECKS
-	
-	// function validateInput($input_label, $untrusted_value, $awaited_type, $min_length, $max_length) obsolete
-	// replaced by checkVar("", $untrusted_value, [$awaited_type], [$min], [$max], [$default_value], $label)
-	
-	// function toPage($untrusted_value, $awaited_type, $default_value) obsolete
-	// repalced by checkVar("html", $untrusted_value, "", "", "", "", "")
-	
-	// function toDb($untrusted_value) obsolete
-	// replaced by checkVar("mysql", $untrusted_value, "", "", "", "", "")
-	
-	
 	function checkVar($target, $untrusted_value, $awaited_type, $min, $max, $default_value, $label) {
-		
-		$value_accepted = true;
-		
+
+		$value_accepted = true; $error = "";
+
 		// 1. filter value according to target (web page or database)
 		// converts to correct charset, removes unwanted values, encodes special chars
 		// does nothing if not $target = ""
 		$untrusted_value = filterValue($target, $untrusted_value);
 
-		//checks var content against awaited type
+		// 2. checks var content against awaited type
 		if($awaited_type != "") {
 			$value_accepted = validateType($untrusted_value, $awaited_type);
+			if(!$value_accepted) { $error .= "bad type, " . $awaited_type . " awaited."; }
 		} else {
 			// sets var type if not specified, for next check against bounds
 			if(is_numeric($untrusted_value)) { $awaited_type = "float"; } else { $awaited_type = "string"; }
 		}
 
+		// 3. checks var content against bounds
 		if($value_accepted) {
-			
-			 // checks var content against values bounds
+
+			 // numeric : checks var content against values bounds
 			if($awaited_type = "int" || $awaited_type = "float" || $awaited_type = "hex") {
 				$value_accepted = validateValue($untrusted_value, $min, $max);
+				if(!$value_accepted) { $error .= "bad value, " . $min . " to " . $max . " accepted."; }
 			}
-			
-			 // checks var content against length bounds
+
+			 // string : checks var content against length bounds
 			if($awaited_type = "string" || $awaited_type = "date" || $awaited_type = "url" || $awaited_type = "email") {
 				$value_accepted = validateLength($untrusted_value, $min, $max);
+				if(!$value_accepted) { $error .= "bad length, " . $min . " to " . $max . "chars accepted."; }
 			}
 		}
-		
+
 		if($value_accepted) { // returns an array with acceptation state (true|false), output value if accepted, and error message if not accepted
-			return array("accepted"=>true; "value"=>$untrusted_value; "error"=>"");
+			return array("accepted"=>true, "value"=>$untrusted_value, "error"=>"");
 		} else {
-			return array("accepted"=>false; "value"=>""; "error"=>$label);
+			return array("accepted"=>false, "value"=>"", "error"=>"'" . $label . "' " . $error);
 		}
 	}
-	
+
 	function filterValue($target, $value) {
 		switch($target) {
 			case "": return $value; break;
 			case "mysql": return mysql_real_escape_string($value); break;
-			case "html": return return htmlentities($value, ENT_QUOTES, "ISO-8859-1", false);
+			case "html": return htmlentities($value, ENT_QUOTES, "ISO-8859-1", false);
 		}
 	}
 
 	function validateType($value, $type) {
-		
+
 		switch($type) {
-			case "boolean":	return is_bool($untrusted_value); break;
-			case "int": return is_int($untrusted_value); break;
-			case "float": return is_float($untrusted_value); break;
-			case "hex": return ctype_xdigit($untrusted_value); break;
-			case "string": return ctype_alnum($untrusted_value); break;
-			case "date": global $date_format; return dateFormat($input, $date_format, ""); break;
-			case "hour": return validateHour($input); break;
-			case "url": return validateUrl($input); break;
-			case "email": return validateEmail($input); break;
+			case "boolean":	return is_bool($value); break;
+			case "int": return is_int($value); break;
+			case "float": return is_float($value); break;
+			case "hex": return ctype_xdigit($value); break;
+			case "string": return ctype_alnum($value); break;
+			case "date": global $date_format; return dateFormat($value, $date_format, ""); break;
+			case "hour": return validateHour($value); break;
+			case "url": return validateUrl($value); break;
+			case "email": return validateEmail($value); break;
 			default: return false;
 		}
 	}
-	
+
 	function validateValue($value, $min, $max) {
-		return (($min == "" || $value >= $min) && ($max == "" || $value <= $max))
+		return (($min == "" || $value >= $min) && ($max == "" || $value <= $max));
 	}
-	
+
 	function validateLength($value, $min, $max) {
 		return (($min == "" || strlen($value) >= $min) && ($max == "" || strlen($value) <= $max));
 	}
-	
+
 	// END UNIVERSAL VARS CHECKS
-	
+
 	function getFromDb($table, $id_column, $id_value, $searched_value) {
 
 		$sql = "SELECT " . $searched_value . " FROM " . $table . " WHERE " . $id_column . " = '" . $id_value . "';";
@@ -417,6 +302,8 @@
 
 		global $database_name;
 
+		$english_ = checkVar("mysql", $english, "string", "", "", "", "");
+
 		if(isset($_COOKIE["bookings_user_id"])) { // user is logged -> uses user language setting
 			$language = $_COOKIE["bookings_language"];
 		} else { // no user logged -> uses app language setting
@@ -427,25 +314,33 @@
 		}
 
 		$sql = "SELECT " . $language . " FROM rs_param_lang ";
-		$sql .= "WHERE english = '" . toDb($english) . "';";
+		$sql .= "WHERE english = '" . $english_["value"] . "';";
 		$translation = db_query($database_name, $sql, "no", "no");
 
 		if($translation_ = fetch_array($translation)) {
 			if($translation_[$language] != "" && !is_null($translation_[$language])) {
 
-				if($special_chars_to_html) { return htmlentities(stripslashes($translation_[$language]));
-				} else { return stripslashes($translation_[$language]); } // do not convert specials characters to html (usually for javascript alert box)
+				if($special_chars_to_html) {
+					$return = $translation_[$language];
+				} else {
+					$return = $translation_[$language];  // do not convert specials characters to html (usually for javascript alert box)
+				}
 
-			} else { return $english . "*"; }
+			} else { $return = $english . "*"; }
 
 		} else {
 
 			// inserts english if database record is missing. It's a tip to get a list of missing vocabulary while developping the application
-			$sql = "INSERT INTO rs_param_lang ( english ) VALUES ( '" . toDb($english) . "' );";
+			$sql = "INSERT INTO rs_param_lang ( english ) VALUES ( '" . $english_["value"] . "' );";
 			db_query($database_name, $sql, "yes", "no");
 
-			return $english . "*"; // the star shows translations missing in the database while browsing the app
+			$return = $english . "*"; // the star shows translations missing in the database while browsing the app
 		}
+
+		echo $return;
+
+		$return = checkVar("html", $return, "string", "", "", "", "");
+		return $return["value"];
 	}
 
 	function getMonday($year, $week) {
@@ -529,7 +424,7 @@
 		// returns $d_date converted to $s_output_format or true if $s_output_format is an empty string
 
 		$return = false;
-		
+
 		if($s_input_format == "") { global $date_format; $s_input_format = $date_format; }
 
 		// parse date format
@@ -563,7 +458,7 @@
 			$a_date = explode($a_format["separator"], $d_date);
 
 			foreach($a_date as $i_index=>$s_value) {
-				$$a_format[$i_index]["date_part"] = $s_value // $day = 30 | $month = 12 | $year = 2009
+				$$a_format[$i_index]["date_part"] = $s_value; // $day = 30 | $month = 12 | $year = 2009
 			}
 
 			if(checkdate($month, $day, $year)) {
@@ -573,25 +468,26 @@
 				} else {
 					$return = date($s_output_format, strtotime($year . "-" . $month . "-" . $day));
 				}
+			}
 		}
 
 		return $return;
 	}
-	
+
 	function validateHour($hour) {
 		$pattern = "#^[0-2]{1,1}[0-9]{1,1}:[0-2]{1,1}[0-9]{1,1}$#";
 		if(preg_match($pattern, $url)) { return $url; } else { return false; }
 	}
-	
+
 	function validateUrl($url) {
 		$pattern = "#^(http://)?((www|3w|w3)\.)?[A-Za-z0-9_-]+(\.[A-Za-z]{2,4})+([^/\.]/[A-Za-z0-9_-]{0,})*(\.[A-Za-z0-9]{1,})?$#";
 		if(preg_match($pattern, $url)) { return $url; } else { return false; }
 	}
-	
+
 	function validatekEmail($email) {
 		$pattern = "#^[A-Za-z0-9._-]+@[a-z0-9._-]{2,}\.[A-Za-z]{2,4}$#";
 	}
-		
+
 	/* obsolete - replaced by dateFormat() in all scripts ASAP
 
 	function DateReformat($date) { // changes date to mysql-compliant format using $date_format setting
