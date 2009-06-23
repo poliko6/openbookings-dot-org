@@ -60,8 +60,16 @@
 			if(substr($sql, 0, 6) == "SELECT" || substr($sql, 0, 12) == "SHOW COLUMNS" || $bypass_admin_security == "yes") {
 				$result = mysql_query($sql);
 			} else {
-					if(isset($_COOKIE["bookings_profile_id"]) && intval($_COOKIE["bookings_profile_id"]) > 1) {
-					$result = mysql_query($sql);
+					
+				if(isset($_COOKIE["bookings_user_id"])) {
+						
+					$bookings_user_id = checkVar("sql", $_COOKIE["bookings_user_id"], "int", "", "", "0", "");
+					
+					$sql = "SELECT profile_id FROM rs_data_users WHERE user_id = " . $bookings_user_id . ";";
+					$temp = mysql_query($sql);
+					$profile_id = ($temp_ = mysql_fetch_array($temp))?$temp_["profile_id"]:0;
+						
+					$result = ($profile_id > 1)?mysql_query($sql):false;
 				}
 			}
 
