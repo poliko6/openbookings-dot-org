@@ -89,7 +89,7 @@
 
 		// 2. checks var content against awaited type
 		if($awaited_type != "") {
-			$value_accepted = validateType($untrusted_value, $awaited_type);
+			$value_accepted = validateType($target, $untrusted_value, $awaited_type);
 			if(!$value_accepted) { $error .= "bad type, " . $awaited_type . " awaited."; }
 		} else {
 			// sets var type if not specified, for next check against bounds
@@ -113,28 +113,28 @@
 		}
 
 		if($value_accepted) { // returns an array with acceptation state (true|false), output value if accepted, and error message if not accepted
-			return array("accepted"=>true, "value"=>$untrusted_value, "error"=>"");
+			return array("ok"=>true, "value"=>$untrusted_value, "error"=>"");
 		} else {
-			return array("accepted"=>false, "value"=>"", "error"=>"'" . $label . "' " . $error);
+			return array("ok"=>false, "value"=>"", "error"=>"'" . $label . "' " . $error);
 		}
 	}
 
 	function filterValue($target, $value) {
 		switch($target) {
 			case "": return $value; break;
-			case "mysql": return mysql_real_escape_string($value); break;
-			case "html": return htmlentities($value, ENT_QUOTES, "ISO-8859-1", false);
+			case "sql": return mysql_real_escape_string($value); break;
+			case "html": return htmlentities($value, ENT_QUOTES, "ISO-8859-1");
 		}
 	}
 
-	function validateType($value, $type) {
+	function validateType($target, $value, $type) {
 
 		switch($type) {
 			case "boolean":	return is_bool($value); break;
 			case "int": return is_int($value); break;
 			case "float": return is_float($value); break;
 			case "hex": return ctype_xdigit($value); break;
-			case "string": return ctype_alnum($value); break;
+			case "string": return validateString($target, $value); break;
 			case "date": global $date_format; return dateFormat($value, $date_format, ""); break;
 			case "hour": return validateHour($value); break;
 			case "url": return validateUrl($value); break;
@@ -154,10 +154,12 @@
 	// END UNIVERSAL VARS CHECKS
 
 	function getFromDb($table, $id_column, $id_value, $searched_value) {
+		
+		global $database_name;
 
 		$sql = "SELECT " . $searched_value . " FROM " . $table . " WHERE " . $id_column . " = '" . $id_value . "';";
 
-		$temp = db_query($database_name, $sql, 0);
+		$temp = db_query($database_name, $sql, "no", "no");
 		if($temp_ = fetch_array($temp)) { return $temp_[$searched_value]; } else { return false; }
 	}
 
@@ -302,7 +304,7 @@
 
 		global $database_name;
 
-		$english_ = checkVar("mysql", $english, "string", "", "", "", "");
+		$english_ = checkVar("sql", $english, "string", "", "", "", "");
 
 		if(isset($_COOKIE["bookings_user_id"])) { // user is logged -> uses user language setting
 			$language = $_COOKIE["bookings_language"];
@@ -336,9 +338,7 @@
 
 			$return = $english . "*"; // the star shows translations missing in the database while browsing the app
 		}
-
-		echo $return;
-
+		
 		$return = checkVar("html", $return, "string", "", "", "", "");
 		return $return["value"];
 	}
@@ -474,6 +474,18 @@
 		return $return;
 	}
 
+	function validateString($target, $string) { // [] () / . ? ! _ - &aa[aaaa]; &000;
+		
+		switch($target) {
+			case "html": $pattern = "#^([A-Za-z0-9\.\?\!\[\]\(\)\s'/_-]|&[a-z]{2,6};|&\#[0-9]{3,3};){1,}$#"; break;
+			case "sql": $pattern = "#^([ÉÈÊËÜÛÎÔÄÏÖÄÅÇA-Zéèëêüûçîôâïöäåaa-z0-9\.\?\!\[\]\(\)\s'/_-]|&[a-z]{2,6};|&\#[0-9]{3,3};){1,}$#"; break;
+			case "": $pattern = "#^([A-Za-z0-9\.\?\!\[\]\(\)\s'/_-]){1,}$#";
+			default: return false;
+		}
+			
+		if(preg_match($pattern, $string)) { return $string; } else { return false; }
+	}
+	
 	function validateHour($hour) {
 		$pattern = "#^[0-2]{1,1}[0-9]{1,1}:[0-2]{1,1}[0-9]{1,1}$#";
 		if(preg_match($pattern, $url)) { return $url; } else { return false; }
@@ -487,34 +499,6 @@
 	function validatekEmail($email) {
 		$pattern = "#^[A-Za-z0-9._-]+@[a-z0-9._-]{2,}\.[A-Za-z]{2,4}$#";
 	}
-
-	/* obsolete - replaced by dateFormat() in all scripts ASAP
-
-	function DateReformat($date) { // changes date to mysql-compliant format using $date_format setting
-
-		global $date_format; $date_item_id = 0;
-
-		for($i=0;$i<=strlen($date_format)-1;$i++) {
-
-			$date_part = substr($date_format, $i, 1);
-
-			if($date_part == "Y" || $date_part == "m" || $date_part == "d") {
-
-				$date_item[$date_item_id] = $date_part; //2
-				$date_item_id++;
-
-			} else {
-				$separator = substr($date_format, $i, 1);
-			}
-
-		} // for
-
-		$date_array = explode($separator, $date);
-		$date_item = array_flip($date_item);
-
-		return $date_array[$date_item["Y"]] . "-" .  $date_array[$date_item["m"]] . "-" .  $date_array[$date_item["d"]];
-
-	} */
 
 	function param_extract($param_name) {
 

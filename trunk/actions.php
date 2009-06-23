@@ -24,7 +24,7 @@
 
 	$message = ""; $script = "";
 
-	switch($_POST["action"]) {
+	switch($_POST["action_"]) {
 
 		case "connect": // **********************************************************************************************
 
@@ -33,10 +33,10 @@
 		$post_username = checkVar("sql", $_POST["username"], "string", "5", "20", "", "username");
 		$post_password = checkVar("sql", $_POST["username"], "string", "5", "20", "", "password");
 
-		$error_message .= (!post_username["ok"])?post_username["error"] . "<br>":"";
-		$error_message .= (!post_password["ok"])?post_password["error"] . "<br>":"";
+		$error_message .= (!$post_username["ok"])?$post_username["error"] . "<br>":"";
+		$error_message .= (!$post_password["ok"])?$post_password["error"] . "<br>":"";
 
-		if(post_username["ok"] && post_password["ok"]) {
+		if($post_username["ok"] && $post_password["ok"]) {
 
 			$sql  = "SELECT user_id, profile_id, locked, language, date_format, user_timezone FROM rs_data_users ";
 			$sql .= "WHERE login = '" . $post_username["value"] . "' ";
@@ -75,7 +75,7 @@
 		if($error_message == "") {
 			$script = "parent.document.location = \"index.php\";\n";
 		} else {
-			$script = "parent.document.getElementById("error_message").innerHTML = \"" . $error_message . "\";\n";
+			$script = "parent.document.getElementById(\"error_message\").innerHTML = \"" . $error_message . "\";\n";
 		}
 
 		break;
@@ -249,7 +249,7 @@
 				case "no":
 					$text1 = Translate("has refused your booking request", 1);
 					$text2 = Translate("Refused booking request", 1);
-					$action_sql = "DELETE FROM rs_data_bookings WHERE book_id = " . get_object_id["value"] . ";";
+					$action_sql = "DELETE FROM rs_data_bookings WHERE book_id = " . $get_object_id["value"] . ";";
 			}
 
 			// extracts booking infos
@@ -362,10 +362,10 @@
 			} else {
 
 				// displays error to user
-				$error_message .= (!get_object_id["ok"])?get_object_id["error"] . "<br>":"";
-				$error_message .= (!get_start_date["ok"])?get_start_date["error"] . "<br>":"";
-				$error_message .= (!get_start_hour["ok"])?get_start_hour["error"] . "<br>":"";
-				$error_message .= (!get_duration["ok"])?get_duration["error"] . "<br>":"";
+				$error_message .= (!$get_object_id["ok"])?$get_object_id["error"] . "<br>":"";
+				$error_message .= (!$get_start_date["ok"])?$get_start_date["error"] . "<br>":"";
+				$error_message .= (!$get_start_hour["ok"])?$get_start_hour["error"] . "<br>":"";
+				$error_message .= (!$get_duration["ok"])?$get_duration["error"] . "<br>":"";
 
 				$script = "parent.document.getElementById(\"info_display\").innerHTML = \"" . $error_message . "\";\n";
 			}
