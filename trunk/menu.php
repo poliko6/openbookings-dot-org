@@ -146,10 +146,8 @@
 	function ShowFamily() { top.frames[1].location = "family.php?user_id=<?php echo $_COOKIE["bookings_user_id"]; ?>&family_id=" + $("family_id").value; }
 	function ShowObject() { top.frames[1].location = "object.php?object_id=" + $("object_id").value + "&user_id=<?php echo $_COOKIE["bookings_user_id"]; ?>&family_id=" + $("family_id").value; }
 	function AvailabilitySearch() { $("search_form").submit(); }
-	function ShowCalendar(filename) {
-		$("form_resa").action = filename; $("form_resa").submit();
-	}
-	function DeLog() { $("iframe_action").src = "actions.php?action_=delog"; }
+	function ShowCalendar(filename) { $("form_resa").action = filename; $("form_resa").submit(); }
+	function DeLog() { $("action_").value = "delog"; $("form_action").submit(); }
 
 --></script>
 
@@ -304,6 +302,10 @@
 </center>
 
 <iframe id="iframe_action" name="iframe_action"></iframe>
+
+<form id="form_action" method="post" action="actions.php" target="iframe_action">
+	<input type="hidden" id="action_" name="action_" value="">
+</form>
 
 <script type="text/javascript"><!--
 $("screen_width").value = screen.width;
