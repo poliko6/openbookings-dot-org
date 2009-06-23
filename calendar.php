@@ -29,39 +29,31 @@
 
 <?php
 
-	// uses the current year if not specified by the posted vars
-	if(isset($_POST["stamp"])) {
-		$year = date("Y", $_POST["stamp"]);
-	} else {
-		if(isset($_POST["annee"])) { $year = $_POST["annee"]; } else { $year = date("Y"); }
-	}
+	$post_object_id = checkVar("", $_POST["object_id"], "int", "", "", "0", "");
 
+	// uses the current year if not specified by the stamp and year posted vars
+	$post_stamp = (isset($_POST["stamp"]))?checkVar("", $_POST["stamp"], "int", "", "", 0, ""):false;
+	$post_year  = (isset($_POST["annee"]))?checkVar("", $_POST["annee"], "int", 2000, 2100, date("Y"), ""):date("Y");
+	$year = ($post_stamp)?date("Y", $post_stamp):$post_year;
+	
 	// extracts colors from the table which holds parameters
-	// the function "param_extract()" is implemented in the file "functions.php"
-	$validated_color = param_extract("validated_color");
-	$unvalidated_color = param_extract("unvalidated_color");
+	$validated_color = checkVar("html", param_extract("validated_color"), "hex", 6, 6, "00c000", "");
+	$unvalidated_color = checkVar("html", param_extract("unvalidated_color"), "hex", 6, 6, "ff8000", "");
+	$background_color = checkVar("html", param_extract("background_color"), "hex", 6, 6, "eff0f8", "");
 
 	$sql  = "SELECT rs_param_families.family_name, rs_data_objects.object_name ";
 	$sql .= "FROM rs_data_objects INNER JOIN rs_param_families ON rs_data_objects.family_id = rs_param_families.family_id ";
-	$sql .= "WHERE rs_data_objects.object_id = " . ToDb($_REQUEST["object_id"]) . ";";
+	$sql .= "WHERE rs_data_objects.object_id = " . $post_object_id . ";";
 	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 
 	$family_name = $temp_["family_name"]; $object_name = $temp_["object_name"];
 
 	// extracts current year bookings
 	$sql = "SELECT book_id, book_start, book_end FROM rs_data_bookings ";
-	$sql .= "WHERE object_id = " . toDb($_REQUEST["object_id"]) . " ";
-	$sql .= "AND (YEAR(book_start) = " . toDb($year) . " ";
-	$sql .= "OR YEAR(book_end) = " . toDb($year) . ");";
+	$sql .= "WHERE object_id = " . $post_object_id . " ";
+	$sql .= "AND (YEAR(book_start) = " . $year . " ";
+	$sql .= "OR YEAR(book_end) = " . $year . ");";
 	$reservations = db_query($database_name, $sql, "no", "no");
-
-	// extracts infos about selected object
-	$sql  = "SELECT rs_param_families.family_name, rs_data_objects.object_name ";
-	$sql .= "FROM rs_data_objects INNER JOIN rs_param_families ON rs_data_objects.family_id = rs_param_families.family_id ";
-	$sql .= "WHERE rs_data_objects.object_id = " . toDb($_REQUEST["object_id"]) . ";";
-	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
-
-	$family_name = $temp_["family_name"]; $object_name = $temp_["object_name"];
 ?>
 
 <html>
@@ -70,13 +62,13 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-<title><?php echo toPage($app_title, "string", "") . " :: " . Translate("Calendar", 1); ?></title>
+<title><?php echo $app_title . " :: " . Translate("Calendar", 1); ?></title>
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 
 <script type="text/javascript"><!--
 	<?php includeCommonScripts(); ?>
-	function ClickOnDay(stamp) { $("iframe_day").src = "day.php?stamp=" + stamp + "&object_id=<?php echo toPage($_REQUEST["object_id"], "int", ""); ?>; }
+	function clickOnDay(stamp) { $("iframe_day").src = "day.php?stamp=" + stamp + "&object_id=<?php echo $post_object_id; ?>; }
 --></script>
 
 </head>
@@ -85,7 +77,7 @@
 
 <div class="global" style="width:810px">
 
-<iframe id="iframe_day" name="iframe_day" frameborder="0" scrolling="no" style="background:#<?php echo toPage(param_extract("background_color"), "string", ""); ?>; height:90px; width:810px;"></iframe>
+<iframe id="iframe_day" name="iframe_day" frameborder="0" scrolling="no" style="background:#<?php echo $background_color; ?>; height:90px; width:810px;"></iframe>
 
 <center>
 
@@ -125,7 +117,7 @@
 		}
 ?>
 
-<tr id="j<?php echo strtotime($date_en_cours); ?>" style="background:<?php echo $couleur;?>; cursor: pointer" onClick="ClickOnDay(<?php echo strtotime($date_en_cours); ?>)">
+<tr id="j<?php echo strtotime($date_en_cours); ?>" style="background:<?php echo $couleur;?>; cursor: pointer" onClick="clickOnDay(<?php echo strtotime($date_en_cours); ?>)">
 <td style="width:20px; text-align:center"><?php echo date("d", strtotime($date_en_cours)); ?></td>
 <td style="width:50px"><?php echo substr($day_name, 0, 3); ?><input type="hidden" id="s<?php echo strtotime($date_en_cours); ?>" name="s<?php echo strtotime($date_en_cours); ?>" value="<?php if(date("l", strtotime($date_en_cours)) == "Saturday" || date("l", strtotime($date_en_cours)) == "Sunday") { echo "c"; } else { echo "o"; } ?>"></td></tr>
 
@@ -188,20 +180,19 @@
 		}
 	} ?>
 
-	<?php if(isset($_REQUEST["stamp"])) { ?>
-		ClickOnDay('<?php echo $_REQUEST["stamp"]; ?>'); // shows the day where a new booking has just been set
+	<?php if($post_stamp["value"]) { ?>
+		clickOnDay('<?php echo $post_stamp["value"]; ?>'); // shows the day where a new booking has just been set
 	<?php } else { ?>
-
 		<?php if($year == date("Y")) { ?>
-			ClickOnDay('<?php echo strtotime(date("Y-m-d")); ?>'); // shows today if the user asks for the current year's calendar
+			clickOnDay('<?php echo strtotime(date("Y-m-d")); ?>'); // shows today if the user asks for the current year's calendar
 		<?php } else { ?>
-			ClickOnDay('<?php echo strtotime($year . "-01-01"); ?>'); // shows the 1st of january if the user asks for another year
+			clickOnDay('<?php echo strtotime($year . "-01-01"); ?>'); // shows the 1st of january if the user asks for another year
 		<?php } ?>
 	<?php } ?>
 
 --></script>
 
-<form action=""><input type="hidden" id="title_" name="title_" value="<?php echo $family_name . " / " . $object_name; ?>"></form>
+<form action=""><input type="hidden" id="title_" name="title_" value="<?php echo checkVar("html", $family_name, "string", "", "", "-", "") . " / " . checkVar("html", $object_name, "string", "", "", "-", ""); ?>"></form>
 
 </body>
 </html>

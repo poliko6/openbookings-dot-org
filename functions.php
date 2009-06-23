@@ -37,7 +37,7 @@
 	}
 
 	// extracts colors from the table which holds parameters
-	$app_title = param_extract("app_title");
+	$app_title = checkVar("html", param_extract("app_title"), "string", "", "", "OpenBookings.org", "");
 
 	function includeCommonScripts() {
 		$common_scripts = "function $(id) { return document.getElementById(id); }\n";
@@ -112,10 +112,17 @@
 			}
 		}
 
-		if($value_accepted) { // returns an array with acceptation state (true|false), output value if accepted, and error message if not accepted
-			return array("ok"=>true, "value"=>$untrusted_value, "error"=>"");
+		if($default_value != "") {
+			
+			// a default value is set: just returns default value if validation fails
+			return ($value_accepted)?$untrusted_value:$default_value;
+			
 		} else {
-			return array("ok"=>false, "value"=>"", "error"=>"'" . $label . "' " . $error);
+			
+			// no default value set: returns an array with
+			// acceptation state (true|false), output value if accepted, and error message if not accepted
+			// useful to provide feedback to the user when form validation fails
+			return ($value_accepted)?array("ok"=>true, "value"=>$untrusted_value, "error"=>""):array("ok"=>false, "value"=>$default_value, "error"=>"'" . $label . "' " . $error);
 		}
 	}
 
