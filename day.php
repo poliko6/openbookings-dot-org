@@ -33,33 +33,37 @@
 
 	// extracts colors from the table which holds parameters
 	// the function "param_extract()" is implemented in the file "functions.php"
-	$free_color = param_extract("free_color");
-	$validated_color = param_extract("validated_color");
-	$unvalidated_color = param_extract("unvalidated_color");
+	// extracts colors from the table which holds parameters
+	$validated_color = checkVar("html", param_extract("validated_color"), "hex", 6, 6, "00c000", "");
+	$unvalidated_color = checkVar("html", param_extract("unvalidated_color"), "hex", 6, 6, "ff8000", "");
+	$background_color = checkVar("html", param_extract("background_color"), "hex", 6, 6, "eff0f8", "");
 
+	$post_object_id = checkVar("sql", $_POST["object_id"], "int", "1", "65535", "0", "");
+	$post_stamp = checkVar("sql", $_POST["stamp", "int", "", "", "", "");
+	
 	// extracts infos about the selected object
 	$sql  = "SELECT rs_param_families.family_name, rs_data_objects.object_name, booking_method, activity_start, activity_end, activity_step ";
 	$sql .= "FROM rs_data_objects INNER JOIN rs_param_families ON rs_data_objects.family_id = rs_param_families.family_id ";
-	$sql .= "WHERE rs_data_objects.object_id = " . $_REQUEST["object_id"] . ";";
+	$sql .= "WHERE rs_data_objects.object_id = " . $post_object_id . ";";
 	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 
-	$booking_method = $temp_["booking_method"];
-	$start_hour = $temp_["activity_start"];
-	$end_hour = $temp_["activity_end"];
-	$activity_step = $temp_["activity_step"] * 60;
+	$booking_method = checkVar("", $temp_["booking_method"], "string", 8, 10, "time_based", "");
+	$start_hour = checkVar("", temp_["activity_start"], "hour", "", "", "09:00", "");
+	$end_hour = checkVar("", temp_["activity_end"], "hour", "", "", "17:00", "");
+	$activity_step = checkVar("", $temp_["activity_step"], "", "", "15", "") * 60;
 
 	// calculates full timestamp of the activity for the selected day
 	if(($start_hour == "00:00" || $start_hour == "0:00" || $start_hour == "") && ($end_hour == "00:00" || $end_hour == "0:00" || $end_hour = "")) {
 
 		// all day long activity (midnight to midnight) is a particular case
-		$activity_start = strtotime(date("Y-m-d", $_REQUEST["stamp"]) . " 00:00:00");
-		$activity_end = strtotime(date("Y-m-d", $_REQUEST["stamp"]) . " 23:59:59");
+		$activity_start = strtotime(date("Y-m-d", $post_stamp) . " 00:00:00");
+		$activity_end = strtotime(date("Y-m-d", $post_stamp) . " 23:59:59");
 
 	} else {
 
 		// standard planning with daily break
-		$activity_start = strtotime(date("Y-m-d", $_REQUEST["stamp"]) . " " . $start_hour);
-		$activity_end = strtotime(date("Y-m-d", $_REQUEST["stamp"]) . " " . $end_hour);
+		$activity_start = strtotime(date("Y-m-d", $post_stamp) . " " . $start_hour);
+		$activity_end = strtotime(date("Y-m-d", $post_stamp) . " " . $end_hour);
 	}
 
 	// calculates the width of one time step in pixels
@@ -76,7 +80,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-<title><?php echo $app_title . " :: " . date($date_format, $_REQUEST["stamp"]); ?></title>
+<title><?php echo $app_title . " :: " . date($date_format, $post_stamp); ?></title>
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 
@@ -119,11 +123,13 @@
 		}
 	}
 
-	function HideInfos() { $("booking_infos").style.visibility = "hidden"; }
+	function HideInfos() {
+		$("booking_infos").style.visibility = "hidden";
+	}
 
 	function openBooking(stamp) {
-			var book_id = $("s" + stamp).value;
-			top.frames[1].location = "<?php echo $booking_method; ?>_book.php?book_id=" + book_id + "&object_id=<?php echo $_REQUEST["object_id"]; ?>&stamp=" + stamp;
+		var book_id = $("s" + stamp).value;
+		top.frames[1].location = "<?php echo $booking_method; ?>_book.php?book_id=" + book_id + "&object_id=<?php echo $post_object_id; ?>&stamp=" + stamp;
 	}
 
 --></script>
@@ -139,13 +145,13 @@
 	// extracts the bookings for the selected day
 	$sql  = "SELECT book_id, book_start, book_end, user_id, misc_info, validated ";
 	$sql .= "FROM rs_data_bookings ";
-	$sql .= "WHERE object_id = " . $_REQUEST["object_id"] . " ";
-	$sql .= "AND ((book_start >= '" . date("Y-m-d", $_REQUEST["stamp"]) . "' ";
-	$sql .= "AND book_start < '" . date("Y-m-d", ($_REQUEST["stamp"] + 86400)) . "') ";
-	$sql .= "OR (book_end >= '" . date("Y-m-d", $_REQUEST["stamp"]) . "' ";
-	$sql .= "AND book_end < '" . date("Y-m-d", ($_REQUEST["stamp"] + 86400)) . "') ";
-	$sql .= "OR (book_start <= '" .  date("Y-m-d", $_REQUEST["stamp"]) . "' ";
-	$sql .= "AND book_end >= '" . date("Y-m-d", $_REQUEST["stamp"]) . "'));";
+	$sql .= "WHERE object_id = " . $post_object_id . " ";
+	$sql .= "AND ((book_start >= '" . date("Y-m-d", $post_stamp) . "' ";
+	$sql .= "AND book_start < '" . date("Y-m-d", ($post_stamp + 86400)) . "') ";
+	$sql .= "OR (book_end >= '" . date("Y-m-d", $post_stamp) . "' ";
+	$sql .= "AND book_end < '" . date("Y-m-d", ($post_stamp + 86400)) . "') ";
+	$sql .= "OR (book_start <= '" .  date("Y-m-d", $post_stamp) . "' ";
+	$sql .= "AND book_end >= '" . date("Y-m-d", $post_stamp) . "'));";
 
 	$bookings = db_query($database_name, $sql, "no", "no");
 
@@ -212,7 +218,7 @@
 
 	echo "<div id=\"booking_infos\" style=\"top:20px\"></div>";
 
-	$managers_names = getObjectInfos($_REQUEST["object_id"], "managers_names");
+	$managers_names = getObjectInfos($post_object_id, "managers_names");
 
 	if($managers_names != "") {
 		$managers_names = Translate("managed by", 1) . " " . $managers_names;
@@ -223,7 +229,7 @@
 ?>
 
 <script type="text/javascript"><!--
-	$("title_").innerHTML = "<?php echo date($date_format, $_REQUEST["stamp"]); ?> - " + parent.document.getElementById("title_").value + " <span class=\"small_text\">(<?php echo $managers_names; ?>)</span>";
+	$("title_").innerHTML = "<?php echo date($date_format, $post_stamp); ?> - " + parent.document.getElementById("title_").value + " <span class=\"small_text\">(<?php echo $managers_names; ?>)</span>";
 --></script>
 
 </body>

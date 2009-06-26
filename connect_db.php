@@ -32,6 +32,7 @@
 		if($debug_mode == "yes") { echo "<hr>-- Debug info--<br>" .$sql . "<hr>"; }
 
 		global $db_connection_type, $db_server_address, $db_user, $db_password;
+		
 		$result = false;
 
 		switch($db_connection_type) {
@@ -65,11 +66,14 @@
 						
 					$bookings_user_id = checkVar("sql", $_COOKIE["bookings_user_id"], "int", "", "", "0", "");
 					
-					$sql = "SELECT profile_id FROM rs_data_users WHERE user_id = " . $bookings_user_id . ";";
-					$temp = mysql_query($sql);
-					$profile_id = ($temp_ = mysql_fetch_array($temp))?$temp_["profile_id"]:0;
-						
-					$result = ($profile_id > 1)?mysql_query($sql):false;
+					if($bookings_user_id) {
+					
+						$sql = "SELECT profile_id FROM rs_data_users WHERE user_id = " . $bookings_user_id . ";";
+						$temp = mysql_query($sql);
+						$profile_id = ($temp_ = mysql_fetch_array($temp))?$temp_["profile_id"]:0;
+							
+						if($profile_id > 1) { $result = mysql_query($sql); }
+					}
 				}
 			}
 
