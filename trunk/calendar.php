@@ -67,8 +67,16 @@
 <link rel="stylesheet" type="text/css" href="styles.php">
 
 <script type="text/javascript"><!--
+
 	<?php includeCommonScripts(); ?>
-	function clickOnDay(stamp) { $("iframe_day").src = "day.php?stamp=" + stamp + "&object_id=<?php echo $post_object_id; ?>; }
+	
+	function clickOnDay(stamp) {
+		$("stamp").value = stamp;
+		$("form_action").action = "day.php";
+		$("form_action").target = "iframe_day";
+		$("form_action").submit();
+	}
+
 --></script>
 
 </head>
@@ -192,7 +200,13 @@
 
 --></script>
 
-<form action=""><input type="hidden" id="title_" name="title_" value="<?php echo checkVar("html", $family_name, "string", "", "", "-", "") . " / " . checkVar("html", $object_name, "string", "", "", "-", ""); ?>"></form>
+<form id="form_action" action="">
+
+<input type="hidden" id="title_" name="title_" value="<?php echo checkVar("html", $family_name, "string", "", "", "-", "") . " / " . checkVar("html", $object_name, "string", "", "", "-", ""); ?>">
+<input type="hidden" id="object_id" name="object_id" value="<?php echo $post_object_id; ?>">
+<input type="hidden" id="stamp" name="stamp" value="">
+
+</form>
 
 </body>
 </html>
