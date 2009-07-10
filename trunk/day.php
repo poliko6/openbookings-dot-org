@@ -29,49 +29,49 @@
 
 <?php
 
-	$screen_width = 785; $offset = 10;
+	$ok_screen_width = 785; $ok_offset = 10;
 
 	// extracts colors from the table which holds parameters
 	// the function "param_extract()" is implemented in the file "functions.php"
 	// extracts colors from the table which holds parameters
-	$validated_color = checkVar("html", param_extract("validated_color"), "hex", 6, 6, "00c000", "");
-	$unvalidated_color = checkVar("html", param_extract("unvalidated_color"), "hex", 6, 6, "ff8000", "");
-	$background_color = checkVar("html", param_extract("background_color"), "hex", 6, 6, "eff0f8", "");
+	$cv_validated_color = checkVar("html", param_extract("validated_color"), "hex", 6, 6, "00c000", "");
+	//$cv_unvalidated_color= checkVar("html", param_extract("unvalidated_color"), "hex", 6, 6, "ff8000", "");
+	//$cv_background_color = checkVar("html", param_extract("background_color"), "hex", 6, 6, "eff0f8", "");
 
-	$post_object_id = checkVar("sql", $_POST["object_id"], "int", "1", "65535", "0", "");
-	$post_stamp = checkVar("sql", $_POST["stamp", "int", "", "", "", "");
+	$cv_post_object_id = checkVar("sql", $_POST["object_id"], "int", "1", "65535", "0", "");
+	$cv_post_stamp = checkVar("sql", $_POST["stamp", "int", "", "", "", "");
 	
 	// extracts infos about the selected object
 	$sql  = "SELECT rs_param_families.family_name, rs_data_objects.object_name, booking_method, activity_start, activity_end, activity_step ";
 	$sql .= "FROM rs_data_objects INNER JOIN rs_param_families ON rs_data_objects.family_id = rs_param_families.family_id ";
-	$sql .= "WHERE rs_data_objects.object_id = " . $post_object_id . ";";
+	$sql .= "WHERE rs_data_objects.object_id = " . $cv_post_object_id. ";";
 	$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
 
-	$booking_method = checkVar("", $temp_["booking_method"], "string", 8, 10, "time_based", "");
-	$start_hour = checkVar("", temp_["activity_start"], "hour", "", "", "09:00", "");
-	$end_hour = checkVar("", temp_["activity_end"], "hour", "", "", "17:00", "");
-	$activity_step = checkVar("", $temp_["activity_step"], "", "", "15", "") * 60;
+	$cv_booking_method = checkVar("", $temp_["booking_method"], "string", 8, 10, "time_based", "");
+	$cv_start_hour = checkVar("", temp_["activity_start"], "hour", "", "", "09:00", "");
+	$cv_end_hour = checkVar("", temp_["activity_end"], "hour", "", "", "17:00", "");
+	$cv_activity_step = checkVar("", $temp_["activity_step"], "", "", "15", "") * 60;
 
 	// calculates full timestamp of the activity for the selected day
-	if(($start_hour == "00:00" || $start_hour == "0:00" || $start_hour == "") && ($end_hour == "00:00" || $end_hour == "0:00" || $end_hour = "")) {
+	if(($cv_start_hour == "00:00" || $cv_start_hour == "0:00" || $cv_start_hour == "") && ($cv_end_hour == "00:00" || $cv_end_hour == "0:00" || $cv_end_hour = "")) {
 
 		// all day long activity (midnight to midnight) is a particular case
-		$activity_start = strtotime(date("Y-m-d", $post_stamp) . " 00:00:00");
-		$activity_end = strtotime(date("Y-m-d", $post_stamp) . " 23:59:59");
+		$ok_activity_start = strtotime(date("Y-m-d", $cv_post_stamp) . " 00:00:00");
+		$ok_activity_end = strtotime(date("Y-m-d", $cv_post_stamp) . " 23:59:59");
 
 	} else {
 
 		// standard planning with daily break
-		$activity_start = strtotime(date("Y-m-d", $post_stamp) . " " . $start_hour);
-		$activity_end = strtotime(date("Y-m-d", $post_stamp) . " " . $end_hour);
+		$ok_activity_start = strtotime(date("Y-m-d", $cv_post_stamp) . " " . $cv_start_hour);
+		$ok_activity_end = strtotime(date("Y-m-d", $cv_post_stamp) . " " . $cv_end_hour);
 	}
 
 	// calculates the width of one time step in pixels
-	$coef = intval(($activity_end - $activity_start) / $screen_width);
-	$step_size = intval($activity_step/$coef);
+	$ok_coef = intval(($ok_activity_end - $ok_activity_start) / $ok_screen_width);
+	$ok_step_size = intval($cv_activity_step/$ok_coef);
 
 	// calculates the width of one hour in pixels
-	$hour_step_size = $step_size * (60 / $temp_["activity_step"]);
+	$ok_hour_step_size = $ok_step_size * (60 / $temp_["activity_step"]);
 ?>
 
 <html>
@@ -80,14 +80,14 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-<title><?php echo $app_title . " :: " . date($date_format, $post_stamp); ?></title>
+<title><?php echo $app_title . " :: " . date($date_format, $cv_post_stamp); ?></title>
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 
 <style type="text/css">
 .hour_tag { top:58px; font-family: arial; font-size:10px; }
 .line { top:56px; width:1px; height:3px; font-size:0px; background:black; }
-.free_step { cursor:pointer; top:40px; height:15px; width:<?php echo intval($activity_step / $coef) - 3; ?>px; background:#<?php echo $free_color; ?>; font-size:0px; }
+.free_step { cursor:pointer; top:40px; height:15px; width:<?php echo intval($cv_activity_step / $ok_coef) - 3; ?>px; background:#<?php echo $free_color; ?>; font-size:0px; }
 </style>
 
 <script type="text/javascript"><!--
@@ -111,7 +111,7 @@
 
 			$("booking_infos").innerHTML = info;
 
-			if(evt.clientX < <?php echo intval($screen_width/2); ?>) {
+			if(evt.clientX < <?php echo intval($ok_screen_width/2); ?>) {
 				posx = evt.clientX + 20;
 			} else {
 				posx = evt.clientX - (225 + 20);
@@ -129,7 +129,7 @@
 
 	function openBooking(stamp) {
 		var book_id = $("s" + stamp).value;
-		top.frames[1].location = "<?php echo $booking_method; ?>_book.php?book_id=" + book_id + "&object_id=<?php echo $post_object_id; ?>&stamp=" + stamp;
+		top.frames[1].location = "<?php echo $cv_booking_method; ?>_book.php?book_id=" + book_id + "&object_id=<?php echo $cv_post_object_id; ?>&stamp=" + stamp;
 	}
 
 --></script>
@@ -145,25 +145,25 @@
 	// extracts the bookings for the selected day
 	$sql  = "SELECT book_id, book_start, book_end, user_id, misc_info, validated ";
 	$sql .= "FROM rs_data_bookings ";
-	$sql .= "WHERE object_id = " . $post_object_id . " ";
-	$sql .= "AND ((book_start >= '" . date("Y-m-d", $post_stamp) . "' ";
-	$sql .= "AND book_start < '" . date("Y-m-d", ($post_stamp + 86400)) . "') ";
-	$sql .= "OR (book_end >= '" . date("Y-m-d", $post_stamp) . "' ";
-	$sql .= "AND book_end < '" . date("Y-m-d", ($post_stamp + 86400)) . "') ";
-	$sql .= "OR (book_start <= '" .  date("Y-m-d", $post_stamp) . "' ";
-	$sql .= "AND book_end >= '" . date("Y-m-d", $post_stamp) . "'));";
+	$sql .= "WHERE object_id = " . $cv_post_object_id. " ";
+	$sql .= "AND ((book_start >= '" . date("Y-m-d", $cv_post_stamp) . "' ";
+	$sql .= "AND book_start < '" . date("Y-m-d", ($cv_post_stamp + 86400)) . "') ";
+	$sql .= "OR (book_end >= '" . date("Y-m-d", $cv_post_stamp) . "' ";
+	$sql .= "AND book_end < '" . date("Y-m-d", ($cv_post_stamp + 86400)) . "') ";
+	$sql .= "OR (book_start <= '" .  date("Y-m-d", $cv_post_stamp) . "' ";
+	$sql .= "AND book_end >= '" . date("Y-m-d", $cv_post_stamp) . "'));";
 
 	$bookings = db_query($database_name, $sql, "no", "no");
 
 	// dispays the timesteps
-	$n = -1; for($t=$activity_start; $t<$activity_end; $t+=$activity_step) { $n++;
-		echo "<div id=\"step_" . $t . "\" class=\"free_step\" style=\"left:" . (($step_size * $n) + $offset) . "px\" onMouseOver=\"ShowInfos(event, '" . $t . "')\" onMouseOut=\"HideInfos()\" onClick=\"openBooking('" . $t . "')\"><input type=\"hidden\" id=\"s" . $t . "\" value=\"0\"></div>\n";
+	$n = -1; for($t=$ok_activity_start; $t<$ok_activity_end; $t+=$cv_activity_step) { $n++;
+		echo "<div id=\"step_" . $t . "\" class=\"free_step\" style=\"left:" . (($ok_step_size * $n) + $ok_offset) . "px\" onMouseOver=\"ShowInfos(event, '" . $t . "')\" onMouseOut=\"HideInfos()\" onClick=\"openBooking('" . $t . "')\"><input type=\"hidden\" id=\"s" . $t . "\" value=\"0\"></div>\n";
 	}
 
 	// displays the hours digits as a caption
-	$n = -1; for($t=$activity_start; $t<=$activity_end; $t+=3600) { $n++;
-		echo "<div class=\"hour_tag\" style=\"left:" . (($hour_step_size * $n) + $offset - 8) . "px\">" . date("H", $t) . "</div>\n";
-		echo "<div class=\"line\" style=\"left:" . (($hour_step_size * $n) + $offset - 2) . "px\"></div>\n";
+	$n = -1; for($t=$ok_activity_start; $t<=$ok_activity_end; $t=strtotime("+1 hour", $t)) { $n++;
+		echo "<div class=\"hour_tag\" style=\"left:" . (($ok_hour_step_size * $n) + $ok_offset - 8) . "px\">" . date("H", $t) . "</div>\n";
+		echo "<div class=\"line\" style=\"left:" . (($ok_hour_step_size * $n) + $ok_offset - 2) . "px\"></div>\n";
 	}
 
 	// highlight of the booked areas using javascript
@@ -190,23 +190,23 @@
 		echo "bookings[" . $bookings_["book_id"] . "]['booker_name'] = \"" . unDuplicateName($booker_["first_name"], $booker_["last_name"]) . "\";\n";
 		echo "bookings[" . $bookings_["book_id"] . "]['booking_dates'] = \"" . dateRange($bookings_["book_start"], $bookings_["book_end"]) . "\";\n";
 
-		if($bookings_["misc_info"] == "" || $bookings_["misc_info"] == Chr(13).Chr(10)) {
+		if($bookings_["misc_info"] == "" || $bookings_["misc_info"] == Chr(13).Chr(10)) { // replace with \n ?
 			echo "bookings[" . $bookings_["book_id"] . "]['misc_info'] = \"(" . Translate("no more informations", 1) . ")\";\n\n";
 		} else {
 			echo "bookings[" . $bookings_["book_id"] . "]['misc_info'] = \"" . str_replace(Chr(13).Chr(10), "<br>", $bookings_["misc_info"]) . "\";\n\n";
 		}
 
-		if($bookings_["validated"]) { $book_color = $validated_color; } else { $book_color = $unvalidated_color; }
+		if($bookings_["validated"]) { $ok_book_color = $cv_validated_color; } else { $ok_book_color = $unvalidated_color; }
 
-		for($t=$activity_start; $t<$activity_end; $t+=$activity_step) {
+		for($t=$ok_activity_start; $t<$ok_activity_end; $t+=$cv_activity_step) {
 
 			if($t >= strtotime($bookings_["book_start"]) && $t < strtotime($bookings_["book_end"])) {
 				echo "$(\"s" . $t . "\").value = \"" . $bookings_["book_id"] . "\";\n";
-				echo "$(\"step_" . $t . "\").style.background = \"#" . $book_color . "\";\n";
+				echo "$(\"step_" . $t . "\").style.background = \"#" . $ok_book_color . "\";\n";
 
 				if($t == strtotime($bookings_["book_start"])) {
 					echo "$(\"step_" . $t . "\").style.borderLeft = \"1px solid black\";\n";
-					echo "$(\"step_" . $t . "\").style.width = '" . (intval($activity_step / $coef) - 4) . "px';\n";
+					echo "$(\"step_" . $t . "\").style.width = '" . (intval($cv_activity_step / $ok_coef) - 4) . "px';\n";
 				}
 
 
@@ -218,18 +218,18 @@
 
 	echo "<div id=\"booking_infos\" style=\"top:20px\"></div>";
 
-	$managers_names = getObjectInfos($post_object_id, "managers_names");
+	$cv_managers_names = checkVar("html", getObjectInfos($cv_post_object_id, "managers_names"), "string", "", "", "", "");
 
-	if($managers_names != "") {
-		$managers_names = Translate("managed by", 1) . " " . $managers_names;
+	if($cv_managers_names != "") {
+		$cv_managers_names = Translate("managed by", 1) . " " . $cv_managers_names;
 	} else {
-		$managers_names = Translate("not managed", 1);
+		$cv_managers_names = Translate("not managed", 1);
 	}
 
 ?>
 
 <script type="text/javascript"><!--
-	$("title_").innerHTML = "<?php echo date($date_format, $post_stamp); ?> - " + parent.document.getElementById("title_").value + " <span class=\"small_text\">(<?php echo $managers_names; ?>)</span>";
+	$("title_").innerHTML = "<?php echo date($date_format, $cv_post_stamp); ?> - " + parent.document.getElementById("title_").value + " <span class=\"small_text\">(<?php echo $cv_managers_names; ?>)</span>";
 --></script>
 
 </body>
