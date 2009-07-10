@@ -21,6 +21,29 @@
 	require_once "config.php";
 	require_once "connect_db.php";
 	require_once "functions.php";
+	
+	// checks posted vars
+	$post_vars_array = array();
+	
+	$allowed_actions = array("insert_new_family","update_family","delete_family");
+	
+	$post_vars_array["action_"] = array("", $_POST["action_"], "string", "", "", $allowed_actions, "", "action_");
+	$post_vars_array["sort_order"] = array("", $_POST["sort_order"], "int", "1", "", "", "", "sort_order");
+	$post_vars_array["postype"] = array("", $_POST["postype"], "int", "-1", "0", "", "", "postype");
+	
+	
+	
+	
+	$target, $untrusted_value, $awaited_type, $min, $max, $allowed_values, $default_value, $label
+
+
+
+family_id
+family_name
+previous_sort_order
+	
+	
+	
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -37,7 +60,7 @@
 		<?php includeCommonScripts(); ?>
 	--></script>
 <?php
-	$family_id = $_REQUEST["family_id"];
+	$family_id = $_POST["family_id"];
 
 	if($family_id == "0") {
 
@@ -117,7 +140,7 @@
 			case "delete_family":
 
 			// moves the objects to the <unclassified> temporary family
-			$sql = "UPDATE rs_data_objects SET family_id = 255 WHERE family_id = " . $_REQUEST["family_id"] . ";";
+			$sql = "UPDATE rs_data_objects SET family_id = 255 WHERE family_id = " . $_POST["family_id"] . ";";
 			db_query($database_name, $sql, "no", "no");
 
 			$sql = "DELETE FROM rs_param_families WHERE family_id = " . $_POST["family_id"] . ";";
@@ -145,7 +168,7 @@
 
 <?php
 
-	} else { // !isset($_REQUEST["action_"])
+	} else { // !isset($_POST["action_"])
 
 		// extracts families list
 		$sql  = "SELECT sort_order, family_name FROM rs_param_families ";
