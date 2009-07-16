@@ -30,8 +30,8 @@
 
 		$error_message = "";
 
-		$post_username = checkVar("sql", $_POST["username"], "string", "5", "20", "", "username");
-		$post_password = checkVar("sql", $_POST["username"], "string", "5", "20", "", "password");
+		$post_username = checkVar("sql", $_POST["username"], "string", "5", "20", "", "username", 1, 0);
+		$post_password = checkVar("sql", $_POST["password"], "string", "5", "20", "", "password", 1, 0);
 
 		$error_message .= (!$post_username["ok"])?$post_username["error"] . "<br>":"";
 		$error_message .= (!$post_password["ok"])?$post_password["error"] . "<br>":"";
@@ -95,29 +95,29 @@
 
 		$validation_error = "";
 
-		$first_name_ = checkVar("", $_POST["first_name"], "string", 2, 50, "", "First name");
+		$first_name_ = checkVar("", $_POST["first_name"], "string", 2, 50, "", "First name", 1, 0);
 		if(!$first_name_["ok"]) { $validation_error .= $first_name_["error"] . "<br>"; }
 		$first_name = $first_name_["value"];
 
-		$last_name_ = checkVar("", $_POST["last_name"], "string", 2, 50, "", "Last name");
+		$last_name_ = checkVar("", $_POST["last_name"], "string", 2, 50, "", "Last name", 1, 0);
 		if(!$last_name_["ok"]) { $validation_error .= $last_name_["error"] . "<br>"; }
 		$last_name = $last_name_["value"];
 
-		$username_ = checkVar("", $_POST["username"], "string", 5, 20, "", "Username");
+		$username_ = checkVar("", $_POST["username"], "string", 5, 20, "", "Username", 1, 0);
 		if(!$username_["ok"]) { $validation_error .= $username_["error"] . "<br>"; }
 		$username = $username_["value"];
 
-		$password_ = checkVar("", $_POST["password"], "string", 5, 20, "", "Password");
+		$password_ = checkVar("", $_POST["password"], "string", 5, 20, "", "Password", 1, 0);
 		if(!$password_["ok"]) { $validation_error .= $password_["error"] . "<br>"; }
 		$password = $password_["value"];
 
-		$verify_password_ = checkVar("", $_POST["verify_password"], "string", 5, 20, "", "Password verification");
+		$verify_password_ = checkVar("", $_POST["verify_password"], "string", 5, 20, "", "Password verification", 1, 0);
 		if(!$verify_password_["ok"]) { $validation_error .= $verify_password_["error"] . "<br>"; }
 		$verify_password = $verify_password_["value"];
 
 		if($password != $verify_password) { $validation_error .= Translate("Password and password verification don't match", 1) . "<br>"; }
 
-		$email_ = checkVar("", $_POST["email"], "email", 8, 80, "", "Email");
+		$email_ = checkVar("", $_POST["email"], "email", 8, 80, "", "Email", 1, 0);
 		if(!$email_["ok"]) { $validation_error .= $email_["error"] . "<br>"; }
 		$email = $email_["value"];
 
@@ -219,121 +219,116 @@
 
 		case "delete_booking":
 
-		$get_book_id = checkVar("sql", $_GET["book_id"], "int", "", "", "", "");
-		$get_object_id = checkVar("sql", $_GET["object_id"], "int", "", "", "", "");
+		$get_book_id = checkVar("sql", $_GET["book_id"], "int", "1", "", "", "", 0, 1);
+		$get_object_id = checkVar("sql", $_GET["object_id"], "int", "1", "", "", "", 0, 1);
 
-		if($get_book_id["ok"] && $get_object_id["ok"]) {
-
-			$sql = "delete from rs_data_bookings WHERE book_id = " . $get_book_id["value"] . " AND object_id = " . $get_object_id["value"] . ";";
-			db_query($database_name, $sql, "no", "no");
-		}
+		$sql = "delete from rs_data_bookings WHERE book_id = " . $get_book_id . " AND object_id = " . $get_object_id . ";";
+		db_query($database_name, $sql, "no", "no");
 
 		break;
 
 		case "confirm_booking": // ***********************************************************************************
 
-		$get_validated = checkVar("html", $_GET["validated"], "string", 2, 3, "", "");
-		$get_book_id = checkVar("sql", $_GET["book_id"], "int", "", "", "", "");
-		$get_object_id = checkVar("sql", $_GET["object_id"], "int", "", "", "", "");
+		$get_validated = checkVar("html", $_GET["validated"], "string", 2, 3, "", "", 0, 1);
+		$get_book_id = checkVar("sql", $_GET["book_id"], "int", "", "", "", "", 0, 1);
+		$get_object_id = checkVar("sql", $_GET["object_id"], "int", "", "", "", "", 0, 1);
 
-		if($get_validated["ok"] && $get_book_id["ok"] && $get_object_id["ok"]) {
+		switch($get_validated) {
 
-			switch($get_validated["value"]) {
+			case "yes":
+				$text1 = Translate("has valided your booking request", 1);
+				$text2 = Translate("Validated booking request", 1);
+				$action_sql = "UPDATE rs_data_bookings SET validated = 1 WHERE book_id = " . $get_book_id . ";";
+			break;
 
-				case "yes":
-					$text1 = Translate("has valided your booking request", 1);
-					$text2 = Translate("Validated booking request", 1);
-					$action_sql = "UPDATE rs_data_bookings SET validated = 1 WHERE book_id = " . $get_book_id["value"] . ";";
-				break;
-
-				case "no":
-					$text1 = Translate("has refused your booking request", 1);
-					$text2 = Translate("Refused booking request", 1);
-					$action_sql = "DELETE FROM rs_data_bookings WHERE book_id = " . $get_object_id["value"] . ";";
-			}
-
-			// extracts booking infos
-			$sql = "SELECT user_id, object_id, book_start, book_end FROM rs_data_bookings WHERE book_id = " . $get_book_id["value"] . ";";
-			$temp = db_query($database_name, $sql, "no", "no");
-
-			if($temp) { // booking still exists
-
-				$temp_ = fetch_array($temp);
-
-				$booker_id = $temp_["user_id"]; $object_id = $temp_["object_id"]; $booking_start = $temp_["book_start"]; $booking_end = $temp_["book_end"];
-
-				// extracts object infos
-				$sql = "SELECT object_name, manager_id, email_bookings FROM rs_data_objects WHERE object_id = " . $object_id . ";";
-				$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
-				$object_name = $temp_["object_name"]; $manager_id = $temp_["manager_id"]; $email_bookings = $temp_["email_bookings"];
-
-				// extracts manager name
-				$sql = "SELECT first_name, last_name, email FROM rs_data_users WHERE user_id = " . $manager_id . ";";
-				$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
-				$manager_name = $temp_["first_name"] . " " . $temp_["last_name"]; $manager_email = $temp_["email"];
-
-				// extracts booker email
-				$sql = "SELECT first_name, last_name, email FROM rs_data_users WHERE user_id = " . $booker_id . ";";
-				$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
-				$booker_name = $temp_["first_name"] . " " . $temp_["last_name"];
-
-				$booker_email = checkVar("", $temp_["email"], "email", "", "", "", "");
-
-				// do the action (confirm or cancel)
-				db_query($database_name, $action_sql, "no", "no");
-
-				// sends a confirmation email to the booker
-				if($booker_email["ok"] && $email_bookings == "yes") {
-
-					$headers  = "MIME-Version: 1.0\r\n";
-					$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-					$headers .= "From: " . checkVar("html", $manager_name, "string", "", "", "", "") . " <" . checkVar("html", $manager_email, "email", "", "", "", "") . ">\r\n";
-
-					$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
-					$message .= "<html>\n";
-					$message .= "<head>\n";
-					$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
-					$message .= "<title>iframe</title>\n";
-
-					$message .= "<style type=\"text/css\">\n";
-					$message .= "a:link {color:black; text-decoration: none; }\n";
-					$message .= "a:visited {color:black; text-decoration: none; }\n";
-					$message .= "a:hover {color:red; text-decoration: none; }\n";
-					$message .= "table { border-collapse: collapse; }\n";
-					$message .= "td { padding: 3px; }\n";
-					$message .= "</style>\n";
-
-					$message .= "</head>\n";
-
-					$message .= "<body>\n";
-
-					$message .= checkVar("html", $manager_name, "string", "", "", "", "") . " " . checkVar("html", $text1, "string", "", "", "", "") . " :\n";
-					$message .= "<p>\n";
-					$message .= Translate("Object", 1) . " : " . checkVar("html", $object_name, "string", "", "", "", "") . "<br>\n";
-					$message .= Translate("Start", 1) . " : " . date($date_format . " H:i", strtotime($booking_start)) . "<br>\n";
-					$message .= Translate("End", 1) . " : " . date($date_format . " H:i", strtotime($booking_end)) . "<br><br>\n";
-
-					$message .= "</body>\n";
-					$message .= "</html>";
-
-					mail($booker_email, $text2, $message, $headers);
-
-					$message = Translate("Confirmation was sent to", 1) . " " . $booker_name;
-				}
-
-			} else { // booking was already cancelled
-
-				$message = Translate("This booking was cancelled by the user even before your try to confirm it", 1) . ".";
-			}
+			case "no":
+				$text1 = Translate("has refused your booking request", 1);
+				$text2 = Translate("Refused booking request", 1);
+				$action_sql = "DELETE FROM rs_data_bookings WHERE book_id = " . $get_object_id . ";";
 		}
+
+		// extracts booking infos
+		$sql = "SELECT user_id, object_id, book_start, book_end FROM rs_data_bookings WHERE book_id = " . $get_book_id . ";";
+		$temp = db_query($database_name, $sql, "no", "no");
+
+		if($temp) { // booking still exists
+
+			$temp_ = fetch_array($temp);
+
+			$booker_id = $temp_["user_id"]; $object_id = $temp_["object_id"]; $booking_start = $temp_["book_start"]; $booking_end = $temp_["book_end"];
+
+			// extracts object infos
+			$sql = "SELECT object_name, manager_id, email_bookings FROM rs_data_objects WHERE object_id = " . $object_id . ";";
+			$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
+			$object_name = $temp_["object_name"]; $manager_id = $temp_["manager_id"]; $email_bookings = $temp_["email_bookings"];
+
+			// extracts manager name
+			$sql = "SELECT first_name, last_name, email FROM rs_data_users WHERE user_id = " . $manager_id . ";";
+			$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
+			$manager_name = $temp_["first_name"] . " " . $temp_["last_name"]; $manager_email = $temp_["email"];
+
+			// extracts booker email
+			$sql = "SELECT first_name, last_name, email FROM rs_data_users WHERE user_id = " . $booker_id . ";";
+			$temp = db_query($database_name, $sql, "no", "no"); $temp_ = fetch_array($temp);
+			$booker_name = $temp_["first_name"] . " " . $temp_["last_name"];
+
+			$booker_email = checkVar("html", $temp_["email"], "email", "8", "", "", "", 0, 1);
+
+			// do the action (confirm or cancel)
+			db_query($database_name, $action_sql, "no", "no");
+
+			// sends a confirmation email to the booker
+			if($email_bookings == "yes") {
+
+				$headers  = "MIME-Version: 1.0\r\n";
+				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+				$headers .= "From: " . checkVar("html", $manager_name, "string", "", "", "", "", 0, 1) . " <" . checkVar("html", $manager_email, "email", "", "", "", "", 0, 1) . ">\r\n";
+
+				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+				$message .= "<html>\n";
+				$message .= "<head>\n";
+				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+				$message .= "<title>iframe</title>\n";
+
+				$message .= "<style type=\"text/css\">\n";
+				$message .= "a:link {color:black; text-decoration: none; }\n";
+				$message .= "a:visited {color:black; text-decoration: none; }\n";
+				$message .= "a:hover {color:red; text-decoration: none; }\n";
+				$message .= "table { border-collapse: collapse; }\n";
+				$message .= "td { padding: 3px; }\n";
+				$message .= "</style>\n";
+
+				$message .= "</head>\n";
+
+				$message .= "<body>\n";
+
+				$message .= checkVar("html", $manager_name, "string", "", "", "", "", 0, 1) . " " . checkVar("html", $text1, "string", "", "", "", "", 0, 1) . " :\n";
+				$message .= "<p>\n";
+				$message .= Translate("Object", 1) . " : " . checkVar("html", $object_name, "string", "", "", "", "", 0, 1) . "<br>\n";
+				$message .= Translate("Start", 1) . " : " . date($date_format . " H:i", strtotime($booking_start)) . "<br>\n";
+				$message .= Translate("End", 1) . " : " . date($date_format . " H:i", strtotime($booking_end)) . "<br><br>\n";
+
+				$message .= "</body>\n";
+				$message .= "</html>";
+
+				mail($booker_email, $text2, $message, $headers);
+
+				$message = Translate("Confirmation was sent to", 1) . " " . $booker_name;
+			}
+
+		} else { // booking was already cancelled
+
+			$message = Translate("This booking was cancelled by the user even before your try to confirm it", 1) . ".";
+		}
+
 
 		break;
 
 		case "update_localization": // ****************************************************************************
 
-		$post_localize_to = checkVar("sql", $_POST["localize_to"], "string", 4, 15, "", "");
-		$post_lang_id = checkVar("sql", $_POST["lang_id"], "int", "", "", "", "");
-		$post_localize_to_lang_id = checkVar("sql", $_POST["$post_localize_to_" . $post_lang_id], "string", "", "", "", "");
+		$post_localize_to = checkVar("sql", $_POST["localize_to"], "string", 4, 15, "", "", 0, 1);
+		$post_lang_id = checkVar("sql", $_POST["lang_id"], "int", "", "", "", "", 0, 1);
+		$post_localize_to_lang_id = checkVar("sql", $_POST["$post_localize_to_" . $post_lang_id], "string", "", "", "", "", 0, 1);
 
 		if($post_localize_to["ok"] && $post_lang_id["ok"] && $post_localize_to_lang_id["ok"]) {
 			$sql = "UPDATE rs_param_lang SET ";
@@ -348,10 +343,10 @@
 
 			$error_message = "";
 
-			$get_object_id = checkVar("", $_GET["object_id"], "int", "", "", "", "Object ID");
-			$get_start_date = checkVar("", $_GET["start_date"], "date", "", "", "", "Start date");
-			$get_start_hour = checkVar("", $_GET["start_hour"], "hour",  "", "", "", "Start hour"); // 00:00
-			$get_duration = checkVar("", $_GET["duration"], "int",  "", "", "", "Duration");
+			$get_object_id = checkVar("", $_GET["object_id"], "int", "", "", "", "Object ID", 1, 0);
+			$get_start_date = checkVar("", $_GET["start_date"], "date", "", "", "", "Start date", 1, 0);
+			$get_start_hour = checkVar("", $_GET["start_hour"], "hour",  "", "", "", "Start hour", 1, 0); // 00:00
+			$get_duration = checkVar("", $_GET["duration"], "int",  "", "", "", "Duration", 1, 0);
 
 			if($get_object_id["ok"] && $get_start_date["ok"] && $get_start_hour["ok"] && $get_duration["ok"]) {
 
@@ -446,7 +441,7 @@
 			$buffer = str_replace("\"", "", $buffer); // removes "
 			$array_columns = explode(";", $buffer);
 
-			foreach($array_columns as $column_name) { $sql .= checkVar("sql", $column_name, "string", "", "", "", "") . " varchar(255) default NULL, "; }
+			foreach($array_columns as $column_name) { $sql .= checkVar("sql", $column_name, "string", "2", "", "", "", 0, 1) . " varchar(255) default NULL, "; }
 			$sql = substr($sql, 0, -1); // removes last comma (,)
 
 			$sql .= "PRIMARY KEY (lang_id), ";
@@ -464,10 +459,10 @@
 				$array_values = explode(";", $buffer);
 
 				$sql  = "INSERT INTO rs_temp_lang ( ";
-				foreach($array_columns as $column_name) { $sql .= checkVar("sql", $column_name, "string", "", "", "", "") . ","; }
+				foreach($array_columns as $column_name) { $sql .= checkVar("sql", $column_name, "string", "", "", "", "", 0, 1) . ","; }
 				$sql = substr($sql, 0, -1); // removes last comma (,)
 				$sql .= " ) VALUES ( ";
-				foreach($array_values as $value) { $sql .= checkVar("sql", $value, "string", "", "", "", "") . ","; }
+				foreach($array_values as $value) { $sql .= checkVar("sql", $value, "string", "", "", "", "", 0, 1) . ","; }
 				$sql = substr($sql, 0, -1); // removes last comma (,)
 				$sql .= ");";
 

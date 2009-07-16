@@ -22,28 +22,21 @@
 	require_once "connect_db.php";
 	require_once "functions.php";
 	
-	// checks posted vars
+	
+	
+	/* checks posted vars
 	$post_vars_array = array();
 	
 	$allowed_actions = array("insert_new_family","update_family","delete_family");
 	
-	$post_vars_array["action_"] = array("", $_POST["action_"], "string", "", "", $allowed_actions, "", "action_");
-	$post_vars_array["sort_order"] = array("", $_POST["sort_order"], "int", "1", "", "", "", "sort_order");
-	$post_vars_array["postype"] = array("", $_POST["postype"], "int", "-1", "0", "", "", "postype");
+	$post_vars_array["action_"] = array("sql", $_POST["action_"], "string", "", "", $allowed_actions, "", "action_");
+	$post_vars_array["sort_order"] = array("sql", $_POST["sort_order"], "int", "1", "", "", "", "sort_order");
+	$post_vars_array["postype"] = array("sql", $_POST["postype"], "int", "-1", "0", "", "", "postype");
+	$post_vars_array["family_id"] = array("sql", $_POST["family_id"], "int", "1", "", "", "", "postype");
+	$post_vars_array["family_name"] = array("", $_POST["family_name"], "string", "1", "50", "", "", "postype");
+	$post_vars_array["previous_sort_order"] = array("", $_POST["previous_sort_order"], "int", "1", "", "", "", "sort_order");
 	
-	
-	
-	
-	$target, $untrusted_value, $awaited_type, $min, $max, $allowed_values, $default_value, $label
-
-
-
-family_id
-family_name
-previous_sort_order
-	
-	
-	
+	$post_vars_array = checkVars($post_vars_array); */
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -59,8 +52,10 @@ previous_sort_order
 	<script type="text/javascript"><!--
 		<?php includeCommonScripts(); ?>
 	--></script>
+	
 <?php
-	$family_id = $_POST["family_id"];
+
+	$family_id = checkVar("sql", $_POST["family_id"], "int", 1, "", "0", "");
 
 	if($family_id == "0") {
 
@@ -111,7 +106,7 @@ previous_sort_order
 			case "update_family":
 
 			// removes sort #
-			$sql = "UPDATE rs_param_families SET sort_order = 0 WHERE sort_order = " . $_POST["previous_sort_order"] . ";";
+			$sql = "UPDATE rs_param_families SET sort_oprevious_sort_orderrder = 0 WHERE sort_order = " . $_POST["previous_sort_order"] . ";";
 			db_query($database_name, $sql, "no", "no");
 
 			$sql = "SELECT family_id, sort_order FROM rs_param_families WHERE sort_order <> 0 ORDER BY sort_order;";

@@ -18,7 +18,9 @@
     along with OpenBookings.org; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA */
 
-	$application_access_level = param_extract("application_access_level");
+	$application_access_level = param_extract("application_access_level"); // minimum user profile required to access the application (anonymous, guest or registered user)
+	$debug_mode = param_extract("debug_mode"); // makes the application more talkative on var validation errors
+	$app_title = checkVar("html", param_extract("app_title"), "string", "", "", "OpenBookings.org", ""); // extracts customized app title 
 
 	if(isset($_COOKIE["bookings_date_format"])) { $date_format = $_COOKIE["bookings_date_format"]; } else { $date_format = param_extract("default_date_format"); }
 
@@ -35,10 +37,7 @@
 	} else {
 		$time_offset = param_extract("default_user_timezone") - param_extract("server_timezone");
 	}
-
-	// extracts colors from the table which holds parameters
-	$app_title = checkVar("html", param_extract("app_title"), "string", "", "", "OpenBookings.org", "");
-
+	
 	function includeCommonScripts() {
 		$common_scripts = "function $(id) { return document.getElementById(id); }\n";
 		echo $common_scripts;
@@ -78,7 +77,7 @@
 		if($permissions_ = fetch_array($permissions)) { return $permissions_["permission"]; } else { return "none"; }
 	}
 
-	function checkVar($target, $untrusted_value, $awaited_type, $min, $max, $default_value, $label) {
+	function checkVar($target, $untrusted_value, $awaited_type, $min, $max, $default_value, $label, $array_return, $die_on_fail) {
 
 		$value_accepted = true; $error = "";
 
@@ -111,18 +110,39 @@
 				if(!$value_accepted) { $error .= "bad length, " . $min . " to " . $max . "chars accepted."; }
 			}
 		}
+		
+		if($value_accepted) {
+			
+			switch($array_return) {
+				
+				case 0: // returns a single value without feedback
+				return $untrusted_value; break;
+				
+				case 1: // returns an array with filtered value or default value with error feedback if validation fails (useful for form validation)				
+				return array("ok"=>true, "value"=>$untrusted_value, "error"=>"")
+			}
 
-		if($default_value != "") {
-			
-			// a default value is set: just returns default value if validation fails
-			return ($value_accepted)?$untrusted_value:$default_value;
-			
 		} else {
 			
-			// no default value set: returns an array with
-			// acceptation state (true|false), output value if accepted, and error message if not accepted
-			// useful to provide feedback to the user when form validation fails
-			return ($value_accepted)?array("ok"=>true, "value"=>$untrusted_value, "error"=>""):array("ok"=>false, "value"=>$default_value, "error"=>"'" . $label . "' " . $error);
+			if($die_on_fail) {
+				exit(Translate("Fatal error :: bad var value detected" ,1));
+				if($debug_mode == "on") { echo "<br>'" . $label . "' " . $error; }
+			}
+			
+			if($default_value == "") {
+				exit(Translate("Fatal error :: var validation failed (and no default value)", 1));
+				if($debug_mode == "on") { echo "<br>'" . $label . "' " . $error; }
+			} else {
+				
+				switch($array_return) {
+					
+					case 0: // returns a single value without feedback
+					return $default_value; break;
+					
+					case 1: // returns an array with filtered value or default value with error feedback if validation fails (useful for form validation)				
+					return array("ok"=>false, "value"=>$default_value, "error"=>"'" . $label . "' " . $error);
+				}
+			}
 		}
 	}
 
