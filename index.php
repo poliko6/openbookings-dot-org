@@ -176,8 +176,6 @@
 
 </center>
 
-
-
 <iframe id="iframe_action" name="iframe_action"></iframe>
 
 <script type="text/javascript"><!--
