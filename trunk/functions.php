@@ -20,7 +20,7 @@
 
 	$application_access_level = param_extract("application_access_level"); // minimum user profile required to access the application (anonymous, guest or registered user)
 	$debug_mode = param_extract("debug_mode"); // makes the application more talkative on var validation errors
-	$app_title = checkVar("html", param_extract("app_title"), "string", "", "", "OpenBookings.org", ""); // extracts customized app title 
+	$app_title = checkVar("html", param_extract("app_title"), "string", "", "", "OpenBookings.org", "", 0, 1); // extracts customized app title
 
 	if(isset($_COOKIE["bookings_date_format"])) { $date_format = $_COOKIE["bookings_date_format"]; } else { $date_format = param_extract("default_date_format"); }
 
@@ -37,7 +37,7 @@
 	} else {
 		$time_offset = param_extract("default_user_timezone") - param_extract("server_timezone");
 	}
-	
+
 	function includeCommonScripts() {
 		$common_scripts = "function $(id) { return document.getElementById(id); }\n";
 		echo $common_scripts;
@@ -89,7 +89,8 @@
 		// 2. checks var content against awaited type
 		if($awaited_type != "") {
 			$value_accepted = validateType($target, $untrusted_value, $awaited_type);
-			if(!$value_accepted) { $error .= "bad type, " . $awaited_type . " awaited."; }
+
+			if($value_accepted == 0) { $error .= "bad type, " . $awaited_type . " awaited."; }
 		} else {
 			// sets var type if not specified, for next check against bounds
 			if(is_numeric($untrusted_value)) { $awaited_type = "float"; } else { $awaited_type = "string"; }
@@ -110,36 +111,37 @@
 				if(!$value_accepted) { $error .= "bad length, " . $min . " to " . $max . "chars accepted."; }
 			}
 		}
-		
+
 		if($value_accepted) {
-			
+
 			switch($array_return) {
-				
+
 				case 0: // returns a single value without feedback
 				return $untrusted_value; break;
-				
-				case 1: // returns an array with filtered value or default value with error feedback if validation fails (useful for form validation)				
-				return array("ok"=>true, "value"=>$untrusted_value, "error"=>"")
+
+				case 1: // returns an array with filtered value or default value with error feedback if validation fails (useful for form validation)
+				return array("ok"=>true, "value"=>$untrusted_value, "error"=>"");
 			}
 
+
 		} else {
-			
+
 			if($die_on_fail) {
-				exit(Translate("Fatal error :: bad var value detected" ,1));
+				exit("Fatal error :: bad var value detected");
 				if($debug_mode == "on") { echo "<br>'" . $label . "' " . $error; }
 			}
-			
+
 			if($default_value == "") {
-				exit(Translate("Fatal error :: var validation failed (and no default value)", 1));
+				exit("Fatal error :: var validation failed (and no default value)");
 				if($debug_mode == "on") { echo "<br>'" . $label . "' " . $error; }
 			} else {
-				
+
 				switch($array_return) {
-					
+
 					case 0: // returns a single value without feedback
 					return $default_value; break;
-					
-					case 1: // returns an array with filtered value or default value with error feedback if validation fails (useful for form validation)				
+
+					case 1: // returns an array with filtered value or default value with error feedback if validation fails (useful for form validation)
 					return array("ok"=>false, "value"=>$default_value, "error"=>"'" . $label . "' " . $error);
 				}
 			}
@@ -181,7 +183,7 @@
 	// END UNIVERSAL VARS CHECKS
 
 	function getFromDb($table, $id_column, $id_value, $searched_value) {
-		
+
 		global $database_name;
 
 		$sql = "SELECT " . $searched_value . " FROM " . $table . " WHERE " . $id_column . " = '" . $id_value . "';";
@@ -331,7 +333,7 @@
 
 		global $database_name;
 
-		$english_ = checkVar("sql", $english, "string", "", "", "", "");
+		$english = checkVar("sql", $english, "string", "", "", "", "", 0, 0);
 
 		if(isset($_COOKIE["bookings_user_id"])) { // user is logged -> uses user language setting
 			$language = $_COOKIE["bookings_language"];
@@ -343,7 +345,7 @@
 		}
 
 		$sql = "SELECT " . $language . " FROM rs_param_lang ";
-		$sql .= "WHERE english = '" . $english_["value"] . "';";
+		$sql .= "WHERE english = '" . $english . "';";
 		$translation = db_query($database_name, $sql, "no", "no");
 
 		if($translation_ = fetch_array($translation)) {
@@ -360,14 +362,14 @@
 		} else {
 
 			// inserts english if database record is missing. It's a tip to get a list of missing vocabulary while developping the application
-			$sql = "INSERT INTO rs_param_lang ( english ) VALUES ( '" . $english_["value"] . "' );";
+			$sql = "INSERT INTO rs_param_lang ( english ) VALUES ( '" . $english . "' );";
 			db_query($database_name, $sql, "yes", "no");
 
 			$return = $english . "*"; // the star shows translations missing in the database while browsing the app
 		}
-		
-		$return = checkVar("html", $return, "string", "", "", "", "");
-		return $return["value"];
+
+		$return = checkVar("html", $return, "string", "", "", "", "", 0, 0);
+		return $return;
 	}
 
 	function getMonday($year, $week) {
@@ -502,17 +504,17 @@
 	}
 
 	function validateString($target, $string) { // [] () / . ? ! _ - &aa[aaaa]; &000;
-		
+
 		switch($target) {
-			case "html": $pattern = "#^([A-Za-z0-9\.\?\!\[\]\(\)\s'/_-]|&[a-z]{2,6};|&\#[0-9]{3,3};){1,}$#"; break;
-			case "sql": $pattern = "#^([ÉÈÊËÜÛÎÔÄÏÖÄÅÇA-Zéèëêüûçîôâïöäåaa-z0-9\.\?\!\[\]\(\)\s'/_-]|&[a-z]{2,6};|&\#[0-9]{3,3};){1,}$#"; break;
-			case "": $pattern = "#^([A-Za-z0-9\.\?\!\[\]\(\)\s'/_-]){1,}$#";
+			case "html": $pattern = "#^([A-Za-z0-9\*\.\?\!\[\]\(\)\s'/_-]|&[a-z]{2,6};|&\#[0-9]{3,3};){1,}$#"; break;
+			case "sql": $pattern = "#^([ÉÈÊËÜÛÎÔÄÏÖÄÅÇA-Zéèëêüûçîôâïöäåaa-z0-9\*\.\?\!\[\]\(\)\s'/_-]|&[a-z]{2,6};|&\#[0-9]{3,3};){1,}$#"; break;
+			case "": $pattern = "#^([A-Za-z0-9\*\.\?\!\[\]\(\)\s'/_-]){1,}$#"; break;
 			default: return false;
 		}
-			
-		if(preg_match($pattern, $string)) { return $string; } else { return false; }
+
+		if(preg_match($pattern, $string)) { return true; } else { return false; }
 	}
-	
+
 	function validateHour($hour) {
 		$pattern = "#^[0-2]{1,1}[0-9]{1,1}:[0-2]{1,1}[0-9]{1,1}$#";
 		if(preg_match($pattern, $url)) { return $url; } else { return false; }
@@ -676,4 +678,63 @@
 			return true;
 		}
 	}
+
+	/* Documentation
+
+	function checkVar($target, $untrusted_value, $awaited_type, $min, $max, $default_value, $label, $array_return, $die_on_fail) {
+
+		$target
+
+			"html" if the result has to be displayed in a html page
+			"sql"  if the result has to be integrated in a sql query
+
+		$untrusted_value
+
+			value to be analysed
+
+		$awaited_type
+
+			awaited content type
+			accepted values: "boolean", "int", "float", "hex", "string", "date", "hour", "url", "email"
+
+		$min
+
+			min value if $awaited_type in "int", "float", "hex"
+			min string length if $awaited_type in "string", "date", "url", "email"
+
+		$max
+
+			max value if $awaited_type in "int", "float", "hex"
+			max string length if $awaited_type in "string", "date", "url", "email"
+
+		$default_value
+
+			value returned by default if the test fails
+
+		$label
+
+			var label, optionnal but useful to make a script display which var has failed
+
+		$array_return
+
+			0 to simply return the sanitized value without details
+
+			1 to return an array with more details
+
+				in case of test success:
+				array("ok"=>true, "value"=>$untrusted_value, "error"=>"")
+
+				in case of test failure:
+				array("ok"=>false, "value"=>$default_value, "error"=>"'" . $label . "' " . $error)
+
+		$die_on_fail
+
+			0 to continue script execution in case of test failure
+
+			1 to terminate script execution in case of test failure
+			intended to be used as emergency stop when an attack is suspected
+	}
+
+	*/
+
 ?>

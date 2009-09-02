@@ -216,7 +216,7 @@
 <tr><td>
 
 <table class="table3" summary=""><tr>
-	<td style="font-weight:bold"><?php echo Translate("Week #", 1); ?></td>
+	<td style="font-weight:bold"><?php echo Translate("Week", 1); ?></td>
 	<td><input id="n_semaine" name="n_semaine"  style="width:24px; text-align:center" value="<?php echo date("W"); ?>"></td>
 	<td></td>
 	<td><button id="show_week" type="button" style="width:60px" onClick="ShowCalendar('week.php?year=' + $('annee').value + '&amp;week=' + $('n_semaine').value)"><?php echo Translate("Show", 1); ?></button></td>
