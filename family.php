@@ -1,6 +1,6 @@
 <?php
 
-	/* OpenBookings.org - Copyright (C) 2005 Jérôme ROGER (jerome@openbookings.org)
+	/* OpenBookings.org - Copyright (C) 2005 JÃ©rÃ´me ROGER (jerome@openbookings.org)
 
 	family.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 
@@ -21,21 +21,21 @@
 	require_once "config.php";
 	require_once "connect_db.php";
 	require_once "functions.php";
-	
-	
-	
+
+
+
 	/* checks posted vars
 	$post_vars_array = array();
-	
+
 	$allowed_actions = array("insert_new_family","update_family","delete_family");
-	
+
 	$post_vars_array["action_"] = array("sql", $_POST["action_"], "string", "", "", $allowed_actions, "", "action_");
 	$post_vars_array["sort_order"] = array("sql", $_POST["sort_order"], "int", "1", "", "", "", "sort_order");
 	$post_vars_array["postype"] = array("sql", $_POST["postype"], "int", "-1", "0", "", "", "postype");
 	$post_vars_array["family_id"] = array("sql", $_POST["family_id"], "int", "1", "", "", "", "postype");
 	$post_vars_array["family_name"] = array("", $_POST["family_name"], "string", "1", "50", "", "", "postype");
 	$post_vars_array["previous_sort_order"] = array("", $_POST["previous_sort_order"], "int", "1", "", "", "", "sort_order");
-	
+
 	$post_vars_array = checkVars($post_vars_array); */
 ?>
 
@@ -45,14 +45,14 @@
 
 <head>
 
-<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<meta content="text/html; charset=UTF-8" http-equiv="content-type">
 
 <title><?php echo $app_title . " :: " . Translate("Family", 1); ?></title>
 
 	<script type="text/javascript"><!--
 		<?php includeCommonScripts(); ?>
 	--></script>
-	
+
 <?php
 
 	$family_id = checkVar("sql", $_POST["family_id"], "int", 1, "", "0", "");

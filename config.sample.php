@@ -1,5 +1,5 @@
 <?php
-	/* OpenBookings.org - Copyright (C) 2005 Jérôme ROGER (jerome@openbookings.org)
+	/* OpenBookings.org - Copyright (C) 2005 JÃ©rÃ´me ROGER (jerome@openbookings.org)
 
 	config.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 

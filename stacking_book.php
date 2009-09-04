@@ -27,7 +27,7 @@
 	CheckCookie(); // Resets app to the index page if timeout is reached. This function is implemented in functions.php
 
 	if(isset($_POST["action_"])) {
-		
+
 		$booking_start = dateFormat($_POST["start_date"], "", "Y-m-d") . " " . $_POST["start_hour"] . "00";
 		$booking_duration = toSeconds($_POST["duration_days"], $_POST["duration_hours"], $_POST["duration_minutes"]);
 		$booking_end = date("Y-m-d H:i:s", strtotime("+" . $booking_duration . " seconds", $booking_start));
@@ -37,13 +37,13 @@
 			case "insert_booking":
 
 			insertBooking("insert", $_POST["book_id"], $_POST["booker_id"], $_POST["object_id"], $booking_start, $booking_end, $_POST["misc_info"], $validated);
-			
+
 			break;
-			
+
 			case "update_booking":
-			
+
 			insertBooking("update", $_POST["book_id"], $_POST["booker_id"], $_POST["object_id"], $booking_start, $booking_end, $_POST["misc_info"], $validated);
-			
+
 			break;
 		}
 
@@ -99,7 +99,7 @@
 
 <head>
 
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 	<title><?php echo $app_title; ?></title>
 
