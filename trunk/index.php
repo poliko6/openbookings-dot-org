@@ -1,6 +1,6 @@
 <?php
 
-	/* OpenBookings.org - Copyright (C) 2005 Jérôme ROGER (jerome@openbookings.org)
+	/* OpenBookings.org - Copyright (C) 2005 JÃ©rÃ´me ROGER (jerome@openbookings.org)
 
 	index.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 
@@ -34,11 +34,11 @@
 
 <head>
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 <title><?php echo $app_title; ?></title>
 
-<meta name="author" content="Jérôme ROGER">
+<meta name="author" content="JÃ©rÃ´me ROGER">
 <meta name="description" content="OpenBookings.org - Universal, multi-purpose online booking system">
 <meta name="keywords" content="booking,bookings,reservation,reservations,resources,ressources,shared,partage,manage,management,gestion,planning,plannings,timetable,timetables,meeting,calendar,calendars,rooms,cars,free,download,open-source,web,html,php,mysql,apache,iis,odbc,online,intranet,internet,system,software">
 <meta name="robots" content="index,nofollow">

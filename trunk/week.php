@@ -1,6 +1,6 @@
 <?php
 
-	/* OpenBookings.org - Copyright (C) 2005 Jérôme ROGER (jerome@openbookings.org)
+	/* OpenBookings.org - Copyright (C) 2005 JÃ©rÃ´me ROGER (jerome@openbookings.org)
 
 	week.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 
@@ -87,7 +87,7 @@
 
 <head>
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 <title><?php echo $app_title . " :: " . $object_family . " / " . $object_name . " - " . Translate("Week #", 1) . " " . $_REQUEST["week"]; ?></title>
 

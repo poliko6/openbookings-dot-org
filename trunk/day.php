@@ -1,6 +1,6 @@
 <?php
 
-	/* OpenBookings.org - Copyright (C) 2005 Jérôme ROGER (jerome@openbookings.org)
+	/* OpenBookings.org - Copyright (C) 2005 JÃ©rÃ´me ROGER (jerome@openbookings.org)
 
 	day.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 
@@ -40,7 +40,7 @@
 
 	$cv_post_object_id = checkVar("sql", $_POST["object_id"], "int", "1", "65535", "0", "");
 	$cv_post_stamp = checkVar("sql", $_POST["stamp", "int", "", "", "", "");
-	
+
 	// extracts infos about the selected object
 	$sql  = "SELECT rs_param_families.family_name, rs_data_objects.object_name, booking_method, activity_start, activity_end, activity_step ";
 	$sql .= "FROM rs_data_objects INNER JOIN rs_param_families ON rs_data_objects.family_id = rs_param_families.family_id ";
@@ -78,7 +78,7 @@
 
 <head>
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 <title><?php echo $app_title . " :: " . date($date_format, $cv_post_stamp); ?></title>
 

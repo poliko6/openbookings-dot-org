@@ -1,6 +1,6 @@
 <?php
 
-	/* OpenBookings.org - Copyright (C) 2005-2009 Jérôme ROGER (jerome@openbookings.org)
+	/* OpenBookings.org - Copyright (C) 2005-2009 JÃ©rÃ´me ROGER (jerome@openbookings.org)
 
 	functions.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 
@@ -152,7 +152,7 @@
 		switch($target) {
 			case "": return $value; break;
 			case "sql": return mysql_real_escape_string($value); break;
-			case "html": return htmlentities($value, ENT_QUOTES, "ISO-8859-1");
+			case "html": return htmlentities($value, ENT_QUOTES, "UTF-8");
 		}
 	}
 
@@ -398,20 +398,20 @@
 	function FormatDate($date_a_verifier, $debutfin) {
 
 		// modif semaine sur un seul chiffre
-		if(strlen($date_a_verifier) <= 2 || ( strlen($date_a_verifier) >= 5  && strlen($date_a_verifier) <= 7)) { //pour prendre 6 caractères ex: 1/2005
+		if(strlen($date_a_verifier) <= 2 || ( strlen($date_a_verifier) >= 5  && strlen($date_a_verifier) <= 7)) { //pour prendre 6 caractÃ¨res ex: 1/2005
 
-			// Sélection de l'année
+			// SÃ©lection de l'annÃ©e
 			if(strlen($date_a_verifier) > 2) {
 				list($semaine, $annee) = explode("/", $date_a_verifier); // Format semaine/annee (ex: 5/2006 ou 05/2006)
 			} else {
 				$annee = date("Y", strtotime(date("Y-m-d"))); // Format semaine (ex: 5 ou 05)
 			}
 
-			$timestamp = strtotime($annee . "-01-01"); // timestamp du premier janvier de l'année choisie
+			$timestamp = strtotime($annee . "-01-01"); // timestamp du premier janvier de l'annÃ©e choisie
 
-			while(intval(date("W",$timestamp)) != 1) { $timestamp = strtotime("+1 days", $timestamp); } // Avancer jusqu'à la semaine 1 (année-01-01 peut être en semaine 53)
+			while(intval(date("W",$timestamp)) != 1) { $timestamp = strtotime("+1 days", $timestamp); } // Avancer jusqu'Ã  la semaine 1 (annÃ©e-01-01 peut Ãªtre en semaine 53)
 
-			while(intval(date("W", $timestamp)) != $date_a_verifier) { $timestamp = strtotime("+1 weeks", $timestamp); } // avancer semaine par semaine jusqu'à la semaine spécifiée par l'utilisateur
+			while(intval(date("W", $timestamp)) != $date_a_verifier) { $timestamp = strtotime("+1 weeks", $timestamp); } // avancer semaine par semaine jusqu'Ã  la semaine spÃ©cifiÃ©e par l'utilisateur
 
 			switch($debutfin) {
 
@@ -430,7 +430,7 @@
 			}
 		}
 
-		//modif année en 31/12/2005 ou 31/12/05 :
+		//modif annÃ©e en 31/12/2005 ou 31/12/05 :
 		if(strlen($date_a_verifier) == 10 || strlen($date_a_verifier) == 8 ) {
 			list($jour, $mois, $annee) = explode("/", $date_a_verifier);
 			return $annee . "-" . $mois . "-" . $jour;
@@ -507,7 +507,7 @@
 
 		switch($target) {
 			case "html": $pattern = "#^([A-Za-z0-9\*\.\?\!\[\]\(\)\s'/_-]|&[a-z]{2,6};|&\#[0-9]{3,3};){1,}$#"; break;
-			case "sql": $pattern = "#^([ÉÈÊËÜÛÎÔÄÏÖÄÅÇA-Zéèëêüûçîôâïöäåaa-z0-9\*\.\?\!\[\]\(\)\s'/_-]|&[a-z]{2,6};|&\#[0-9]{3,3};){1,}$#"; break;
+			case "sql": $pattern = "#^([Ã‰ÃˆÃŠÃ‹ÃœÃ›ÃÃ”Ã„ÃÃ–Ã„Ã…Ã‡A-ZÃ©Ã¨Ã«ÃªÃ¼Ã»Ã§Ã®Ã´Ã¢Ã¯Ã¶Ã¤Ã¥aa-z0-9\*\.\?\!\[\]\(\)\s'/_-]|&[a-z]{2,6};|&\#[0-9]{3,3};){1,}$#"; break;
 			case "": $pattern = "#^([A-Za-z0-9\*\.\?\!\[\]\(\)\s'/_-]){1,}$#"; break;
 			default: return false;
 		}
@@ -547,7 +547,7 @@
 		if(!isset($_COOKIE["bookings_user_id"])) {
 
 			echo "<html><head>\n";
-			echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+			echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
 			echo "<title>Session has expired</title>\n";
 			echo "<script type=\"text/javascript\"><!-- \n";
 			echo "top.location = \"index.php\";\n";
@@ -634,13 +634,13 @@
 			if(!$validated && getObjectInfos($object_id, "is_managed") && $email_bookings == "yes") { // sends an email for the object's manager to validate the new booking
 
 				$headers  = "MIME-Version: 1.0\r\n";
-				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+				$headers .= "Content-type: text/html; charset=utf-8\r\n";
 				$headers .= "From: " . $booker_name . " <" . $booker_email . ">\r\n";
 
 				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 				$message .= "<html>\n";
 				$message .= "<head>\n";
-				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
 				$message .= "<title>iframe</title>\n";
 
 				$message .= "<style type=\"text/css\">\n";

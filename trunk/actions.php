@@ -1,6 +1,6 @@
 <?php
 
-	/* OpenBookings.org - Copyright (C) 2005 JÈrÙme ROGER (jerome@openbookings.org)
+	/* OpenBookings.org - Copyright (C) 2005 J√©r√¥me ROGER (jerome@openbookings.org)
 
 	actions.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 
@@ -23,8 +23,6 @@
 	require_once "functions.php";
 
 	$message = ""; $script = "";
-
-	//test
 
 	switch($_POST["action_"]) {
 
@@ -126,12 +124,12 @@
 		if($validation_error != "") {
 
 			// check for already used username
-			$sql = "SELECT user_id FROM rs_data_users WHERE login = '" . checkVar("sql", $_POST["username"], "", "", "", "", "") . "';";
+			$sql = "SELECT user_id FROM rs_data_users WHERE login = '" . checkVar("sql", $_POST["username"], "", "", "", "", "", 0, 1) . "';";
 			$temp = db_query($database_name, $sql, "no", "no");
 
 			if($temp_ = fetch_array($temp)) {
 
-				$validation_error = sprintf(Translate("Username %1\$s is already used, please choose another one.", 1), checkVar("html", $_POST["username"], "", "", "", "", "")) . "<br>";
+				$validation_error = sprintf(Translate("Username %1\$s is already used, please choose another one.", 1), checkVar("html", $_POST["username"], "", "", "", "", "", 0, 0)) . "<br>";
 			}
 		}
 
@@ -145,12 +143,12 @@
 
 			$sql  = "INSERT INTO rs_data_users ( rand_id, last_name, first_name, login, profile_id, email, password, locked, language, date_format, user_timezone ) VALUES ( ";
 			$sql .= $rand_id . ", ";
-			$sql .= "'" . checkVar("sql", $_POST["last_name"], "", "", "", "", "") . "', ";
-			$sql .= "'" . checkVar("sql", $_POST["first_name"], "", "", "", "", "") . "', ";
-			$sql .= "'" . checkVar("sql", $_POST["username"], "", "", "", "", "") . "', ";
+			$sql .= "'" . checkVar("sql", $_POST["last_name"], "", "", "", "", "", 0, 0) . "', ";
+			$sql .= "'" . checkVar("sql", $_POST["first_name"], "", "", "", "", "", 0, 0) . "', ";
+			$sql .= "'" . checkVar("sql", $_POST["username"], "", "", "", "", "", 0, 0) . "', ";
 			$sql .= "3, "; // standard user profile
-			$sql .= "'" . checkVar("sql", $_POST["email"], "", "", "", "", "") . "', ";
-			$sql .= "'" . checkVar("sql", $_POST["password"], "", "", "", "", "") . "', ";
+			$sql .= "'" . checkVar("sql", $_POST["email"], "", "", "", "", "", 0, 0) . "', ";
+			$sql .= "'" . checkVar("sql", $_POST["password"], "", "", "", "", "", 0, 0) . "', ";
 
 			$self_registration_mode = param_extract("self_registration_mode");
 			if($self_registration_mode == "no_validation") { $sql .= "0, "; } else { $sql .= "1, "; }
@@ -165,17 +163,17 @@
 
 				$script = "";
 
-				//$app_title = param_extract("app_title"); // DÈj‡ extrait dans functions.php (inclu ci-dessus)
+				//$app_title = param_extract("app_title"); // D√©j√† extrait dans functions.php (inclu ci-dessus)
 				$admin_email = param_extract("admin_email");
 
 				$headers  = "MIME-Version: 1.0\r\n";
-				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-				$headers .= "From: " . checkVar("html", $app_title, "", "", "", "", "") . " <" . checkVar("html", $admin_email, "", "", "", "", "") . ">\r\n";
+				$headers .= "Content-type: text/html; charset=utf-8\r\n";
+				$headers .= "From: " . checkVar("html", $app_title, "", "", "", "", "", 0, 1) . " <" . checkVar("html", $admin_email, "", "", "", "", "") . ">\r\n";
 
 				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 				$message .= "<html>\n";
 				$message .= "<head>\n";
-				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
 				$message .= "<title>email confirmation</title>\n";
 
 				$message .= "<style type=\"text/css\">\n";
@@ -198,7 +196,7 @@
 				$message .= "</body>\n";
 				$message .= "</html>";
 
-				mail(checkVar("html", $_POST["email"], "email", "", "", "", ""), Translate("Registration code", 1), $message, $headers);
+				mail(checkVar("html", $_POST["email"], "email", "", "", "", "", 0, 1), Translate("Registration code", 1), $message, $headers);
 
 				$script .= "parent.document.getElementById(\"notice\").innerHTML = \"";
 				$script .= "<span class=\"big_text\">" . Translate("Registration successful !", 1) . "</span>";
@@ -283,13 +281,13 @@
 			if($email_bookings == "yes") {
 
 				$headers  = "MIME-Version: 1.0\r\n";
-				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+				$headers .= "Content-type: text/html; charset=utf-8\r\n";
 				$headers .= "From: " . checkVar("html", $manager_name, "string", "", "", "", "", 0, 1) . " <" . checkVar("html", $manager_email, "email", "", "", "", "", 0, 1) . ">\r\n";
 
 				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 				$message .= "<html>\n";
 				$message .= "<head>\n";
-				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+				$message .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
 				$message .= "<title>iframe</title>\n";
 
 				$message .= "<style type=\"text/css\">\n";
@@ -448,7 +446,7 @@
 
 			$sql .= "PRIMARY KEY (lang_id), ";
 
-			foreach($array_columns as $column_name) { $sql .= "KEY " . checkVar("sql", $column_name, "string", "", "", "", "") . " (" . checkVar("sql", $column_name, "string", "", "", "", "") . "),"; }
+			foreach($array_columns as $column_name) { $sql .= "KEY " . checkVar("sql", $column_name, "string", "", "", "", "", 0, 1) . " (" . checkVar("sql", $column_name, "string", "", "", "", "", 0, 1) . "),"; }
 			$sql = substr($sql, 0, -1); // removes last comma (,)
 
 			$sql .= " ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;";
@@ -500,9 +498,9 @@
 
 <head>
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<title><?php echo checkVar("html", $app_title, "string", "", "", "", "") . " :: " . Translate("Actions", 1); ?></title>
+<title><?php echo checkVar("html", $app_title, "string", "", "", "", "", 0, 1) . " :: " . Translate("Actions", 1); ?></title>
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 
@@ -514,7 +512,7 @@
 
 <body>
 
-<?php //echo $message; ?>
+<?php echo $message; ?>
 
 </body>
 

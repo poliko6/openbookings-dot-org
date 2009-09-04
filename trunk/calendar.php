@@ -1,6 +1,6 @@
 <?php
 
-	/* OpenBookings.org - Copyright (C) 2005 Jérôme ROGER (jerome@openbookings.org)
+	/* OpenBookings.org - Copyright (C) 2005 JÃ©rÃ´me ROGER (jerome@openbookings.org)
 
 	calendar.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 
@@ -35,7 +35,7 @@
 	$post_stamp = (isset($_POST["stamp"]))?checkVar("", $_POST["stamp"], "int", "", "", 0, ""):false;
 	$post_year  = (isset($_POST["annee"]))?checkVar("", $_POST["annee"], "int", 2000, 2100, date("Y"), ""):date("Y");
 	$year = ($post_stamp)?date("Y", $post_stamp):$post_year;
-	
+
 	// extracts colors from the table which holds parameters
 	$validated_color = checkVar("html", param_extract("validated_color"), "hex", 6, 6, "00c000", "");
 	$unvalidated_color = checkVar("html", param_extract("unvalidated_color"), "hex", 6, 6, "ff8000", "");
@@ -60,7 +60,7 @@
 
 <head>
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 <title><?php echo $app_title . " :: " . Translate("Calendar", 1); ?></title>
 
@@ -69,7 +69,7 @@
 <script type="text/javascript"><!--
 
 	<?php includeCommonScripts(); ?>
-	
+
 	function clickOnDay(stamp) {
 		$("stamp").value = stamp;
 		$("form_action").action = "day.php";
