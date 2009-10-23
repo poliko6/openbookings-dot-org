@@ -100,15 +100,16 @@
 		if($value_accepted) {
 
 			 // numeric : checks var content against values bounds
-			if($awaited_type = "int" || $awaited_type = "float" || $awaited_type = "hex") {
+			if($awaited_type == "int" || $awaited_type == "float" || $awaited_type == "hex") {
+				echo $awaited_type . "<br>";
 				$value_accepted = validateValue($untrusted_value, $min, $max);
-				if(!$value_accepted) { $error .= "bad value, " . $min . " to " . $max . " accepted."; }
+				if(!$value_accepted) { $error .= "bad value, " . $min . " to " . $max . " expected."; }
 			}
 
 			 // string : checks var content against length bounds
-			if($awaited_type = "string" || $awaited_type = "date" || $awaited_type = "url" || $awaited_type = "email") {
+			if($awaited_type == "string" || $awaited_type == "date" || $awaited_type == "url" || $awaited_type == "email") {
 				$value_accepted = validateLength($untrusted_value, $min, $max);
-				if(!$value_accepted) { $error .= "bad length, " . $min . " to " . $max . "chars accepted."; }
+				if(!$value_accepted) { $error .= "bad length, " . $min . " to " . $max . " chars expected."; }
 			}
 		}
 
@@ -131,19 +132,13 @@
 				if($debug_mode == "on") { echo "<br>'" . $label . "' " . $error; }
 			}
 
-			if($default_value == "") {
-				exit("Fatal error :: var validation failed (and no default value)");
-				if($debug_mode == "on") { echo "<br>'" . $label . "' " . $error; }
-			} else {
+			switch($array_return) {
 
-				switch($array_return) {
+				case 0: // returns a single value without feedback
+				return $default_value; break;
 
-					case 0: // returns a single value without feedback
-					return $default_value; break;
-
-					case 1: // returns an array with filtered value or default value with error feedback if validation fails (useful for form validation)
-					return array("ok"=>false, "value"=>$default_value, "error"=>"'" . $label . "' " . $error);
-				}
+				case 1: // returns an array with filtered value or default value with error feedback if validation fails (useful for form validation)
+				return array("ok"=>false, "value"=>$default_value, "error"=>"'" . $label . "' " . $error);
 			}
 		}
 	}
@@ -487,6 +482,7 @@
 			$a_date = explode($a_format["separator"], $d_date);
 
 			foreach($a_date as $i_index=>$s_value) {
+				echo $a_format[$i_index] . "<br>";
 				$$a_format[$i_index]["date_part"] = $s_value; // $day = 30 | $month = 12 | $year = 2009
 			}
 
@@ -525,7 +521,7 @@
 		if(preg_match($pattern, $url)) { return $url; } else { return false; }
 	}
 
-	function validatekEmail($email) {
+	function validateEmail($email) {
 		$pattern = "#^[A-Za-z0-9._-]+@[a-z0-9._-]{2,}\.[A-Za-z]{2,4}$#";
 	}
 

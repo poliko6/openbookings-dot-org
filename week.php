@@ -26,7 +26,7 @@
 
 	// finds monday of the selected week & year
 	$current_day = strtotime("01/01/" . $_REQUEST["year"]);
-	while(date("w", $current_day) != 1 || date("W", $current_day) != $_REQUEST["week"]) { $current_day += 86400; }
+	while(date("w", $current_day) != 1 || date("W", $current_day) != $_REQUEST["week"]) { $current_day = strtotime("+1 day", $current_day); }
 	$monday = date("Y-m-d", $current_day);
 	$stamp = strtotime($monday);
 
@@ -117,13 +117,13 @@
 		$left = ($day - 1) * ($column_width + $column_offset) + 50;
 
 		//caption : days names
-		$html .= "<div style=\"font-weight:bold; left:" . $left . "; top:" . ($vertical_offset - 5) . "px;\">" . Translate(date("l", strtotime($monday) + 86400 * ($day - 1)), 1) . "</div>\n";
+		$html .= "<div style=\"font-weight:bold; left:" . $left . "; top:" . ($vertical_offset - 5) . "px;\">" . Translate(date("l", strtotime("+" . ($day-1) . " day", strtotime($monday)), 1)) . "</div>\n";
 
 		$n = -1;
 
 		for($hour=$activity_start;$hour<$activity_end;$hour+=$activity_step) { $n++;
 
-			$step_id = $stamp + ($day - 1) * 86400 + $hour;
+			$step_id = strtotime("+" . ($day-1) . " day", $stamp) + $hour;
 
 			// hour boxes
 			$top = ($step_size + $line_offset) * $n + $vertical_offset + 14;
@@ -185,7 +185,7 @@
 				// conputes the size of the coloured range
 				for($t=$activity_start; $t<$activity_end; $t+=$activity_step) { $m++;
 
-					$step_id = $stamp + (($day-1) * 86400) + $t + 3600;
+					$step_id = strtotime("+" . ($day-1) . " day", $stamp) + $t + 3600; // to be improved
 
 					if($step_id >= strtotime($bookings_["book_start"]) && $step_id < strtotime($bookings_["book_end"])) {
 						if($start == 0) { $start = $m; } else { $end = $m; }

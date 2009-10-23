@@ -147,9 +147,9 @@
 	$sql .= "FROM rs_data_bookings ";
 	$sql .= "WHERE object_id = " . $cv_post_object_id. " ";
 	$sql .= "AND ((book_start >= '" . date("Y-m-d", $cv_post_stamp) . "' ";
-	$sql .= "AND book_start < '" . date("Y-m-d", ($cv_post_stamp + 86400)) . "') ";
+	$sql .= "AND book_start < '" . date("Y-m-d", strtotime("+1 day", $cv_post_stamp)) . "') ";
 	$sql .= "OR (book_end >= '" . date("Y-m-d", $cv_post_stamp) . "' ";
-	$sql .= "AND book_end < '" . date("Y-m-d", ($cv_post_stamp + 86400)) . "') ";
+	$sql .= "AND book_end < '" . date("Y-m-d", strtotime("+1 day", $cv_post_stamp)) . "') ";
 	$sql .= "OR (book_start <= '" .  date("Y-m-d", $cv_post_stamp) . "' ";
 	$sql .= "AND book_end >= '" . date("Y-m-d", $cv_post_stamp) . "'));";
 

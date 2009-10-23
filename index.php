@@ -81,6 +81,8 @@
 
 		function changeTab(id) {
 
+			$("error_message").innerHTML = "";
+
 			if(current_tab_id != "") { $(current_tab_id).style.background = "#dfdfdf"; }
 
 			$(id).style.background = "#f7f7f7";
@@ -121,14 +123,14 @@
 
 <form id="login_form" name="login_form" method="post" action="actions.php" target="iframe_action">
 
-<div class="global" style="width:300px;top:50px">
+<div class="global" style="width:500px;top:50px">
 
 	<div class="tab_set" style="width:300px">
 		<?php if($self_registration_mode != "no_self_registration") { ?><div class="tab" id="register" onMouseOver="highLightTab(this.id, event)" onMouseOut="highLightTab(this.id, event)" onClick="changeTab(this.id)"><?php echo Translate("Register",1); ?></div><?php } ?>
 		<div class="tab" id="connect" onMouseOver="highLightTab(this.id, event)" onMouseOut="highLightTab(this.id, event)" onClick="changeTab(this.id)"><?php echo Translate("Connect",1); ?></div>
 	</div>
 
-	<div class="colorframe" style="text-align:center">
+	<div class="colorframe" style="text-align:center;width:300px">
 
 		<div class="global" style="width:260px;padding:20px">
 
@@ -151,7 +153,7 @@
 
 	</div>
 
-	<div class="error_message" id="error_message"></div>
+	<div class="error_message" id="error_message" style="padding-left:100px"></div>
 
 	<div style="position:relative">
 
@@ -163,6 +165,7 @@
 			<td><a href="http://www.w3.org" target="_blank"><img src="pictures/valid_html401.png" alt="Valid HTML 4.01!" height="31" width="88"></a></td>
 			<td style="width:10px">
 			<td><a href="http://www.mozilla.org/products/firefox/" target="_blank"><img src="pictures/get_firefox.gif" alt="Get FireFox!" height="32" width="110"></a></td>
+
 		</tr>
 	</table>
 
@@ -187,3 +190,7 @@
 <?php } ?>
 
 </html>
+
+
+
+

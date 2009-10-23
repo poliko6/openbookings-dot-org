@@ -168,7 +168,7 @@
 
 				$headers  = "MIME-Version: 1.0\r\n";
 				$headers .= "Content-type: text/html; charset=utf-8\r\n";
-				$headers .= "From: " . checkVar("html", $app_title, "", "", "", "", "", 0, 1) . " <" . checkVar("html", $admin_email, "", "", "", "", "") . ">\r\n";
+				$headers .= "From: " . $app_title . " <" . checkVar("html", $admin_email, "", "", "", "", "") . ">\r\n";
 
 				$message = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 				$message .= "<html>\n";
@@ -500,7 +500,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<title><?php echo checkVar("html", $app_title, "string", "", "", "", "", 0, 1) . " :: " . Translate("Actions", 1); ?></title>
+<title><?php echo $app_title; ?></title>
 
 <link rel="stylesheet" type="text/css" href="styles.php">
 
