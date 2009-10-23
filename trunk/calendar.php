@@ -1,6 +1,6 @@
 <?php
 
-	/* OpenBookings.org - Copyright (C) 2005 JÃ©rÃ´me ROGER (jerome@openbookings.org)
+	/* OpenBookings.org - Copyright (C) 2005 Jérôme ROGER (jerome@openbookings.org)
 
 	calendar.php - This file is part of OpenBookings.org (http://www.openbookings.org)
 
@@ -114,7 +114,7 @@
 		$day_name = Translate(date("l", strtotime($date_en_cours)), 1);
 
 		$range_start = $date_en_cours;
-		$range_end = date("Y-m-d", strtotime($date_en_cours) + 86400);
+		$range_end = date("Y-m-d", strtotime("+1 day", strtotime($date_en_cours));
 
 		if(date("l", strtotime($date_en_cours)) == "Saturday" || date("l", strtotime($date_en_cours)) == "Sunday") {
 			$couleur = "#7f7fff";
